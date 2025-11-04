@@ -20,8 +20,10 @@
 <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-16">
 <div class="flex items-center">
-<img src="images/seenn-logo.png" alt="Seenn" class="h-32 w-auto" style="filter: brightness(0);" />
+<img src="images/seenn-logo.png" alt="Seenn" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" />
 </div>
+
+<!-- Desktop Navigation -->
 <div class="hidden md:flex items-center gap-8">
 <div class="relative group">
 <button class="text-sm font-medium text-gray-800 hover:text-primary transition-colors flex items-center gap-1" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;">
@@ -46,7 +48,7 @@
 <a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="#" data-i18n="pricing">Pricing</a>
 <a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="contact.html" data-i18n="contact">Contact</a>
 </div>
-<div class="flex items-center" style="gap: 1rem;">
+<div class="hidden md:flex items-center" style="gap: 1rem;">
 <a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="#" data-i18n="login">Log in</a>
 <a class="px-4 py-2 text-sm font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="#" data-i18n="getStarted">
                             Get Started
@@ -55,16 +57,49 @@
     עברית
 </button>
 </div>
+
+<!-- Mobile menu button -->
+<button id="mobileMenuBtn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-gray-800 hover:bg-gray-200 transition-colors" onclick="toggleMobileMenu()">
+<svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+</svg>
+<svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+</svg>
+</button>
+</div>
+
+<!-- Mobile menu -->
+<div id="mobileMenu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg" style="background-color: rgba(245, 240, 232, 0.98);">
+<div class="px-4 py-4 space-y-3">
+<div class="border-b border-gray-200 pb-3">
+<div class="font-semibold text-gray-800 mb-2" style="font-family: 'Montserrat', sans-serif;" data-i18n="products">Products</div>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" style="font-family: 'Montserrat', sans-serif;">
+<div class="font-medium" data-i18n="jessProduct">Jess - Account Receivable AI Agent</div>
+</a>
+<a href="#michael-section" onclick="toggleMobileMenu()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" style="font-family: 'Montserrat', sans-serif;">
+<div class="font-medium" data-i18n="michaelProduct">Michael - After Hours AI Agent</div>
+</a>
+</div>
+<a href="#" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;" data-i18n="pricing">Pricing</a>
+<a href="contact.html" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;" data-i18n="contact">Contact</a>
+<a href="#" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;" data-i18n="login">Log in</a>
+<a href="#" class="block px-4 py-3 text-center font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif;" data-i18n="getStarted">Get Started</a>
+<button id="langToggleMobile" class="w-full px-4 py-2 text-center font-medium text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">
+עברית
+</button>
+</div>
 </div>
 </nav>
 </header>
 <main>
-<section class="relative pt-24 pb-32 text-white overflow-hidden" style="min-height: 70vh; background-image: url('images/ChatGPT Image Nov 2, 2025, 10_15_32 AM.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
-<h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4" data-i18n="heroTitle">Stop Chasing Payments. Start Collecting Automatically.</h1>
-<p class="text-base md:text-lg max-w-3xl mx-auto mb-8 text-gray-200" data-i18n="heroSubtitle">Your AI agent calls and contacts overdue clients, follows your rules, and improves your bank cash flow. Approximately 60% improvement in collections and cash flow.</p>
-<div class="flex justify-center items-center gap-4">
-<a class="px-8 py-3 text-lg font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" href="#" data-i18n="startTrial">Start Your Free Trial</a>
+<section class="relative pt-16 sm:pt-24 pb-24 sm:pb-32 text-white overflow-hidden" style="min-height: 60vh; background-image: url('images/ChatGPT Image Nov 2, 2025, 10_15_32 AM.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="container mx-auto px-6 sm:px-6 lg:px-8 text-center relative">
+<h1 class="text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4 px-2" data-i18n="heroTitle">Stop Chasing Payments. Start Collecting Automatically.</h1>
+<p class="text-sm sm:text-base md:text-lg max-w-3xl mx-auto mb-6 sm:mb-8 text-gray-200 px-4" data-i18n="heroSubtitle">Your AI agent calls and contacts overdue clients, follows your rules, and improves your bank cash flow. Approximately 60% improvement in collections and cash flow.</p>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4">
+<a class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors text-center" href="#" data-i18n="startTrial">Start Your Free Trial</a>
+<button onclick="openDemoModal()" class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-white bg-transparent border-3 border-white rounded-lg transition-all duration-300" style="font-family: 'Montserrat', sans-serif; border-width: 3px;" onmouseover="this.style.backgroundColor='white'; this.style.color='#2C5F5F';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='white';">See a Demo</button>
 </div>
 </div>
 
@@ -250,6 +285,55 @@ Your browser does not support the video tag.
 </div>
 </div>
 </footer>
+</div>
+
+<!-- Demo Modal -->
+<div id="demoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 9999; overflow-y: auto;">
+<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem;" onclick="event.target === this && closeDemoModal()">
+<div style="background-color: rgba(245, 240, 232, 0.98); border-radius: 1rem; padding: 2.5rem; max-width: 500px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+<button onclick="closeDemoModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #333; font-family: 'Montserrat', sans-serif;">&times;</button>
+<h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: #111; font-family: 'Montserrat', sans-serif;">Book a Demo</h2>
+<p style="color: #555; margin-bottom: 1.5rem; font-family: 'Montserrat', sans-serif;">Fill out the form below and we'll contact you to schedule your personalized demo.</p>
+<form id="demoForm" onsubmit="handleDemoSubmit(event)">
+<input type="hidden" name="access_key" value="630176d0-413a-4fb3-8fb8-253102416f60">
+<input type="hidden" name="subject" value="New Demo Request from Seenn">
+<input type="hidden" name="from_name" value="Seenn Demo Request">
+
+<div style="margin-bottom: 1rem;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Full Name *</label>
+<input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
+</div>
+
+<div style="margin-bottom: 1rem;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Email *</label>
+<input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
+</div>
+
+<div style="margin-bottom: 1rem;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Company *</label>
+<input type="text" name="company" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
+</div>
+
+<div style="margin-bottom: 1rem;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Phone Number</label>
+<input type="tel" name="phone" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
+</div>
+
+<div style="margin-bottom: 1rem;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Preferred Date & Time</label>
+<input type="text" name="preferred_time" placeholder="e.g., Tuesday, 2pm EST" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Additional Notes</label>
+<textarea name="notes" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; resize: vertical; background-color: white;"></textarea>
+</div>
+
+<button type="submit" id="demoSubmitBtn" style="width: 100%; padding: 0.875rem; background-color: #D4F261; color: black; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#C5E352'" onmouseout="this.style.backgroundColor='#D4F261'">Request Demo</button>
+</form>
+<div id="demoFormMessage" style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; display: none; font-family: 'Montserrat', sans-serif;"></div>
+</div>
+</div>
 </div>
 
 </body>

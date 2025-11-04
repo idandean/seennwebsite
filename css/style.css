@@ -218,3 +218,70 @@ body {
     right: 40px;
   }
 }
+
+/* Mobile Optimization Styles */
+@media (max-width: 768px) {
+  /* Better text sizing on mobile */
+  h1 {
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+
+  /* Improve touch targets */
+  button, a {
+    min-height: 44px;
+  }
+
+  /* Better padding for mobile sections */
+  section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Mobile modal adjustments */
+  #demoModal > div {
+    padding: 1rem !important;
+  }
+
+  #demoModal > div > div {
+    padding: 1.5rem !important;
+    max-width: 100% !important;
+    margin: 0.5rem !important;
+  }
+
+  /* Improve video sizing on mobile */
+  video {
+    max-height: 300px;
+    object-fit: cover;
+  }
+
+  /* Better grid layouts on mobile */
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hide decorative elements that crowd mobile */
+  .backdrop-square {
+    display: none;
+  }
+}
+
+/* Smooth mobile menu transition */
+#mobileMenu {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Prevent horizontal scroll on mobile */
+body {
+  overflow-x: hidden;
+}
+
+/* Better touch scrolling on iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}

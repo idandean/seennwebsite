@@ -167,9 +167,15 @@ const translations = {
 document.addEventListener('DOMContentLoaded', function() {
     let currentLang = 'en';
     const langToggle = document.getElementById('langToggle');
+    const langToggleMobile = document.getElementById('langToggleMobile');
     const html = document.documentElement;
 
     langToggle.addEventListener('click', function() {
+        currentLang = currentLang === 'en' ? 'he' : 'en';
+        updateLanguage(currentLang);
+    });
+
+    langToggleMobile.addEventListener('click', function() {
         currentLang = currentLang === 'en' ? 'he' : 'en';
         updateLanguage(currentLang);
     });
@@ -180,10 +186,12 @@ document.addEventListener('DOMContentLoaded', function() {
             html.setAttribute('dir', 'rtl');
             html.setAttribute('lang', 'he');
             langToggle.textContent = 'English';
+            langToggleMobile.textContent = 'English';
         } else {
             html.setAttribute('dir', 'ltr');
             html.setAttribute('lang', 'en');
             langToggle.textContent = 'עברית';
+            langToggleMobile.textContent = 'עברית';
         }
 
         // Update all elements with data-i18n attribute
@@ -196,3 +204,86 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    const closeIcon = document.getElementById('closeIcon');
+
+    if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+    } else {
+        mobileMenu.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+    }
+}
+
+// Demo Modal Functions
+function openDemoModal() {
+    document.getElementById('demoModal').style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeDemoModal() {
+    document.getElementById('demoModal').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Handle Demo Form Submission
+async function handleDemoSubmit(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const submitBtn = document.getElementById('demoSubmitBtn');
+    const messageDiv = document.getElementById('demoFormMessage');
+
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    messageDiv.style.display = 'none';
+
+    try {
+        const formData = new FormData(form);
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Success message
+            messageDiv.textContent = '🎉 Thank you! Your demo request has been received. We\'ll contact you shortly!';
+            messageDiv.style.backgroundColor = '#d4edda';
+            messageDiv.style.color = '#155724';
+            messageDiv.style.border = '1px solid #c3e6cb';
+            messageDiv.style.display = 'block';
+
+            // Reset form
+            form.reset();
+
+            // Close modal after 3 seconds
+            setTimeout(() => {
+                closeDemoModal();
+                messageDiv.style.display = 'none';
+            }, 3000);
+        } else {
+            throw new Error('Form submission failed');
+        }
+    } catch (error) {
+        // Error message
+        messageDiv.textContent = '❌ Something went wrong. Please try again or email us at hello@seenn.ai';
+        messageDiv.style.backgroundColor = '#f8d7da';
+        messageDiv.style.color = '#721c24';
+        messageDiv.style.border = '1px solid #f5c6cb';
+        messageDiv.style.display = 'block';
+    } finally {
+        // Restore button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request Demo';
+    }
+}
