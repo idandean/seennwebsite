@@ -195,16 +195,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Michael avatar hover functionality
-    const michaelAvatar = document.getElementById('michaelAvatar');
-    if (michaelAvatar) {
-        michaelAvatar.addEventListener('mouseenter', function() {
-            this.play();
-        });
-
-        michaelAvatar.addEventListener('mouseleave', function() {
-            this.pause();
-            this.currentTime = 0; // Reset to beginning
-        });
-    }
 });
