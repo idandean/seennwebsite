@@ -35,7 +35,11 @@
 </div>
 
 <div class="rounded-3xl shadow-2xl p-8 md:p-12" style="background-color: rgba(245, 240, 232, 0.95);">
-<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="contactForm">
+<form action="https://api.web3forms.com/submit" method="POST" id="contactForm">
+<input type="hidden" name="access_key" value="630176d0-413a-4fb3-8fb8-253102416f60">
+<input type="hidden" name="subject" value="New message from Seenn contact form">
+<input type="hidden" name="from_name" value="Seenn Contact Form">
+
 <div class="space-y-6">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
@@ -65,7 +69,7 @@
 
 <div>
 <label for="subject" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Subject *</label>
-<input type="text" id="subject" name="subject" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+<input type="text" id="subject" name="userSubject" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
 </div>
 
 <div>
@@ -96,38 +100,46 @@ Send Message
 </div>
 
 <script>
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+const form = document.getElementById('contactForm');
 
-    const formData = new FormData(this);
-    const data = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        email: formData.get('email'),
-        company: formData.get('company') || 'N/A',
-        phone: formData.get('phone') || 'N/A',
-        subject: formData.get('subject'),
-        message: formData.get('message')
-    };
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(form);
+  const object = Object.fromEntries(formData);
+  const json = JSON.stringify(object);
+  
+  const button = form.querySelector('button[type="submit"]');
+  const originalText = button.textContent;
+  button.textContent = 'Sending...';
+  button.disabled = true;
 
-    // Create email body
-    const emailBody = `
-Name: ${data.firstName} ${data.lastName}
-Email: ${data.email}
-Company: ${data.company}
-Phone: ${data.phone}
-Subject: ${data.subject}
-
-Message:
-${data.message}
-    `;
-
-    // Send via mailto as fallback
-    window.location.href = `mailto:hello@seenn.ai?subject=${encodeURIComponent(data.subject)}&body=${encodeURIComponent(emailBody)}`;
-
-    // Show success message
-    alert('Thank you for your message! Your email client will open to send the message.');
-    this.reset();
+  fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+      },
+      body: json
+  })
+  .then(async (response) => {
+      let json = await response.json();
+      if (response.status == 200) {
+          alert('✅ Thank you! Your message has been sent successfully. We\'ll get back to you soon!');
+          form.reset();
+      } else {
+          console.log(response);
+          alert('❌ Something went wrong. Please try again or email us directly at hello@seenn.ai');
+      }
+  })
+  .catch(error => {
+      console.log(error);
+      alert('❌ Something went wrong. Please try again or email us directly at hello@seenn.ai');
+  })
+  .then(function() {
+      button.textContent = originalText;
+      button.disabled = false;
+  });
 });
 </script>
 </body>
