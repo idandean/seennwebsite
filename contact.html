@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us - Seenn</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="css/style.css" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display" style="background-image: url('images/ChatGPT Image Nov 2, 2025, 09_47_00 AM.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+<div id="root">
+<header class="backdrop-blur-sm sticky top-0 z-50" style="background-color: rgba(245, 240, 232, 0.95);">
+<nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center">
+<a href="index.html"><img src="images/seenn-logo.png" alt="Seenn" class="h-32 w-auto" style="filter: brightness(0);" /></a>
+</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="index.html">Home</a>
+<a class="px-4 py-2 text-sm font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="index.html#pricing">Get Started</a>
+</div>
+</div>
+</nav>
+</header>
+
+<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-3xl">
+<div class="text-center mb-12">
+<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="font-family: 'Montserrat', sans-serif;">Get in Touch</h1>
+<p class="text-lg text-gray-700">Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+</div>
+
+<div class="rounded-3xl shadow-2xl p-8 md:p-12" style="background-color: rgba(245, 240, 232, 0.95);">
+<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="contactForm">
+<div class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label for="firstName" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">First Name *</label>
+<input type="text" id="firstName" name="firstName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+</div>
+<div>
+<label for="lastName" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Last Name *</label>
+<input type="text" id="lastName" name="lastName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+</div>
+</div>
+
+<div>
+<label for="email" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Email *</label>
+<input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+</div>
+
+<div>
+<label for="company" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Company</label>
+<input type="text" id="company" name="company" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+</div>
+
+<div>
+<label for="phone" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Phone Number</label>
+<input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+</div>
+
+<div>
+<label for="subject" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Subject *</label>
+<input type="text" id="subject" name="subject" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+</div>
+
+<div>
+<label for="message" class="block text-sm font-semibold text-gray-900 mb-2" style="font-family: 'Montserrat', sans-serif;">Message *</label>
+<textarea id="message" name="message" rows="6" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+</div>
+
+<div>
+<button type="submit" class="w-full px-8 py-4 text-lg font-semibold text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif;">
+Send Message
+</button>
+</div>
+</div>
+</form>
+
+<div class="mt-8 pt-8 border-t border-gray-200 text-center">
+<p class="text-gray-700 mb-2" style="font-family: 'Montserrat', sans-serif;">Or email us directly at:</p>
+<a href="mailto:hello@seenn.ai" class="text-xl font-semibold text-primary hover:underline" style="font-family: 'Montserrat', sans-serif;">hello@seenn.ai</a>
+</div>
+</div>
+</main>
+
+<footer class="relative py-6 overflow-hidden" style="background-color: #F5F0E8; border-top: 1px solid #ddd; margin-top: 4rem;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
+<p class="text-sm text-gray-700">All rights reserved to Seenn Inc 2025</p>
+</div>
+</footer>
+</div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        company: formData.get('company') || 'N/A',
+        phone: formData.get('phone') || 'N/A',
+        subject: formData.get('subject'),
+        message: formData.get('message')
+    };
+
+    // Create email body
+    const emailBody = `
+Name: ${data.firstName} ${data.lastName}
+Email: ${data.email}
+Company: ${data.company}
+Phone: ${data.phone}
+Subject: ${data.subject}
+
+Message:
+${data.message}
+    `;
+
+    // Send via mailto as fallback
+    window.location.href = `mailto:hello@seenn.ai?subject=${encodeURIComponent(data.subject)}&body=${encodeURIComponent(emailBody)}`;
+
+    // Show success message
+    alert('Thank you for your message! Your email client will open to send the message.');
+    this.reset();
+});
+</script>
+</body>
+</html>

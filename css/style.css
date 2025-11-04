@@ -1,0 +1,220 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+.gradient-bg {
+    background: linear-gradient(180deg, #3B1C7C 0%, #6A2FF9 100%);
+}
+
+/* Add extra top padding for hero content in Hebrew (RTL) mode */
+[dir="rtl"] section.gradient-bg {
+    padding-top: 8rem;
+}
+
+[dir="ltr"] section.gradient-bg {
+    padding-top: 6rem;
+}
+
+/* Better spacing for Hebrew/RTL navigation links */
+[dir="rtl"] nav a {
+    margin-left: 2rem !important;
+    margin-right: 0 !important;
+}
+
+[dir="rtl"] nav .space-x-8 > * + * {
+    margin-left: 2rem;
+    margin-right: 0;
+}
+
+.hero, #hero, .hero-section { position: relative; overflow: hidden; }
+.bg-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0; /* behind content */
+}
+/* ensure content is above */
+.hero > *:not(.bg-art),
+#hero > *:not(.bg-art),
+.hero-section > *:not(.bg-art) {
+  position: relative;
+  z-index: 1; /* content above */
+}
+
+/* Small sparkles styling */
+.sparkle-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Hollow sparkle (larger) */
+.sparkle-hollow {
+  width: 42px;
+  height: 42px;
+  opacity: 0.9;
+}
+
+/* Filled sparkles (smaller) */
+.sparkle-filled {
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+/* Individual sparkle positions */
+.sparkle-1 {
+  top: 80px;
+  left: 176px;
+}
+
+.sparkle-2 {
+  top: 56px;
+  left: 128px;
+}
+
+.sparkle-3 {
+  top: 144px;
+  left: 144px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sparkle-1 {
+    top: 60px;
+    left: 120px;
+  }
+  
+  .sparkle-2 {
+    top: 40px;
+    left: 90px;
+  }
+  
+  .sparkle-3 {
+    top: 100px;
+    left: 100px;
+  }
+  
+  .sparkle-hollow {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .sparkle-filled {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Decorative backdrop squares for "How It Works" section */
+.backdrop-squares {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.backdrop-square {
+  position: absolute;
+  background-color: #F3EEFF;
+  border-radius: 1rem;
+  opacity: 0.8;
+  box-shadow: 0 6px 28px rgba(109, 76, 255, 0.12);
+}
+
+/* Individual square positions and sizes */
+.square-1 {
+  width: 150px;
+  height: 150px;
+  top: 24px;
+  left: 24px;
+}
+
+.square-2 {
+  width: 96px;
+  height: 96px;
+  top: 210px;
+  left: 110px;
+  opacity: 0.7;
+}
+
+.square-3 {
+  width: 120px;
+  height: 120px;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.6;
+}
+
+.square-4 {
+  width: 86px;
+  height: 86px;
+  top: 220px;
+  right: 220px;
+  opacity: 0.7;
+}
+
+.square-5 {
+  width: 64px;
+  height: 64px;
+  top: 320px;
+  right: 120px;
+  opacity: 0.7;
+}
+
+.square-6 {
+  width: 56px;
+  height: 56px;
+  bottom: 80px;
+  right: 40px;
+  opacity: 0.7;
+}
+
+/* Optional floating animation */
+@keyframes floaty {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes floaty-center {
+  0%, 100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -6px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .square-3 {
+    animation: floaty-center 10s ease-in-out infinite;
+  }
+
+  .square-5 {
+    animation: floaty 12s ease-in-out infinite;
+  }
+}
+
+/* Hide some squares on small screens to avoid crowding */
+@media (max-width: 640px) {
+  .square-1,
+  .square-2 {
+    display: none;
+  }
+
+  .square-4 {
+    right: 40px;
+  }
+}

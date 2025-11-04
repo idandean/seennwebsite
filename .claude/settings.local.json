@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Read(//mnt/c/Users/edani/OneDrive/Desktop/Underline INC/Pictures/Screenshots 1/**)",
+      "Read(//mnt/c/Users/edani/Downloads/**)"
+    ],
+    "deny": []
+  }
+}

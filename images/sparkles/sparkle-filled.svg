@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <defs>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2.2" flood-color="#C9B1FF" flood-opacity="0.85"/>
+    </filter>
+    <path id="filled-sparkle" d="
+      M32 12
+      Q39 26, 52 32
+      Q39 38, 32 52
+      Q25 38, 12 32
+      Q25 26, 32 12 Z"/>
+  </defs>
+  <use href="#filled-sparkle" fill="#FFFFFF" filter="url(#softGlow)"/>
+</svg>

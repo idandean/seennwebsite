@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stellar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script src="js/script.js"></script>
+<link href="css/style.css" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div id="root">
+<header class="backdrop-blur-sm sticky top-0 z-50" style="background-color: rgba(245, 240, 232, 0.95);">
+<nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center">
+<img src="images/seenn-logo.png" alt="Seenn" class="h-32 w-auto" style="filter: brightness(0);" />
+</div>
+<div class="hidden md:flex items-center gap-8">
+<div class="relative group">
+<button class="text-sm font-medium text-gray-800 hover:text-primary transition-colors flex items-center gap-1" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;">
+<span data-i18n="products">Products</span>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+</svg>
+</button>
+<div class="absolute left-0 rtl:left-auto rtl:right-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50" style="background-color: rgba(245, 240, 232, 0.98);">
+<div class="py-2">
+<a href="#" class="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">
+<div class="font-semibold" data-i18n="jessProduct">Jess - Account Receivable AI Agent</div>
+<div class="text-xs text-gray-600 mt-1" data-i18n="jessProductDesc">Automate payment collection</div>
+</a>
+<a href="#michael-section" class="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">
+<div class="font-semibold" data-i18n="michaelProduct">Michael - After Hours AI Agent</div>
+<div class="text-xs text-gray-600 mt-1" data-i18n="michaelProductDesc">Coming soon</div>
+</a>
+</div>
+</div>
+</div>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="#" data-i18n="pricing">Pricing</a>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="contact.html" data-i18n="contact">Contact</a>
+</div>
+<div class="flex items-center" style="gap: 1rem;">
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="#" data-i18n="login">Log in</a>
+<a class="px-4 py-2 text-sm font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="#" data-i18n="getStarted">
+                            Get Started
+                        </a>
+<button id="langToggle" class="px-3 py-1.5 text-sm font-medium text-gray-800 border border-gray-300 rounded-lg hover:bg-primary/10 transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;">
+    עברית
+</button>
+</div>
+</div>
+</nav>
+</header>
+<main>
+<section class="relative pt-24 pb-32 text-white overflow-hidden" style="min-height: 70vh; background-image: url('images/ChatGPT Image Nov 2, 2025, 10_15_32 AM.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+<h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4" data-i18n="heroTitle">Stop Chasing Payments. Start Collecting Automatically.</h1>
+<p class="text-base md:text-lg max-w-3xl mx-auto mb-8 text-gray-200" data-i18n="heroSubtitle">Your AI agent calls and contacts overdue clients, follows your rules, and improves your bank cash flow. Approximately 60% improvement in collections and cash flow.</p>
+<div class="flex justify-center items-center gap-4">
+<a class="px-8 py-3 text-lg font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" href="#" data-i18n="startTrial">Start Your Free Trial</a>
+</div>
+</div>
+
+<!-- Wavy divider -->
+<div class="absolute bottom-0 left-0 w-full overflow-hidden" style="line-height: 0;">
+<svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 80px;">
+<path d="M0,50 C150,80 350,0 600,50 C850,100 1050,30 1200,50 L1200,120 L0,120 Z" fill="#F5F0E8"></path>
+</svg>
+</div>
+</section>
+
+<!-- New Second Fold - Avatar -->
+<section class="py-24" style="background-color: #F5F0E8; position: relative; overflow: hidden;">
+<!-- Decorative rectangles - diagonal pattern -->
+<div style="position: absolute; top: 10%; left: 8%; width: 140px; height: 110px; background-color: rgba(230, 220, 240, 0.4); border-radius: 20px;"></div>
+<div style="position: absolute; top: 40%; left: 25%; width: 120px; height: 95px; background-color: rgba(230, 220, 240, 0.45); border-radius: 18px;"></div>
+<div style="position: absolute; bottom: 3%; left: 48%; width: 100px; height: 80px; background-color: rgba(230, 220, 240, 0.4); border-radius: 16px;"></div>
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8" style="position: relative; z-index: 1;">
+<div class="text-center mb-12">
+<h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style="font-family: 'Montserrat', sans-serif;" data-i18n="sayHelloJess">Say hello to Jess</h2>
+<p class="text-xl text-gray-700" data-i18n="jessSubtitle">The AI agent that handles your payment reminders—so you don't have to.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+<div class="rounded-3xl overflow-hidden shadow-2xl" style="max-width: 500px;">
+<video class="w-full h-auto rounded-3xl" autoplay muted loop playsinline style="object-fit: contain;">
+<source src="images/Generated File November 01, 2025 - 11_48PM.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+</div>
+<div class="space-y-8">
+<div class="space-y-6">
+<div class="border-b border-gray-300 pb-6">
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong data-i18n="phoneReminders">Phone reminders:</strong> <span data-i18n="phoneDesc">Natural voice calls that stick to your rules.</span></p>
+</div>
+<div class="border-b border-gray-300 pb-6">
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong data-i18n="whatsappSms">WhatsApp / SMS:</strong> <span data-i18n="whatsappDesc">Quick nudges with links to pay now.</span></p>
+</div>
+<div class="pb-6">
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong data-i18n="emailFollowups">Email follow-ups:</strong> <span data-i18n="emailDesc">Personalized, on-brand, and logged to your system.</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-24" style="position: relative; overflow: hidden; background-color: #F5F0E8;">
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8" style="position: relative; z-index: 1;">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold text-gray-900" data-i18n="howItWorksTitle">How It Works</h2>
+<p class="mt-4 text-lg text-gray-700 max-w-2xl mx-auto" data-i18n="howItWorksSubtitle">Delegate payment collection in simple steps and get back to growing your business.</p>
+</div>
+
+<!-- Card 0 - Setup -->
+<div class="grid md:grid-cols-2 gap-12 items-center mb-16">
+<div class="rounded-3xl overflow-hidden md:order-1" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); padding: 3rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+<video class="w-full h-auto rounded-xl" autoplay muted loop playsinline style="object-fit: contain;">
+<source src="images/4eb9460e-fa6a-4ff2-a75f-113a88b7b516 (2).mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+</div>
+<div class="text-gray-900 md:order-2">
+<h3 class="text-3xl md:text-4xl font-bold mb-6" data-i18n="step0Title">Set You Up in 5 Seconds</h3>
+<p class="text-lg text-gray-700" data-i18n="step0Desc">Get a new phone number with quick WhatsApp integration in just 5 seconds. As an approved Meta Tech Provider, we ensure seamless and secure communication for all your payment reminders.</p>
+</div>
+</div>
+
+<!-- Card 1 -->
+<div class="grid md:grid-cols-2 gap-12 items-center mb-16">
+<div class="text-gray-900">
+<h3 class="text-3xl md:text-4xl font-bold mb-6" data-i18n="step1Title">Set Your Payment Rules</h3>
+<p class="text-lg text-gray-700" data-i18n="step1Desc">Tell us your payment terms, grace periods, and escalation rules. We'll configure your AI agent to follow your exact specifications and handle collections professionally.</p>
+</div>
+<div class="rounded-3xl overflow-hidden" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); padding: 3rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+<img src="images/ChatGPT Image Nov 1, 2025, 10_43_34 PM.png" alt="Set Payment Rules" class="w-full h-auto rounded-xl" />
+</div>
+</div>
+
+<!-- Card 2 -->
+<div class="grid md:grid-cols-2 gap-12 items-center mb-16">
+<div class="rounded-3xl overflow-hidden md:order-1" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); padding: 3rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+<img src="images/ChatGPT Image Nov 1, 2025, 10_52_45 PM.png" alt="Agent Calls Clients" class="w-full h-auto rounded-xl" />
+</div>
+<div class="text-gray-900 md:order-2">
+<h3 class="text-3xl md:text-4xl font-bold mb-6" data-i18n="step2Title">Agent Calls Overdue Clients</h3>
+<p class="text-lg text-gray-700" data-i18n="step2Desc">When payments are late, your AI agent automatically calls clients following your rules. No manual work required, maintaining professional relationships while ensuring timely payments.</p>
+</div>
+</div>
+
+<!-- Card 3 -->
+<div class="grid md:grid-cols-2 gap-12 items-center">
+<div class="text-gray-900">
+<h3 class="text-3xl md:text-4xl font-bold mb-6" data-i18n="step3Title">Get Paid Faster</h3>
+<p class="text-lg text-gray-700" data-i18n="step3Desc">60% more payments recovered. 40% better cash flow. Zero awkward collection calls for you. Focus on growing your business while we handle collections.</p>
+</div>
+<div class="rounded-3xl overflow-hidden" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); padding: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+<img src="images/ChatGPT Image Nov 1, 2025, 08_57_09 PM.png" alt="Get Paid Faster" class="w-full h-auto rounded-xl" />
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- Michael - After Hours Receptionist Section -->
+<section id="michael-section" class="py-24" style="background-color: #F5F0E8; position: relative; overflow: hidden;">
+<!-- Decorative rectangles -->
+<div style="position: absolute; top: 12%; left: 5%; width: 130px; height: 100px; background-color: rgba(230, 220, 240, 0.4); border-radius: 20px;"></div>
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8" style="position: relative; z-index: 1;">
+<div class="text-center mb-12">
+<h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style="font-family: 'Montserrat', sans-serif;">Meet Michael</h2>
+<p class="text-xl text-gray-700">Your After Hours Receptionist - Never Miss a Lead, Always Available</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+<div class="rounded-3xl overflow-hidden shadow-2xl" style="max-width: 500px; height: 350px;">
+<video id="michaelAvatar" class="w-full h-full rounded-3xl cursor-pointer" muted style="object-fit: cover; object-position: center 20%;">
+<source src="images/Avatar_Talking_on_Phone_Video (online-video-cutter.com) (1).mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+</div>
+<div class="space-y-8">
+<div class="space-y-6">
+<div class="border-b border-gray-300 pb-6">
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>Never Miss a Lead:</strong> <span>Captures every lead, even after business hours.</span></p>
+</div>
+<div class="border-b border-gray-300 pb-6">
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>24/7 Availability:</strong> <span>Always answers calls with professional reception.</span></p>
+</div>
+<div class="pb-6">
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>Smart Call Routing:</strong> <span>Handles inquiries and schedules appointments automatically.</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Card with aurora background -->
+<section class="py-24" style="background-color: #F5F0E8; position: relative; overflow: hidden;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8" style="position: relative; z-index: 1;">
+<div class="relative pt-32 pb-32 text-white overflow-hidden rounded-3xl shadow-2xl flex items-start justify-center" style="min-height: 60vh; background-image: url('images/ChatGPT Image Nov 1, 2025, 10_59_30 PM.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<h2 class="text-2xl md:text-4xl font-bold text-white text-center" style="font-family: 'Montserrat', sans-serif; margin-top: -1rem;" data-i18n="buildWorkforce">Build Your Tomorrow Admin WorkForce</h2>
+</div>
+</div>
+</section>
+</main>
+<footer class="relative py-6 overflow-hidden" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<h3 class="text-lg font-semibold text-gray-900 mb-4">Seenn</h3>
+<p class="text-sm text-gray-700" data-i18n="footerTagline">Automate payment collection with AI. Get paid faster.</p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4" data-i18n="product">Products</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="#" data-i18n="collectionsAgent">Jess - Account Receivable AI Agent</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="#" data-i18n="afterHoursAgent">Michael - After Hours AI Agent (Coming Soon)</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="#" data-i18n="pricing">Pricing</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4" data-i18n="company">Company</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="mailto:hello@seenn.ai" data-i18n="contact">Contact: hello@seenn.ai</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4" data-i18n="legal">Legal</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="privacy-policy.html" data-i18n="privacy">Privacy Policy</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="terms-of-service.html" data-i18n="terms">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 border-t border-gray-300 pt-8 flex flex-col sm:flex-row justify-between items-center">
+<p class="text-sm text-gray-700" data-i18n="copyright">All rights reserved to Seenn Inc 2025</p>
+<div class="flex space-x-4 mt-4 sm:mt-0">
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>
