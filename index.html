@@ -99,7 +99,7 @@
 <p class="text-sm sm:text-base md:text-lg max-w-3xl mx-auto mb-6 sm:mb-8 text-gray-200 px-4" data-i18n="heroSubtitle">Your AI agent calls and contacts overdue clients, follows your rules, and improves your bank cash flow. Approximately 60% improvement in collections and cash flow.</p>
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4">
 <a class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors text-center" href="https://app.seenn.ai/auth" data-i18n="startTrial">Start Your Free Trial</a>
-<button onclick="openDemoModal()" class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-white bg-transparent border-3 border-white rounded-lg transition-all duration-300" style="font-family: 'Montserrat', sans-serif; border-width: 3px;" onmouseover="this.style.backgroundColor='white'; this.style.color='#2C5F5F';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='white';">See a Demo</button>
+<button onclick="openDemoModal()" class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-white bg-transparent border-3 border-white rounded-lg transition-all duration-300" style="font-family: 'Montserrat', sans-serif; border-width: 3px;" onmouseover="this.style.backgroundColor='white'; this.style.color='#2C5F5F';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='white';" data-i18n="seeDemo">See a Demo</button>
 </div>
 </div>
 
@@ -213,8 +213,8 @@ Your browser does not support the video tag.
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8" style="position: relative; z-index: 1;">
 <div class="text-center mb-12">
-<h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style="font-family: 'Montserrat', sans-serif;">Meet Michael</h2>
-<p class="text-xl text-gray-700">Your After Hours Receptionist - Never Miss a Lead, Always Available</p>
+<h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style="font-family: 'Montserrat', sans-serif;" data-i18n="meetMichael">Meet Michael</h2>
+<p class="text-xl text-gray-700" data-i18n="michaelSubtitle">Your After Hours Receptionist - Never Miss a Lead, Always Available</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
 <div class="rounded-3xl overflow-hidden shadow-2xl" style="max-width: 500px; height: 350px;">
@@ -226,13 +226,13 @@ Your browser does not support the video tag.
 <div class="space-y-8">
 <div class="space-y-6">
 <div class="border-b border-gray-300 pb-6">
-<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>Never Miss a Lead:</strong> <span>Captures every lead, even after business hours.</span></p>
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong data-i18n="neverMissLead">Never Miss a Lead:</strong> <span data-i18n="neverMissLeadDesc">Captures every lead, even after business hours.</span></p>
 </div>
 <div class="border-b border-gray-300 pb-6">
-<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>24/7 Availability:</strong> <span>Always answers calls with professional reception.</span></p>
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong data-i18n="availability247">24/7 Availability:</strong> <span data-i18n="availability247Desc">Always answers calls with professional reception.</span></p>
 </div>
 <div class="pb-6">
-<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>Smart Call Routing:</strong> <span>Handles inquiries and schedules appointments automatically.</span></p>
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong data-i18n="smartCallRouting">Smart Call Routing:</strong> <span data-i18n="smartCallRoutingDesc">Handles inquiries and schedules appointments automatically.</span></p>
 </div>
 </div>
 </div>
@@ -292,44 +292,44 @@ Your browser does not support the video tag.
 <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem;" onclick="event.target === this && closeDemoModal()">
 <div style="background-color: rgba(245, 240, 232, 0.98); border-radius: 1rem; padding: 2.5rem; max-width: 500px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
 <button onclick="closeDemoModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #333; font-family: 'Montserrat', sans-serif;">&times;</button>
-<h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: #111; font-family: 'Montserrat', sans-serif;">Book a Demo</h2>
-<p style="color: #555; margin-bottom: 1.5rem; font-family: 'Montserrat', sans-serif;">Fill out the form below and we'll contact you to schedule your personalized demo.</p>
+<h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: #111; font-family: 'Montserrat', sans-serif;" data-i18n="bookDemo">Book a Demo</h2>
+<p style="color: #555; margin-bottom: 1.5rem; font-family: 'Montserrat', sans-serif;" data-i18n="demoDescription">Fill out the form below and we'll contact you to schedule your personalized demo.</p>
 <form id="demoForm" onsubmit="handleDemoSubmit(event)">
 <input type="hidden" name="access_key" value="630176d0-413a-4fb3-8fb8-253102416f60">
 <input type="hidden" name="subject" value="New Demo Request from Seenn">
 <input type="hidden" name="from_name" value="Seenn Demo Request">
 
 <div style="margin-bottom: 1rem;">
-<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Full Name *</label>
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;" data-i18n="fullName">Full Name *</label>
 <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
 </div>
 
 <div style="margin-bottom: 1rem;">
-<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Email *</label>
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;" data-i18n="email">Email *</label>
 <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
 </div>
 
 <div style="margin-bottom: 1rem;">
-<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Company *</label>
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;" data-i18n="company">Company *</label>
 <input type="text" name="company" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
 </div>
 
 <div style="margin-bottom: 1rem;">
-<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Phone Number</label>
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;" data-i18n="phoneNumber">Phone Number</label>
 <input type="tel" name="phone" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
 </div>
 
 <div style="margin-bottom: 1rem;">
-<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Preferred Date & Time</label>
-<input type="text" name="preferred_time" placeholder="e.g., Tuesday, 2pm EST" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;" data-i18n="preferredDateTime">Preferred Date & Time</label>
+<input type="text" name="preferred_time" data-i18n-placeholder="dateTimePlaceholder" placeholder="e.g., Tuesday, 2pm EST" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; background-color: white;">
 </div>
 
 <div style="margin-bottom: 1.5rem;">
-<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;">Additional Notes</label>
+<label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-family: 'Montserrat', sans-serif;" data-i18n="additionalNotes">Additional Notes</label>
 <textarea name="notes" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif; resize: vertical; background-color: white;"></textarea>
 </div>
 
-<button type="submit" id="demoSubmitBtn" style="width: 100%; padding: 0.875rem; background-color: #D4F261; color: black; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#C5E352'" onmouseout="this.style.backgroundColor='#D4F261'">Request Demo</button>
+<button type="submit" id="demoSubmitBtn" style="width: 100%; padding: 0.875rem; background-color: #D4F261; color: black; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#C5E352'" onmouseout="this.style.backgroundColor='#D4F261'" data-i18n="requestDemo">Request Demo</button>
 </form>
 <div id="demoFormMessage" style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; display: none; font-family: 'Montserrat', sans-serif;"></div>
 </div>

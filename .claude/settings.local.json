@@ -5,7 +5,9 @@
       "Bash(mv:*)",
       "Bash(cp:*)",
       "Read(//mnt/c/Users/edani/OneDrive/Desktop/Underline INC/Pictures/Screenshots 1/**)",
-      "Read(//mnt/c/Users/edani/Downloads/**)"
+      "Read(//mnt/c/Users/edani/Downloads/**)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

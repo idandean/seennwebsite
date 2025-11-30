@@ -43,6 +43,7 @@ const translations = {
         heroTitle: "Stop Chasing Payments. Start Collecting Automatically.",
         heroSubtitle: "Your AI agent calls and contacts overdue clients, follows your rules, and improves your bank cash flow. Approximately 60% improvement in collections and cash flow.",
         startTrial: "Start Your Free Trial",
+        seeDemo: "See a Demo",
 
         // Jess section
         sayHelloJess: "Say hello to Jess",
@@ -82,6 +83,29 @@ const translations = {
         feature3: "Customizable collection escalation rules",
         feature4: "Professional communication that maintains client relationships",
 
+        // Michael section
+        meetMichael: "Meet Michael",
+        michaelSubtitle: "Your After Hours Receptionist - Never Miss a Lead, Always Available",
+        neverMissLead: "Never Miss a Lead:",
+        neverMissLeadDesc: "Captures every lead, even after business hours.",
+        availability247: "24/7 Availability:",
+        availability247Desc: "Always answers calls with professional reception.",
+        smartCallRouting: "Smart Call Routing:",
+        smartCallRoutingDesc: "Handles inquiries and schedules appointments automatically.",
+
+        // Demo modal
+        bookDemo: "Book a Demo",
+        demoDescription: "Fill out the form below and we'll contact you to schedule your personalized demo.",
+        fullName: "Full Name *",
+        email: "Email *",
+        company: "Company *",
+        phoneNumber: "Phone Number",
+        preferredDateTime: "Preferred Date & Time",
+        dateTimePlaceholder: "e.g., Tuesday, 2pm EST",
+        additionalNotes: "Additional Notes",
+        requestDemo: "Request Demo",
+        sending: "Sending...",
+
         // Footer
         footerTagline: "Automate payment collection with AI. Get paid faster.",
         product: "Products",
@@ -98,74 +122,99 @@ const translations = {
         features: "תכונות",
         products: "מוצרים",
         pricing: "תמחור",
-        aboutUs: "אודותינו",
+        aboutUs: "אודות",
         contact: "צור קשר",
-        login: "התחבר",
-        getStarted: "התחל עכשיו",
-        jessProduct: "ג'ס - סוכנת חייבים AI",
-        jessProductDesc: "אוטומציה לגביית תשלומים",
-        michaelProduct: "מייקל - סוכן מחוץ לשעות העבודה",
+        login: "התחברות",
+        getStarted: "התחילו עכשיו",
+        jessProduct: "ג'ס - סוכנת גבייה בבינה מלאכותית",
+        jessProductDesc: "אוטומציה של גביית תשלומים",
+        michaelProduct: "מייקל - סוכן שירות לאחר שעות העבודה",
         michaelProductDesc: "בקרוב",
 
         // Hero section
         heroTitle: "תפסיקו לרדוף אחרי תשלומים. התחילו לגבות אוטומטית.",
-        heroSubtitle: "הסוכן הדיגיטלי שלכם מתקשר ויוצר קשר עם לקוחות שחייבים, עוקב אחר הכללים שלכם ומשפר לכם את תזרים המזומנים בבנק. שיפור של כ- 60% בגביה ובתזרים המזומנים.",
-        startTrial: "התחל תקופת ניסיון חינם",
+        heroSubtitle: "סוכן ה-AI שלכם מתקשר ליצירת קשר עם לקוחות שחייבים, פועל לפי הכללים שלכם, ומשפר את תזרים המזומנים בחשבון הבנק. שיפור של כ-60% בגביה ובתזרים המזומנים.",
+        startTrial: "התחילו תקופת ניסיון חינם",
+        seeDemo: "צפו בהדגמה",
 
         // Jess section
-        sayHelloJess: "תכירו את ג'ס",
-        jessSubtitle: "הסוכנת הדיגיטלית שמטפלת בתזכורות התשלום שלכם - כך שאתם לא צריכים.",
+        sayHelloJess: "הכירו את ג'ס",
+        jessSubtitle: "סוכנת ה-AI שמטפלת בתזכורות התשלום - כך שאתם לא צריכים.",
         phoneReminders: "תזכורות טלפוניות:",
-        phoneDesc: "שיחות קוליות טבעיות שעוקבות אחר הכללים שלכם.",
+        phoneDesc: "שיחות קוליות טבעיות שפועלות לפי הכללים שלכם.",
         whatsappSms: "WhatsApp / SMS:",
         whatsappDesc: "תזכורות מהירות עם קישורים לתשלום מיידי.",
-        emailFollowups: "מעקב באימייל:",
-        emailDesc: "מותאם אישית, משקף את המותג שלכם, ומתועד במערכת.",
+        emailFollowups: "מעקבים באימייל:",
+        emailDesc: "אישיים, משקפים את המותג שלכם, ונשמרים במערכת.",
 
         // How it works
         howItWorksTitle: "איך זה עובד",
-        howItWorksSubtitle: "האצל את גביית התשלומים בשלבים פשוטים וחזור להתמקד בצמיחת העסק שלך.",
-        step0Title: "הגדרה ב-5 שניות",
-        step0Desc: "קבלו מספר טלפון חדש עם אינטגרציית WhatsApp מהירה תוך 5 שניות בלבד. כספק טכנולוגיה מאושר של Meta, אנחנו מבטיחים תקשורת חלקה ומאובטחת לכל תזכורות התשלום שלכם.",
-        step1Title: "הגדירו את כללי התשלום שלכם",
-        step1Desc: "ספרו לנו על תנאי התשלום, תקופות חסד וכללי הסלמה שלכם. נגדיר את הסוכן הדיגיטלי שלכם לפעול לפי המפרט המדויק שלכם ולטפל בגבייה בצורה מקצועית.",
-        step2Title: "הסוכן מתקשר ללקוחות שחייבים",
-        step2Desc: "כאשר תשלומים מאחרים, הסוכן הדיגיטלי שלכם מתקשר אוטומטית ללקוחות לפי הכללים שלכם. בלי עבודה ידנית, תוך שמירה על יחסים מקצועיים והבטחת תשלומים בזמן.",
+        howItWorksSubtitle: "האצילו את גביית התשלומים בכמה צעדים פשוטים וחזרו להתמקד בצמיחת העסק.",
+        step0Title: "הגדרה תוך 5 שניות",
+        step0Desc: "קבלו מספר טלפון חדש עם אינטגרציית WhatsApp מהירה תוך 5 שניות בלבד. כספק טכנולוגיה מאושר של Meta, אנו מבטיחים תקשורת חלקה ומאובטחת לכל תזכורות התשלום שלכם.",
+        step1Title: "הגדירו את כללי התשלום",
+        step1Desc: "ספרו לנו על תנאי התשלום, תקופות החסד וכללי ההסלמה שלכם. נגדיר את סוכן ה-AI שלכם לפעול לפי המפרט המדויק שלכם ולטפל בגבייה בצורה מקצועית.",
+        step2Title: "הסוכן מתקשר ללקוחות בפיגור",
+        step2Desc: "כאשר תשלומים מתעכבים, סוכן ה-AI שלכם מתקשר אוטומטית ללקוחות לפי הכללים שלכם. ללא עבודה ידנית, תוך שמירה על יחסים מקצועיים והבטחת תשלומים בזמן.",
         step3Title: "קבלו תשלומים מהר יותר",
-        step3Desc: "60% יותר תשלומים שנגבו. 40% תזרים מזומנים טוב יותר. אפס שיחות גבייה מביכות בשבילכם. התמקדו בצמיחת העסק בזמן שאנחנו מטפלים בגבייה.",
-        buildWorkforce: "בנו את כוח העבודה המנהלי של המחר",
+        step3Desc: "60% יותר תשלומים שנגבו בהצלחה. 40% שיפור בתזרים המזומנים. אפס שיחות גבייה מביכות. התמקדו בצמיחת העסק בזמן שאנחנו מטפלים בגבייה.",
+        buildWorkforce: "בנו את כוח העבודה המנהלי של העתיד",
+
+        // Michael section
+        meetMichael: "הכירו את מייקל",
+        michaelSubtitle: "המזכיר שלכם לאחר שעות העבודה - אף פעם לא תפספסו ליד, תמיד זמינים",
+        neverMissLead: "אף פעם לא מפספסים ליד:",
+        neverMissLeadDesc: "תופס כל ליד, גם מחוץ לשעות העבודה.",
+        availability247: "זמינות 24/7:",
+        availability247Desc: "תמיד עונה לשיחות עם קבלת פנים מקצועית.",
+        smartCallRouting: "ניתוב שיחות חכם:",
+        smartCallRoutingDesc: "מטפל בפניות וקובע פגישות באופן אוטומטי.",
 
         // Agents section
-        agentsSubtitle: "לוגיקה חזקה וסוכני בינה מלאכותית",
+        agentsSubtitle: "סוכני AI חזקים עם לוגיקה מתקדמת",
         agentsTitle: "סוכני AI שגובים תשלומים ותופסים לידים 24/7",
-        agentsDesc: "הסוכן הדיגיטלי שלך מטפל בגבייה אוטומטית. הוסף מענה ללידים 24/7 כשדרוג אופציונלי.",
-        specializedExperts: "שני סוכנים מיוחדים לצמיחת הכנסות",
+        agentsDesc: "סוכן ה-AI שלכם מטפל בגביה אוטומטית. הוסיפו מענה ללידים 24/7 כשדרוג אופציונלי.",
+        specializedExperts: "שני סוכנים מתמחים להגדלת הכנסות",
 
         // Meet your team
         ourAgents: "הסוכנים שלנו",
-        meetTeamTitle: "חבר צוות הגבייה הדיגיטלי שלך",
-        meetTeamDesc: "לא רק בוט. סוכן AI מתוחכם שמשתלב עם מערכת החשבונאות שלך, לומד את העדפות הגבייה שלך ומנהל באופן מקצועי חשבונות שחייבים.",
+        meetTeamTitle: "חבר צוות הגבייה שלכם",
+        meetTeamDesc: "לא רק בוט רגיל. סוכן AI מתוחכם שמשתלב עם מערכת החשבונאות שלכם, לומד את העדפות הגבייה שלכם, ומנהל באופן מקצועי חשבונות בפיגור.",
         feature1: "שיחות תזכורת תשלום אוטומטיות",
         feature2: "יצירת קשר רב-ערוצית (טלפון, אימייל, WhatsApp)",
         feature3: "כללי הסלמת גבייה הניתנים להתאמה אישית",
-        feature4: "תקשורת מקצועית השומרת על יחסי לקוחות",
+        feature4: "תקשורת מקצועית ששומרת על יחסי לקוחות",
+
+        // Demo modal
+        bookDemo: "קבעו הדגמה",
+        demoDescription: "מלאו את הטופס ונצור איתכם קשר לתיאום הדגמה אישית.",
+        fullName: "שם מלא *",
+        email: "אימייל *",
+        company: "חברה *",
+        phoneNumber: "מספר טלפון",
+        preferredDateTime: "תאריך ושעה מועדפים",
+        dateTimePlaceholder: "למשל: יום שלישי, 14:00",
+        additionalNotes: "הערות נוספות",
+        requestDemo: "קבעו הדגמה",
+        sending: "שולח...",
 
         // Footer
-        footerTagline: "בצע גבייה אוטומטית עם AI. קבל תשלומים מהר יותר.",
+        footerTagline: "גבייה אוטומטית עם AI. קבלו תשלומים מהר יותר.",
         product: "מוצרים",
-        collectionsAgent: "ג'ס - סוכנת חייבים AI",
-        afterHoursAgent: "מייקל - סוכן מחוץ לשעות העבודה (בקרוב)",
+        collectionsAgent: "ג'ס - סוכנת גבייה AI",
+        afterHoursAgent: "מייקל - סוכן שירות לאחר שעות העבודה (בקרוב)",
         company: "חברה",
         legal: "משפטי",
         privacy: "מדיניות פרטיות",
         terms: "תנאי שימוש",
-        copyright: "כל הזכויות שמורות לחברת Seenn Inc 2025"
+        copyright: "כל הזכויות שמורות ל-Seenn Inc 2025"
     }
 };
 
 // Language switching functionality
 document.addEventListener('DOMContentLoaded', function() {
     let currentLang = 'en';
+    window.currentLanguage = 'en'; // Initialize global language variable
     const langToggle = document.getElementById('langToggle');
     const langToggleMobile = document.getElementById('langToggleMobile');
     const html = document.documentElement;
@@ -201,6 +250,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 element.textContent = translations[lang][key];
             }
         });
+
+        // Update placeholders
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            if (translations[lang][key]) {
+                element.placeholder = translations[lang][key];
+            }
+        });
+
+        // Store current language for form submission
+        window.currentLanguage = lang;
     }
 
 });
@@ -240,10 +300,11 @@ async function handleDemoSubmit(event) {
     const form = event.target;
     const submitBtn = document.getElementById('demoSubmitBtn');
     const messageDiv = document.getElementById('demoFormMessage');
+    const currentLang = window.currentLanguage || 'en';
 
     // Show loading state
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
+    submitBtn.textContent = translations[currentLang].sending;
     messageDiv.style.display = 'none';
 
     try {
@@ -284,6 +345,6 @@ async function handleDemoSubmit(event) {
     } finally {
         // Restore button state
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Request Demo';
+        submitBtn.textContent = translations[currentLang].requestDemo;
     }
 }
