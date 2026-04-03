@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"Time: %{time_total}s\\\\nTTFB: %{time_starttransfer}s\\\\nSize: %{size_download} bytes\\\\nHTTP: %{http_code}\\\\n\" -L \"https://www.seenn.ai/\")"
+    ]
+  }
+}
