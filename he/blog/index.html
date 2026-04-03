@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" style="scroll-behavior: smooth;">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>בלוג - Seenn | תובנות על גביית תשלומים עם AI</title>
+<meta name="description" content="מאמרים מקצועיים על גביית תשלומים עם בינה מלאכותית, אוטומציה של חשבונות לקוחות, וניהול תזרים מזומנים לעסקים.">
+
+<link rel="canonical" href="https://www.seenn.ai/he/blog/">
+<link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/">
+<link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/">
+<link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="בלוג - Seenn | תובנות על גביית תשלומים עם AI">
+<meta property="og:description" content="מאמרים מקצועיים על גביית תשלומים עם בינה מלאכותית, אוטומציה של חשבונות לקוחות, וניהול תזרים מזומנים לעסקים.">
+<meta property="og:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
+<meta property="og:url" content="https://www.seenn.ai/he/blog/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:site_name" content="Seenn">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="בלוג - Seenn | תובנות על גביית תשלומים עם AI">
+<meta name="twitter:description" content="מאמרים מקצועיים על גביית תשלומים עם בינה מלאכותית, אוטומציה של חשבונות לקוחות, וניהול תזרים מזומנים.">
+<meta name="twitter:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
+
+<link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon.png" />
+<link rel="shortcut icon" type="image/png" href="../../images/favicon.png" />
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script src="../../js/script.js"></script>
+<link href="../../css/style.css" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div id="root">
+<header class="backdrop-blur-sm sticky top-0 z-50" style="background-color: rgba(245, 240, 232, 0.95);">
+<nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center">
+<a href="/he/"><img src="../../images/seenn-logo.png" alt="Seenn לוגו" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" /></a>
+</div>
+
+<!-- Desktop Navigation -->
+<div class="hidden md:flex items-center gap-8">
+<div class="relative group">
+<button class="text-sm font-medium text-gray-800 hover:text-primary transition-colors flex items-center gap-1" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;">
+<span>מוצרים</span>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+</button>
+<div class="absolute left-auto right-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50" style="background-color: rgba(245, 240, 232, 0.98);">
+<div class="py-2">
+<a href="/he/" class="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">
+<div class="font-semibold">ג'ס - סוכנת גבייה בבינה מלאכותית</div>
+<div class="text-xs text-gray-600 mt-1">אוטומציה של גביית תשלומים</div>
+</a>
+<a href="/he/#michael-section" class="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">
+<div class="font-semibold">מייקל - סוכן שירות לאחר שעות העבודה</div>
+<div class="text-xs text-gray-600 mt-1">בקרוב</div>
+</a>
+</div>
+</div>
+</div>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/#pricing">תמחור</a>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/about.html">אודות</a>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/contact.html">צור קשר</a>
+</div>
+<div class="hidden md:flex items-center" style="gap: 1rem;">
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="https://app.seenn.ai/auth/login">התחברות</a>
+<a class="px-4 py-2 text-sm font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="https://app.seenn.ai/auth/signup">התחילו עכשיו</a>
+<a href="/blog/" class="px-3 py-1.5 text-sm font-medium text-gray-800 border border-gray-300 rounded-lg hover:bg-primary/10 transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;">English</a>
+</div>
+
+<!-- Mobile menu button -->
+<button id="mobileMenuBtn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-gray-800 hover:bg-gray-200 transition-colors" onclick="toggleMobileMenu()">
+<svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+<svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+</button>
+</div>
+
+<!-- Mobile menu -->
+<div id="mobileMenu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg" style="background-color: rgba(245, 240, 232, 0.98);">
+<div class="px-4 py-4 space-y-3">
+<div class="border-b border-gray-200 pb-3">
+<div class="font-semibold text-gray-800 mb-2" style="font-family: 'Montserrat', sans-serif;">מוצרים</div>
+<a href="/he/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" style="font-family: 'Montserrat', sans-serif;"><div class="font-medium">ג'ס - סוכנת גבייה בבינה מלאכותית</div></a>
+<a href="/he/#michael-section" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" style="font-family: 'Montserrat', sans-serif;"><div class="font-medium">מייקל - סוכן שירות לאחר שעות העבודה</div></a>
+</div>
+<a href="/he/#pricing" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">תמחור</a>
+<a href="/he/about.html" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">אודות</a>
+<a href="/he/contact.html" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">צור קשר</a>
+<a href="https://app.seenn.ai/auth/login" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">התחברות</a>
+<a href="https://app.seenn.ai/auth/signup" class="block px-4 py-3 text-center font-medium text-black bg-[#D4F261] rounded-lg hover:bg-[#C5E352] transition-colors" style="font-family: 'Montserrat', sans-serif;">התחילו עכשיו</a>
+<a href="/blog/" class="block w-full px-4 py-2 text-center font-medium text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">English</a>
+</div>
+</div>
+</nav>
+</header>
+<main>
+<section class="py-16 sm:py-24" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+<h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="font-family: 'Montserrat', sans-serif;">בלוג</h1>
+<p class="text-lg text-gray-600 mb-12" style="font-family: 'Inter', sans-serif;">תובנות מקצועיות על גביית תשלומים עם בינה מלאכותית, אוטומציה של חשבונות לקוחות וניהול תזרים מזומנים.</p>
+
+<!-- Article 1 -->
+<article class="mb-10 p-6 sm:p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<span class="text-xs font-semibold text-purple-700 uppercase tracking-wider" style="font-family: 'Montserrat', sans-serif;">מדריך</span>
+<h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-2 mb-3" style="font-family: 'Montserrat', sans-serif;">
+<a href="/he/blog/ai-payment-collection-guide.html" class="hover:text-purple-700 transition-colors">המדריך המלא לגביית תשלומים עם AI ב-2025</a>
+</h2>
+<p class="text-gray-600 mb-4" style="font-family: 'Inter', sans-serif;">מה זו גביית תשלומים עם בינה מלאכותית, איך זה עובד, ולמה עסקים שמאמצים את הטכנולוגיה מגבים עד 60% יותר תשלומים. מדריך מקיף לעסקים קטנים ובינוניים.</p>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-500" style="font-family: 'Inter', sans-serif;">15 במרץ, 2025 &middot; 5 דקות קריאה</span>
+<a href="/he/blog/ai-payment-collection-guide.html" class="text-sm font-medium text-purple-700 hover:text-purple-900 transition-colors" style="font-family: 'Montserrat', sans-serif;">קראו עוד &larr;</a>
+</div>
+</article>
+
+<!-- Article 2 -->
+<article class="mb-10 p-6 sm:p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<span class="text-xs font-semibold text-purple-700 uppercase tracking-wider" style="font-family: 'Montserrat', sans-serif;">אסטרטגיה</span>
+<h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-2 mb-3" style="font-family: 'Montserrat', sans-serif;">
+<a href="/he/blog/reduce-overdue-payments.html" class="hover:text-purple-700 transition-colors">5 אסטרטגיות מוכחות לצמצום חובות פתוחים</a>
+</h2>
+<p class="text-gray-600 mb-4" style="font-family: 'Inter', sans-serif;">חובות פתוחים עולים לעסקים מיליארדים בכל שנה. הנה חמש אסטרטגיות מעשיות לצמצום איחורים בתשלומים ושיפור תזרים המזומנים, מגובות בנתונים אמיתיים.</p>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-500" style="font-family: 'Inter', sans-serif;">15 במרץ, 2025 &middot; 4 דקות קריאה</span>
+<a href="/he/blog/reduce-overdue-payments.html" class="text-sm font-medium text-purple-700 hover:text-purple-900 transition-colors" style="font-family: 'Montserrat', sans-serif;">קראו עוד &larr;</a>
+</div>
+</article>
+
+<!-- Article 3 -->
+<article class="mb-10 p-6 sm:p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<span class="text-xs font-semibold text-purple-700 uppercase tracking-wider" style="font-family: 'Montserrat', sans-serif;">ערוץ</span>
+<h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-2 mb-3" style="font-family: 'Montserrat', sans-serif;">
+<a href="/he/blog/whatsapp-payment-reminders.html" class="hover:text-purple-700 transition-colors">למה תזכורות תשלום ב-WhatsApp מקבלות 98% פתיחה</a>
+</h2>
+<p class="text-gray-600 mb-4" style="font-family: 'Inter', sans-serif;">אחוזי הפתיחה של אימייל תשלומים עומדים על 20%. הודעות WhatsApp מגיעות ל-98%. גלו למה WhatsApp הוא הערוץ הכי אפקטיבי לגביית תשלומים מלקוחות עסקיים.</p>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-500" style="font-family: 'Inter', sans-serif;">15 במרץ, 2025 &middot; 3 דקות קריאה</span>
+<a href="/he/blog/whatsapp-payment-reminders.html" class="text-sm font-medium text-purple-700 hover:text-purple-900 transition-colors" style="font-family: 'Montserrat', sans-serif;">קראו עוד &larr;</a>
+</div>
+</article>
+
+</div>
+</section>
+</main>
+<footer class="relative py-6 overflow-hidden" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<h3 class="text-lg font-semibold text-gray-900 mb-4">Seenn</h3>
+<p class="text-sm text-gray-700">אוטומציה של גביית תשלומים עם AI. קבלו תשלום מהר יותר.</p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">מוצרים</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/">ג'ס - סוכנת גבייה AI</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/">מייקל - סוכן שירות לאחר שעות העבודה (בקרוב)</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/#pricing">תמחור</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">חברה</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/about.html">אודות</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="mailto:hello@seenn.ai">צור קשר: hello@seenn.ai</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">משפטי</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/privacy-policy.html">מדיניות פרטיות</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/terms-of-service.html">תנאי שימוש</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 border-t border-gray-300 pt-8 flex flex-col sm:flex-row justify-between items-center">
+<p class="text-sm text-gray-700">&copy; 2026 Seenn Inc. כל הזכויות שמורות.</p>
+<div class="flex gap-4 mt-4 sm:mt-0">
+<a href="https://www.facebook.com/share/1dNCURrQWa/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-900 transition-colors">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+</a>
+<a href="https://www.instagram.com/seenn.ai" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-900 transition-colors">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</body>
+</html>

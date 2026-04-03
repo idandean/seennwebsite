@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage -->
+  <url>
+    <loc>https://www.seenn.ai/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://www.seenn.ai/about.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/about.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/about.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/about.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/about.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/about.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/about.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/about.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://www.seenn.ai/blog/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/blog/ai-payment-collection-guide.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-payment-collection-guide.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/ai-payment-collection-guide.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-payment-collection-guide.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/blog/reduce-overdue-payments.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/reduce-overdue-payments.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/reduce-overdue-payments.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/reduce-overdue-payments.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/blog/whatsapp-payment-reminders.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://www.seenn.ai/contact.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/contact.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/contact.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/contact.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/contact.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/contact.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/contact.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/contact.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://www.seenn.ai/privacy-policy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/privacy-policy.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/privacy-policy.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/privacy-policy.html" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/privacy-policy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/privacy-policy.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/privacy-policy.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/privacy-policy.html" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://www.seenn.ai/terms-of-service.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/terms-of-service.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/terms-of-service.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/terms-of-service.html" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/terms-of-service.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/terms-of-service.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/terms-of-service.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/terms-of-service.html" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
