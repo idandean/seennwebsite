@@ -103,6 +103,55 @@
     <priority>0.7</priority>
   </url>
 
+  <url>
+    <loc>https://www.seenn.ai/blog/net-30-60-90-payment-terms.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/blog/ai-accounts-receivable-automation.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/blog/cash-flow-management-small-business.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/cash-flow-management-small-business.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/blog/cash-flow-management-small-business.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/cash-flow-management-small-business.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- Contact -->
   <url>
     <loc>https://www.seenn.ai/contact.html</loc>
