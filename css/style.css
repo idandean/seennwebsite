@@ -285,3 +285,113 @@ body {
 * {
   -webkit-overflow-scrolling: touch;
 }
+
+/* =========================================================
+   AI collector devours overdue invoices — animated stripe
+   ========================================================= */
+.feed-stripe {
+  position: relative;
+  overflow: hidden;
+  background-color: #C9B555;        /* fallback only, behind the video */
+}
+
+/* the headline is overlaid on the video's OWN gold (above the blue stripe),
+   so there's no separate background to colour-match — the gold is all the video */
+.feed-video-wrap {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+  aspect-ratio: 1280 / 425;         /* trimmed height: minimal headline gold + eating band, robot kept whole */
+}
+.feed-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;      /* less top gold — robot sits right under the headline */
+  background: #C9B555;
+}
+.feed-overlay {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(94%, 1000px);
+  text-align: center;
+  z-index: 2;
+}
+.feed-overlay-title {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.05rem, 2.15vw, 1.65rem);
+  line-height: 1.14;
+  color: #16233b;
+}
+.feed-overlay-sub {
+  margin: 0 auto;
+  max-width: 760px;
+  font-size: clamp(0.78rem, 1.45vw, 1.02rem);
+  line-height: 1.45;
+  color: #2a3547;
+}
+
+/* prominent "close the loop with payment links" callout */
+.feed-callout {
+  max-width: 680px;
+  margin: 1.5rem auto 0;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #eaf2fb;
+  background: rgba(212, 242, 97, 0.12);
+  border: 1px solid rgba(212, 242, 97, 0.42);
+  border-radius: 14px;
+  padding: 0.85rem 1.25rem;
+}
+.feed-callout strong { color: #D4F261; }
+
+
+/* =========================================================
+   Integrations — logo wall on a light background
+   ========================================================= */
+.intg-section { background-color: #ececf0; }
+.intg-heading {
+  font-family: 'Inter', sans-serif;   /* same face as the hero title */
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  line-height: 1.15;
+  color: #111827;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 3rem;
+}
+.intg-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2.25rem 3.5rem;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.intg-l { height: 40px; width: auto; display: block; }
+.intg-l--sap { height: 46px; }
+.intg-l--hashav { height: 50px; width: 50px; border-radius: 50%; display: block; }
+.intg-l--rivhit-wrap {
+  display: inline-flex;
+  align-items: center;
+  background: #16324f;
+  padding: 0.5rem 0.95rem;
+  border-radius: 12px;
+}
+.intg-l--rivhit { height: 34px; }
+.intg-more {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 2.75rem;
+  font-family: 'Inter', sans-serif;
+}

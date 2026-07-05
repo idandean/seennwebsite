@@ -35,6 +35,7 @@ const translations = {
         contact: "Contact",
         login: "Log in",
         getStarted: "Get Started",
+        requestDemoBtn: "Request a Demo",
         jessProduct: "Jess - AI Accounts Receivable Agent",
         jessProductDesc: "Recover overdue payments on autopilot",
         michaelProduct: "Michael - AI Receptionist",
@@ -48,13 +49,17 @@ const translations = {
 
         // Jess section
         sayHelloJess: "Meet Jess",
-        jessSubtitle: "Your AI accounts receivable agent. She calls, texts, and emails overdue clients \u2014 so you never have to make an uncomfortable payment follow-up call again.",
-        phoneReminders: "Voice Calls",
-        phoneDesc: "Natural-sounding AI calls that follow your exact payment rules and tone.",
-        whatsappSms: "WhatsApp & SMS",
-        whatsappDesc: "Instant reminders with one-tap payment links. 98% open rate.",
-        emailFollowups: "Email Sequences",
-        emailDesc: "Branded, personalized follow-ups \u2014 logged and tracked in your dashboard.",
+        jessSubtitle: "More than reminders: Jess calls and messages, sends payment links, handles disputes, and records every outcome back to your system \u2014 so you don't have to.",
+        phoneReminders: "Phone reminders:",
+        phoneDesc: "Natural voice calls that follow your rules.",
+        whatsappSms: "WhatsApp / SMS:",
+        whatsappDesc: "A payment link for the exact balance \u2014 clients pay in one tap.",
+        emailFollowups: "Email follow-ups:",
+        emailDesc: "Personalized, on-brand, and logged to your system.",
+        disputesTitle: "Handles disputes:",
+        disputesDesc: "She replies, resolves what she can, and escalates the rest to you.",
+        outcomesTitle: "Records outcomes:",
+        outcomesDesc: "She logs every promise, dispute, and result to your system \u2014 nothing slips.",
 
         // How it works
         howItWorksTitle: "How It Works",
@@ -67,7 +72,10 @@ const translations = {
         step2Desc: "When invoices go overdue, Jess contacts your clients via phone, WhatsApp, SMS, and email. She follows up persistently but professionally \u2014 so you never have to pick up the phone yourself.",
         step3Title: "Watch Payments Roll In",
         step3Desc: "60% more recoveries. 40% better cash flow. Zero uncomfortable conversations. That\u2019s the Seenn effect.",
-        buildWorkforce: "Ready to Put Your Receivables on Autopilot?",
+        stepPayTitle: "One-Tap Payment Links Close the Loop",
+        stepPayDesc: "Every reminder carries a secure payment link loaded with the client's exact outstanding balance \u2014 one tap settles what they owe in full and closes the loop from overdue to paid.",
+        buildWorkforce: "Ready for cash collection on autopilot?",
+        talkToUs: "Talk to Us",
 
         // Agents section
         agentsSubtitle: "AI-Powered Revenue Recovery",
@@ -104,24 +112,31 @@ const translations = {
         stat3Label: "Hours Saved Per Week",
         stat4Number: "24/7",
         stat4Label: "No Extra Headcount Needed",
+        feedEyebrow: "Meet your AI collector",
+        feedTitle: "Your AI coworker that collects your cash automatically and improves your cashflow",
+        feedSubtitle: "It devours your overdue invoices and works the whole collection process on its own \u2014 calling, sending WhatsApp reminders, and attaching a one-tap payment link to every message so clients can settle on the spot. Recover up to 40% more revenue, live in days.",
+        feedCallout: "\ud83d\udd17 Every reminder carries a secure payment link loaded with the client's exact outstanding balance \u2014 one tap settles what they owe in full and closes the loop from overdue to paid.",
+        intgEyebrow: "Integrations",
+        intgTitle: "Connect to your existing finance stack in days, not months",
+        intgSubtitle: "Seenn plugs straight into the tools you already run \u2014 no rip-and-replace, no manual exports.",
+        intgHashavshevet: "Hashavshevet",
+        intgRivhit: "Rivhit",
+        intgMore: "\u2026and more. Custom integrations & API available.",
         metaPartner: "Approved Meta Tech Provider",
         dataPrivacy: "No Data Shared with Third Parties",
 
         // Pricing
-        pricingTitle: "Choose the Plan That Fits Your Needs",
-        pricingSubtitle: "Build powerful AR workflows with AI Agents. Start free, upgrade as you grow.",
+        pricingTitle: "Pricing Tailored to Your Business",
+        pricingSubtitle: "Every business collects differently. Tell us about your receivables volume and we'll put together a plan that fits — no one-size-fits-all packages.",
+        contactForPricing: "Contact Us for Pricing",
         trialPlan: "Trial",
         trialDesc: "Start for free",
-        trialPrice: "$0",
-        trialPeriod: "/14 days",
         trialFeature1: "2 clients",
         trialFeature2: "6 outbound calls",
         trialFeature3: "Your own phone number",
         trialFeature4: "All features to try",
         starterPlan: "Starter",
         starterDesc: "For small businesses",
-        starterPrice: "$199",
-        starterPeriod: "/month",
         starterFeature1: "100 active contacts",
         starterFeature2: "600 voice minutes",
         starterFeature3: "500 WhatsApp messages",
@@ -129,8 +144,6 @@ const translations = {
         starterFeature5: "1 phone number",
         growthPlan: "Growth",
         growthDesc: "For growing businesses",
-        growthPrice: "$599",
-        growthPeriod: "/month",
         growthFeature1: "400 active contacts",
         growthFeature2: "2,400 voice minutes",
         growthFeature3: "2,000 WhatsApp messages",
@@ -139,8 +152,6 @@ const translations = {
         mostPopular: "Most Popular",
         enterprisePlan: "Enterprise",
         enterpriseDesc: "For large organizations",
-        enterprisePrice: "$1,499",
-        enterprisePeriod: "/month",
         enterpriseFeature1: "1,200 active contacts",
         enterpriseFeature2: "8,640 voice minutes",
         enterpriseFeature3: "9,600 WhatsApp messages",
@@ -272,6 +283,7 @@ const translations = {
         contact: "\u05E6\u05D5\u05E8 \u05E7\u05E9\u05E8",
         login: "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5\u05EA",
         getStarted: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05E2\u05DB\u05E9\u05D9\u05D5",
+        requestDemoBtn: "\u05D1\u05E7\u05E9\u05D5 \u05D4\u05D3\u05D2\u05DE\u05D4",
         jessProduct: "\u05D2'\u05E1 - \u05E1\u05D5\u05DB\u05E0\u05EA \u05D2\u05D1\u05D9\u05D9\u05D4 \u05D1\u05D1\u05D9\u05E0\u05D4 \u05DE\u05DC\u05D0\u05DB\u05D5\u05EA\u05D9\u05EA",
         jessProductDesc: "\u05D2\u05D1\u05D9\u05D9\u05EA \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05D1\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8 \u05DE\u05DC\u05D0",
         michaelProduct: "\u05DE\u05D9\u05D9\u05E7\u05DC - \u05E4\u05E7\u05D9\u05D3 AI",
@@ -285,13 +297,17 @@ const translations = {
 
         // Jess section
         sayHelloJess: "\u05D4\u05DB\u05D9\u05E8\u05D5 \u05D0\u05EA \u05D2'\u05E1",
-        jessSubtitle: "\u05E1\u05D5\u05DB\u05E0\u05EA \u05D4\u05D2\u05D1\u05D9\u05D9\u05D4 \u05E9\u05DC\u05DB\u05DD \u05D1\u05D1\u05D9\u05E0\u05D4 \u05DE\u05DC\u05D0\u05DB\u05D5\u05EA\u05D9\u05EA. \u05D4\u05D9\u05D0 \u05DE\u05EA\u05E7\u05E9\u05E8\u05EA, \u05E9\u05D5\u05DC\u05D7\u05EA \u05D4\u05D5\u05D3\u05E2\u05D5\u05EA \u05D5\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC\u05D9\u05DD \u05DC\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA \u05E9\u05D7\u05D9\u05D9\u05D1\u05D9\u05DD \u2014 \u05DB\u05D3\u05D9 \u05E9\u05DC\u05E2\u05D5\u05DC\u05DD \u05DC\u05D0 \u05EA\u05E6\u05D8\u05E8\u05DB\u05D5 \u05DC\u05E2\u05E9\u05D5\u05EA \u05E9\u05D9\u05D7\u05EA \u05D2\u05D1\u05D9\u05D9\u05D4 \u05DC\u05D0 \u05E0\u05E2\u05D9\u05DE\u05D4 \u05E9\u05D5\u05D1.",
-        phoneReminders: "\u05E9\u05D9\u05D7\u05D5\u05EA \u05E7\u05D5\u05DC\u05D9\u05D5\u05EA",
-        phoneDesc: "\u05E9\u05D9\u05D7\u05D5\u05EA AI \u05E9\u05E0\u05E9\u05DE\u05E2\u05D5\u05EA \u05D8\u05D1\u05E2\u05D9\u05D5\u05EA \u05D5\u05E4\u05D5\u05E2\u05DC\u05D5\u05EA \u05DC\u05E4\u05D9 \u05DB\u05DC\u05DC\u05D9 \u05D4\u05D2\u05D1\u05D9\u05D9\u05D4 \u05D5\u05D4\u05D8\u05D5\u05DF \u05E9\u05DC\u05DB\u05DD.",
-        whatsappSms: "WhatsApp & SMS",
-        whatsappDesc: "\u05EA\u05D6\u05DB\u05D5\u05E8\u05D5\u05EA \u05DE\u05D9\u05D9\u05D3\u05D9\u05D5\u05EA \u05E2\u05DD \u05E7\u05D9\u05E9\u05D5\u05E8 \u05EA\u05E9\u05DC\u05D5\u05DD \u05D1\u05DC\u05D7\u05D9\u05E6\u05D4 \u05D0\u05D7\u05EA. 98% \u05E9\u05D9\u05E2\u05D5\u05E8 \u05E4\u05EA\u05D9\u05D7\u05D4.",
-        emailFollowups: "\u05E8\u05E6\u05E4\u05D9 \u05D0\u05D9\u05DE\u05D9\u05D9\u05DC",
-        emailDesc: "\u05DE\u05E2\u05E7\u05D1\u05D9\u05DD \u05DE\u05DE\u05D5\u05EA\u05D2\u05D9\u05DD \u05D5\u05D0\u05D9\u05E9\u05D9\u05D9\u05DD \u2014 \u05E0\u05E8\u05E9\u05DE\u05D9\u05DD \u05D5\u05DE\u05EA\u05D5\u05E2\u05D3\u05D9\u05DD \u05D1\u05DC\u05D5\u05D7 \u05D4\u05D1\u05E7\u05E8\u05D4 \u05E9\u05DC\u05DB\u05DD.",
+        jessSubtitle: "\u05D9\u05D5\u05EA\u05E8 \u05DE\u05EA\u05D6\u05DB\u05D5\u05E8\u05D5\u05EA: \u05D2'\u05E1 \u05DE\u05EA\u05E7\u05E9\u05E8\u05EA \u05D5\u05E9\u05D5\u05DC\u05D7\u05EA \u05D4\u05D5\u05D3\u05E2\u05D5\u05EA, \u05E9\u05D5\u05DC\u05D7\u05EA \u05E7\u05D9\u05E9\u05D5\u05E8\u05D9 \u05EA\u05E9\u05DC\u05D5\u05DD, \u05DE\u05D8\u05E4\u05DC\u05EA \u05D1\u05DE\u05D7\u05DC\u05D5\u05E7\u05D5\u05EA, \u05D5\u05DE\u05EA\u05E2\u05D3\u05EA \u05DB\u05DC \u05EA\u05D5\u05E6\u05D0\u05D4 \u05D1\u05DE\u05E2\u05E8\u05DB\u05EA \u05E9\u05DC\u05DB\u05DD \u2014 \u05DB\u05DA \u05E9\u05D0\u05EA\u05DD \u05DC\u05D0 \u05E6\u05E8\u05D9\u05DB\u05D9\u05DD.",
+        phoneReminders: "\u05EA\u05D6\u05DB\u05D5\u05E8\u05D5\u05EA \u05D8\u05DC\u05E4\u05D5\u05E0\u05D9\u05D5\u05EA:",
+        phoneDesc: "\u05E9\u05D9\u05D7\u05D5\u05EA \u05E7\u05D5\u05DC\u05D9\u05D5\u05EA \u05D8\u05D1\u05E2\u05D9\u05D5\u05EA \u05E9\u05E4\u05D5\u05E2\u05DC\u05D5\u05EA \u05DC\u05E4\u05D9 \u05D4\u05DB\u05DC\u05DC\u05D9\u05DD \u05E9\u05DC\u05DB\u05DD.",
+        whatsappSms: "WhatsApp / SMS:",
+        whatsappDesc: "\u05E7\u05D9\u05E9\u05D5\u05E8 \u05EA\u05E9\u05DC\u05D5\u05DD \u05DC\u05E1\u05DB\u05D5\u05DD \u05D4\u05DE\u05D3\u05D5\u05D9\u05E7 \u2014 \u05D4\u05DC\u05E7\u05D5\u05D7 \u05DE\u05E9\u05DC\u05DD \u05D1\u05DC\u05D7\u05D9\u05E6\u05D4 \u05D0\u05D7\u05EA.",
+        emailFollowups: "\u05DE\u05E2\u05E7\u05D1\u05D9\u05DD \u05D1\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC:",
+        emailDesc: "\u05D0\u05D9\u05E9\u05D9\u05D9\u05DD, \u05DE\u05E9\u05E7\u05E4\u05D9\u05DD \u05D0\u05EA \u05D4\u05DE\u05D5\u05EA\u05D2 \u05E9\u05DC\u05DB\u05DD, \u05D5\u05E0\u05E9\u05DE\u05E8\u05D9\u05DD \u05D1\u05DE\u05E2\u05E8\u05DB\u05EA.",
+        disputesTitle: "\u05D8\u05D9\u05E4\u05D5\u05DC \u05D1\u05DE\u05D7\u05DC\u05D5\u05E7\u05D5\u05EA:",
+        disputesDesc: "\u05D4\u05D9\u05D0 \u05DE\u05D2\u05D9\u05D1\u05D4, \u05E4\u05D5\u05EA\u05E8\u05EA \u05DE\u05D4 \u05E9\u05D0\u05E4\u05E9\u05E8, \u05D5\u05DE\u05E2\u05D1\u05D9\u05E8\u05D4 \u05D0\u05DC\u05D9\u05DB\u05DD \u05D0\u05EA \u05D4\u05E9\u05D0\u05E8.",
+        outcomesTitle: "\u05EA\u05D9\u05E2\u05D5\u05D3 \u05EA\u05D5\u05E6\u05D0\u05D5\u05EA:",
+        outcomesDesc: "\u05D4\u05D9\u05D0 \u05DE\u05EA\u05E2\u05D3\u05EA \u05DB\u05DC \u05D4\u05D1\u05D8\u05D7\u05D4, \u05DE\u05D7\u05DC\u05D5\u05E7\u05EA \u05D5\u05EA\u05D5\u05E6\u05D0\u05D4 \u05D1\u05DE\u05E2\u05E8\u05DB\u05EA \u05E9\u05DC\u05DB\u05DD \u2014 \u05E9\u05D5\u05DD \u05D3\u05D1\u05E8 \u05DC\u05D0 \u05E0\u05D5\u05E4\u05DC.",
 
         // How it works
         howItWorksTitle: "\u05D0\u05D9\u05DA \u05D6\u05D4 \u05E2\u05D5\u05D1\u05D3",
@@ -304,7 +320,10 @@ const translations = {
         step2Desc: "\u05DB\u05E9\u05D7\u05E9\u05D1\u05D5\u05E0\u05D9\u05EA \u05E2\u05D5\u05D1\u05E8\u05EA \u05D0\u05EA \u05DE\u05D5\u05E2\u05D3 \u05D4\u05EA\u05E9\u05DC\u05D5\u05DD, \u05D2'\u05E1 \u05E4\u05D5\u05E0\u05D4 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05DC\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA \u05D1\u05D8\u05DC\u05E4\u05D5\u05DF, WhatsApp, SMS \u05D5\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC \u2014 \u05D0\u05E8\u05D1\u05E2\u05EA \u05D4\u05E2\u05E8\u05D5\u05E6\u05D9\u05DD \u05D1\u05D9\u05D7\u05D3. \u05D4\u05D9\u05D0 \u05E2\u05D5\u05E7\u05D1\u05EA \u05D1\u05E2\u05E7\u05D1\u05D9\u05D5\u05EA \u05D0\u05D1\u05DC \u05DE\u05E7\u05E6\u05D5\u05E2\u05D9\u05EA, \u05DB\u05DA \u05E9\u05D0\u05EA\u05DD \u05D0\u05E3 \u05E4\u05E2\u05DD \u05DC\u05D0 \u05EA\u05E6\u05D8\u05E8\u05DB\u05D5 \u05DC\u05D4\u05E8\u05D9\u05DD \u05D8\u05DC\u05E4\u05D5\u05DF \u05D0\u05D5 \u05DC\u05E9\u05DC\u05D5\u05D7 \u05EA\u05D6\u05DB\u05D5\u05E8\u05EA \u05D1\u05E2\u05E6\u05DE\u05DB\u05DD.",
         step3Title: "\u05E8\u05D0\u05D5 \u05D0\u05D9\u05DA \u05D4\u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05E0\u05DB\u05E0\u05E1\u05D9\u05DD",
         step3Desc: "60% \u05D9\u05D5\u05EA\u05E8 \u05D2\u05D1\u05D9\u05D9\u05D4. 40% \u05E9\u05D9\u05E4\u05D5\u05E8 \u05D1\u05EA\u05D6\u05E8\u05D9\u05DD. \u05D0\u05E4\u05E1 \u05E9\u05D9\u05D7\u05D5\u05EA \u05DE\u05D1\u05D9\u05DB\u05D5\u05EA. \u05D6\u05D4 \u05D4\u05D0\u05E4\u05E7\u05D8 \u05E9\u05DC Seenn.",
-        buildWorkforce: "\u05DE\u05D5\u05DB\u05E0\u05D9\u05DD \u05DC\u05E9\u05D9\u05DD \u05D0\u05EA \u05D4\u05D2\u05D1\u05D9\u05D9\u05D4 \u05E2\u05DC \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8?",
+        stepPayTitle: "\u05E7\u05D9\u05E9\u05D5\u05E8\u05D9 \u05EA\u05E9\u05DC\u05D5\u05DD \u05D1\u05DC\u05D7\u05D9\u05E6\u05D4 \u05D0\u05D7\u05EA \u05E1\u05D5\u05D2\u05E8\u05D9\u05DD \u05D0\u05EA \u05DE\u05E2\u05D2\u05DC \u05D4\u05EA\u05E9\u05DC\u05D5\u05DD",
+        stepPayDesc: "\u05DB\u05DC \u05EA\u05D6\u05DB\u05D5\u05E8\u05EA \u05DB\u05D5\u05DC\u05DC\u05EA \u05E7\u05D9\u05E9\u05D5\u05E8 \u05EA\u05E9\u05DC\u05D5\u05DD \u05DE\u05D0\u05D5\u05D1\u05D8\u05D7 \u05E2\u05DD \u05D4\u05E1\u05DB\u05D5\u05DD \u05D4\u05DE\u05D3\u05D5\u05D9\u05E7 \u05E9\u05DC \u05D4\u05D9\u05EA\u05E8\u05D4 \u05DC\u05EA\u05E9\u05DC\u05D5\u05DD \u2014 \u05D4\u05DC\u05E7\u05D5\u05D7 \u05DE\u05E1\u05DC\u05E7 \u05D0\u05EA \u05DE\u05DC\u05D5\u05D0 \u05D4\u05D7\u05D5\u05D1 \u05D1\u05DC\u05D7\u05D9\u05E6\u05D4 \u05D0\u05D7\u05EA, \u05D5\u05DB\u05DC \u05D7\u05E9\u05D1\u05D5\u05E0\u05D9\u05EA \u05D1\u05D0\u05D9\u05D7\u05D5\u05E8 \u05E0\u05E1\u05D2\u05E8\u05EA \u05DB\u05DE\u05E9\u05D5\u05DC\u05DE\u05EA.",
+        buildWorkforce: "\u05DE\u05D5\u05DB\u05E0\u05D9\u05DD \u05DC\u05D2\u05D1\u05D9\u05D9\u05D4 \u05E2\u05DC \u05D8\u05D9\u05D9\u05E1 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9?",
+        talkToUs: "\u05D3\u05D1\u05E8\u05D5 \u05D0\u05D9\u05EA\u05E0\u05D5",
 
         // Michael section
         meetMichael: "\u05D4\u05DB\u05D9\u05E8\u05D5 \u05D0\u05EA \u05DE\u05D9\u05D9\u05E7\u05DC",
@@ -341,24 +360,31 @@ const translations = {
         stat3Label: "\u05E9\u05E2\u05D5\u05EA \u05E0\u05D7\u05E1\u05DB\u05D5\u05EA \u05D1\u05E9\u05D1\u05D5\u05E2",
         stat4Number: "24/7",
         stat4Label: "\u05D1\u05DC\u05D9 \u05E6\u05D5\u05E8\u05DA \u05D1\u05E2\u05D5\u05D1\u05D3 \u05E0\u05D5\u05E1\u05E3",
+        feedEyebrow: "\u05d4\u05db\u05d9\u05e8\u05d5 \u05d0\u05ea \u05e1\u05d5\u05db\u05df \u05d4\u05d2\u05d1\u05d9\u05d9\u05d4 \u05e9\u05dc\u05db\u05dd",
+        feedTitle: "\u05d7\u05d1\u05e8 \u05d4\u05e6\u05d5\u05d5\u05ea \u05d4-AI \u05e9\u05d2\u05d5\u05d1\u05d4 \u05dc\u05db\u05dd \u05d0\u05ea \u05d4\u05db\u05e1\u05e3 \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9\u05ea \u05d5\u05de\u05e9\u05e4\u05e8 \u05d0\u05ea \u05ea\u05d6\u05e8\u05d9\u05dd \u05d4\u05de\u05d6\u05d5\u05de\u05e0\u05d9\u05dd \u05e9\u05dc\u05db\u05dd",
+        feedSubtitle: "\u05d4\u05d5\u05d0 \u05d6\u05d5\u05dc\u05dc \u05d0\u05ea \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05d5\u05ea \u05d1\u05d0\u05d9\u05d7\u05d5\u05e8 \u05e9\u05dc\u05db\u05dd \u05d5\u05de\u05e0\u05d4\u05dc \u05d0\u05ea \u05db\u05dc \u05ea\u05d4\u05dc\u05d9\u05da \u05d4\u05d2\u05d1\u05d9\u05d9\u05d4 \u05dc\u05d1\u05d3 \u2014 \u05de\u05ea\u05e7\u05e9\u05e8, \u05e9\u05d5\u05dc\u05d7 \u05ea\u05d6\u05db\u05d5\u05e8\u05d5\u05ea \u05d1-WhatsApp, \u05d5\u05de\u05e6\u05e8\u05e3 \u05dc\u05db\u05dc \u05d4\u05d5\u05d3\u05e2\u05d4 \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd \u05d1\u05dc\u05d7\u05d9\u05e6\u05d4 \u05d0\u05d7\u05ea \u05db\u05d3\u05d9 \u05e9\u05d4\u05dc\u05e7\u05d5\u05d7\u05d5\u05ea \u05d9\u05e9\u05dc\u05de\u05d5 \u05d1\u05de\u05e7\u05d5\u05dd. \u05d2\u05d1\u05d5 \u05e2\u05d3 40% \u05d9\u05d5\u05ea\u05e8 \u05d4\u05db\u05e0\u05e1\u05d5\u05ea, \u05e2\u05dd \u05e2\u05dc\u05d9\u05d9\u05d4 \u05dc\u05d0\u05d5\u05d5\u05d9\u05e8 \u05ea\u05d5\u05da \u05d9\u05de\u05d9\u05dd.",
+        feedCallout: "\ud83d\udd17 \u05db\u05dc \u05ea\u05d6\u05db\u05d5\u05e8\u05ea \u05db\u05d5\u05dc\u05dc\u05ea \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd \u05de\u05d0\u05d5\u05d1\u05d8\u05d7 \u05e2\u05dd \u05d4\u05e1\u05db\u05d5\u05dd \u05d4\u05de\u05d3\u05d5\u05d9\u05e7 \u05e9\u05dc \u05d4\u05d9\u05ea\u05e8\u05d4 \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd \u2014 \u05d4\u05dc\u05e7\u05d5\u05d7 \u05de\u05e1\u05dc\u05e7 \u05d0\u05ea \u05de\u05dc\u05d5\u05d0 \u05d4\u05d7\u05d5\u05d1 \u05d1\u05dc\u05d7\u05d9\u05e6\u05d4 \u05d0\u05d7\u05ea, \u05d5\u05db\u05dc \u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05d1\u05d0\u05d9\u05d7\u05d5\u05e8 \u05e0\u05e1\u05d2\u05e8\u05ea \u05db\u05de\u05e9\u05d5\u05dc\u05de\u05ea.",
+        intgEyebrow: "\u05d0\u05d9\u05e0\u05d8\u05d2\u05e8\u05e6\u05d9\u05d5\u05ea",
+        intgTitle: "\u05d4\u05ea\u05d7\u05d1\u05e8\u05d5 \u05dc\u05de\u05e2\u05e8\u05db\u05ea \u05d4\u05e4\u05d9\u05e0\u05e0\u05e1\u05d9\u05ea \u05d4\u05e7\u05d9\u05d9\u05de\u05ea \u05e9\u05dc\u05db\u05dd \u05ea\u05d5\u05da \u05d9\u05de\u05d9\u05dd, \u05dc\u05d0 \u05d7\u05d5\u05d3\u05e9\u05d9\u05dd",
+        intgSubtitle: "Seenn \u05de\u05ea\u05d7\u05d1\u05e8 \u05d9\u05e9\u05d9\u05e8\u05d5\u05ea \u05dc\u05de\u05e2\u05e8\u05db\u05d5\u05ea \u05e9\u05db\u05d1\u05e8 \u05e2\u05d5\u05d1\u05d3\u05d9\u05dd \u05d0\u05d9\u05ea\u05df \u2014 \u05d1\u05dc\u05d9 \u05d4\u05d7\u05dc\u05e4\u05ea \u05de\u05e2\u05e8\u05db\u05ea \u05d5\u05d1\u05dc\u05d9 \u05d9\u05d9\u05e6\u05d5\u05d0 \u05d9\u05d3\u05e0\u05d9.",
+        intgHashavshevet: "\u05d7\u05e9\u05d1\u05e9\u05d1\u05ea",
+        intgRivhit: "\u05e8\u05d5\u05d5\u05d7\u05d9\u05ea",
+        intgMore: "\u2026\u05d5\u05e2\u05d5\u05d3. \u05d0\u05d9\u05e0\u05d8\u05d2\u05e8\u05e6\u05d9\u05d5\u05ea \u05de\u05d5\u05ea\u05d0\u05de\u05d5\u05ea \u05d5-API \u05d6\u05de\u05d9\u05e0\u05d9\u05dd.",
         metaPartner: "\u05E1\u05E4\u05E7 \u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 \u05DE\u05D0\u05D5\u05E9\u05E8 \u05E9\u05DC Meta",
         dataPrivacy: "\u05D0\u05E0\u05D7\u05E0\u05D5 \u05DC\u05D0 \u05DE\u05E9\u05EA\u05E4\u05D9\u05DD \u05DE\u05D9\u05D3\u05E2 \u05E2\u05DD \u05E6\u05D3\u05D3\u05D9\u05DD \u05E9\u05DC\u05D9\u05E9\u05D9\u05D9\u05DD",
 
         // Pricing
-        pricingTitle: "\u05D1\u05D7\u05E8\u05D5 \u05D0\u05EA \u05D4\u05EA\u05D5\u05DB\u05E0\u05D9\u05EA \u05E9\u05DE\u05EA\u05D0\u05D9\u05DE\u05D4 \u05DC\u05DB\u05DD",
-        pricingSubtitle: "\u05D1\u05E0\u05D5 \u05EA\u05D4\u05DC\u05D9\u05DB\u05D9 \u05D2\u05D1\u05D9\u05D9\u05D4 \u05D7\u05D6\u05E7\u05D9\u05DD \u05E2\u05DD \u05E1\u05D5\u05DB\u05E0\u05D9 AI. \u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD, \u05E9\u05D3\u05E8\u05D2\u05D5 \u05DB\u05E9\u05D0\u05EA\u05DD \u05D2\u05D3\u05DC\u05D9\u05DD.",
+        pricingTitle: "\u05EA\u05DE\u05D7\u05D5\u05E8 \u05E9\u05DE\u05D5\u05EA\u05D0\u05DD \u05DC\u05E2\u05E1\u05E7 \u05E9\u05DC\u05DB\u05DD",
+        pricingSubtitle: "\u05DB\u05DC \u05E2\u05E1\u05E7 \u05D2\u05D5\u05D1\u05D4 \u05D0\u05D7\u05E8\u05EA. \u05E1\u05E4\u05E8\u05D5 \u05DC\u05E0\u05D5 \u05E2\u05DC \u05D4\u05D9\u05E7\u05E3 \u05D4\u05D7\u05D9\u05D9\u05D1\u05D9\u05DD \u05E9\u05DC\u05DB\u05DD \u05D5\u05E0\u05E8\u05DB\u05D9\u05D1 \u05EA\u05D5\u05DB\u05E0\u05D9\u05EA \u05E9\u05DE\u05EA\u05D0\u05D9\u05DE\u05D4 \u05D1\u05D3\u05D9\u05D5\u05E7 \u05DC\u05DB\u05DD \u2014 \u05D1\u05DC\u05D9 \u05D7\u05D1\u05D9\u05DC\u05D5\u05EA \u05E9\u05DC \u05DE\u05D9\u05D3\u05D4 \u05D0\u05D7\u05EA \u05DC\u05DB\u05D5\u05DC\u05DD.",
+        contactForPricing: "\u05E6\u05E8\u05D5 \u05E7\u05E9\u05E8 \u05DC\u05E7\u05D1\u05DC\u05EA \u05D4\u05E6\u05E2\u05EA \u05DE\u05D7\u05D9\u05E8",
         trialPlan: "\u05E0\u05D9\u05E1\u05D9\u05D5\u05DF",
         trialDesc: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD",
-        trialPrice: "\u20AA0",
-        trialPeriod: "/14 \u05D9\u05DE\u05D9\u05DD",
         trialFeature1: "2 \u05DC\u05E7\u05D5\u05D7\u05D5\u05EA",
         trialFeature2: "6 \u05E9\u05D9\u05D7\u05D5\u05EA \u05D9\u05D5\u05E6\u05D0\u05D5\u05EA",
         trialFeature3: "\u05DE\u05E1\u05E4\u05E8 \u05D8\u05DC\u05E4\u05D5\u05DF \u05E9\u05DC\u05DB\u05DD",
         trialFeature4: "\u05DB\u05DC \u05D4\u05EA\u05DB\u05D5\u05E0\u05D5\u05EA \u05DC\u05E0\u05D9\u05E1\u05D9\u05D5\u05DF",
         starterPlan: "\u05E1\u05D8\u05D0\u05E8\u05D8\u05E8",
         starterDesc: "\u05DC\u05E2\u05E1\u05E7\u05D9\u05DD \u05E7\u05D8\u05E0\u05D9\u05DD",
-        starterPrice: "$199",
-        starterPeriod: "/\u05D7\u05D5\u05D3\u05E9",
         starterFeature1: "100 \u05D0\u05E0\u05E9\u05D9 \u05E7\u05E9\u05E8 \u05E4\u05E2\u05D9\u05DC\u05D9\u05DD",
         starterFeature2: "600 \u05D3\u05E7\u05D5\u05EA \u05E9\u05D9\u05D7\u05D4",
         starterFeature3: "500 \u05D4\u05D5\u05D3\u05E2\u05D5\u05EA WhatsApp",
@@ -366,8 +392,6 @@ const translations = {
         starterFeature5: "\u05DE\u05E1\u05E4\u05E8 \u05D8\u05DC\u05E4\u05D5\u05DF 1",
         growthPlan: "\u05D2\u05E8\u05D5\u05EA\u05F3",
         growthDesc: "\u05DC\u05E2\u05E1\u05E7\u05D9\u05DD \u05E6\u05D5\u05DE\u05D7\u05D9\u05DD",
-        growthPrice: "$599",
-        growthPeriod: "/\u05D7\u05D5\u05D3\u05E9",
         growthFeature1: "400 \u05D0\u05E0\u05E9\u05D9 \u05E7\u05E9\u05E8 \u05E4\u05E2\u05D9\u05DC\u05D9\u05DD",
         growthFeature2: "2,400 \u05D3\u05E7\u05D5\u05EA \u05E9\u05D9\u05D7\u05D4",
         growthFeature3: "2,000 \u05D4\u05D5\u05D3\u05E2\u05D5\u05EA WhatsApp",
@@ -376,8 +400,6 @@ const translations = {
         mostPopular: "\u05D4\u05DB\u05D9 \u05E4\u05D5\u05E4\u05D5\u05DC\u05E8\u05D9",
         enterprisePlan: "\u05D0\u05E0\u05D8\u05E8\u05E4\u05E8\u05D9\u05D9\u05D6",
         enterpriseDesc: "\u05DC\u05D0\u05E8\u05D2\u05D5\u05E0\u05D9\u05DD \u05D2\u05D3\u05D5\u05DC\u05D9\u05DD",
-        enterprisePrice: "$1,499",
-        enterprisePeriod: "/\u05D7\u05D5\u05D3\u05E9",
         enterpriseFeature1: "1,200 \u05D0\u05E0\u05E9\u05D9 \u05E7\u05E9\u05E8 \u05E4\u05E2\u05D9\u05DC\u05D9\u05DD",
         enterpriseFeature2: "8,640 \u05D3\u05E7\u05D5\u05EA \u05E9\u05D9\u05D7\u05D4",
         enterpriseFeature3: "9,600 \u05D4\u05D5\u05D3\u05E2\u05D5\u05EA WhatsApp",
@@ -650,3 +672,15 @@ async function handleDemoSubmit(event) {
         submitBtn.textContent = translations[currentLang].requestDemo;
     }
 }
+
+// Keep the full-width "eating overdue invoices" video autoplaying and looping forever
+(function () {
+    document.querySelectorAll('.feed-video').forEach(function (v) {
+        v.muted = true;
+        v.loop = true;
+        var play = function () { var p = v.play(); if (p && typeof p.catch === 'function') p.catch(function () {}); };
+        v.addEventListener('loadeddata', play);
+        v.addEventListener('ended', function () { v.currentTime = 0; play(); });
+        play();
+    });
+})();
