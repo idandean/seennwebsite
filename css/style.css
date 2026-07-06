@@ -1,3 +1,7 @@
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
 body {
     font-family: 'Inter', sans-serif;
 }
@@ -334,6 +338,36 @@ body {
   font-size: clamp(0.78rem, 1.45vw, 1.02rem);
   line-height: 1.45;
   color: #2a3547;
+}
+
+/* ---- Mobile: the small video has no room to overlay a multi-line headline,
+   so the headline moves into its own gold band ABOVE the video ---- */
+@media (max-width: 767px) {
+  .feed-stripe { max-width: 100vw; overflow-x: hidden; }
+  .feed-overlay {
+    position: static;
+    transform: none;
+    inset: auto;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 1.25rem 1rem;
+  }
+  .feed-overlay-title {
+    font-size: 1.2rem;
+    line-height: 1.25;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  .feed-video-wrap {
+    aspect-ratio: 1280 / 340;       /* just the robot + eating band, no empty top gold */
+    max-width: 100vw;
+  }
+  .feed-video {
+    max-width: 100%;
+    object-position: center 40%;    /* robot head near the top, invoices below */
+  }
 }
 
 /* prominent "close the loop with payment links" callout */
