@@ -4,7 +4,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.seenn.ai/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/" />
     <changefreq>weekly</changefreq>
@@ -12,7 +12,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/" />
     <changefreq>weekly</changefreq>
@@ -22,7 +22,7 @@
   <!-- About -->
   <url>
     <loc>https://www.seenn.ai/about.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/about.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/about.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/about.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/about.html" />
     <changefreq>monthly</changefreq>
@@ -30,7 +30,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/about.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/about.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/about.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/about.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/about.html" />
     <changefreq>monthly</changefreq>
@@ -40,7 +40,7 @@
   <!-- Blog -->
   <url>
     <loc>https://www.seenn.ai/blog/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/" />
     <changefreq>weekly</changefreq>
@@ -48,7 +48,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/" />
     <changefreq>weekly</changefreq>
@@ -56,7 +56,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/blog/ai-payment-collection-guide.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-payment-collection-guide.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
     <changefreq>monthly</changefreq>
@@ -64,7 +64,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/ai-payment-collection-guide.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-payment-collection-guide.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-payment-collection-guide.html" />
     <changefreq>monthly</changefreq>
@@ -72,7 +72,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/blog/reduce-overdue-payments.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/reduce-overdue-payments.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
     <changefreq>monthly</changefreq>
@@ -80,7 +80,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/reduce-overdue-payments.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/reduce-overdue-payments.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/reduce-overdue-payments.html" />
     <changefreq>monthly</changefreq>
@@ -88,7 +88,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/blog/whatsapp-payment-reminders.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
     <changefreq>monthly</changefreq>
@@ -96,7 +96,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/whatsapp-payment-reminders.html" />
     <changefreq>monthly</changefreq>
@@ -105,7 +105,7 @@
 
   <url>
     <loc>https://www.seenn.ai/blog/net-30-60-90-payment-terms.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
     <changefreq>monthly</changefreq>
@@ -113,7 +113,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html" />
     <changefreq>monthly</changefreq>
@@ -121,7 +121,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/blog/ai-accounts-receivable-automation.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
     <changefreq>monthly</changefreq>
@@ -129,7 +129,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/ai-accounts-receivable-automation.html" />
     <changefreq>monthly</changefreq>
@@ -137,7 +137,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/blog/cash-flow-management-small-business.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/cash-flow-management-small-business.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
     <changefreq>monthly</changefreq>
@@ -145,7 +145,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/blog/cash-flow-management-small-business.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/blog/cash-flow-management-small-business.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/cash-flow-management-small-business.html" />
     <changefreq>monthly</changefreq>
@@ -155,7 +155,7 @@
   <!-- Contact -->
   <url>
     <loc>https://www.seenn.ai/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/contact.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/contact.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/contact.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/contact.html" />
     <changefreq>monthly</changefreq>
@@ -163,7 +163,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/contact.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/contact.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/contact.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/contact.html" />
     <changefreq>monthly</changefreq>
@@ -173,7 +173,7 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://www.seenn.ai/privacy-policy.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/privacy-policy.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/privacy-policy.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/privacy-policy.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/privacy-policy.html" />
     <changefreq>yearly</changefreq>
@@ -181,7 +181,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/privacy-policy.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/privacy-policy.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/privacy-policy.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/privacy-policy.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/privacy-policy.html" />
     <changefreq>yearly</changefreq>
@@ -191,7 +191,7 @@
   <!-- Terms of Service -->
   <url>
     <loc>https://www.seenn.ai/terms-of-service.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/terms-of-service.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/terms-of-service.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/terms-of-service.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/terms-of-service.html" />
     <changefreq>yearly</changefreq>
@@ -199,7 +199,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/terms-of-service.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/terms-of-service.html" />
+    <lastmod>2026-07-07</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/terms-of-service.html" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/terms-of-service.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/terms-of-service.html" />
     <changefreq>yearly</changefreq>

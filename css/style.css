@@ -18,16 +18,9 @@ body {
     padding-top: 6rem;
 }
 
-/* Better spacing for Hebrew/RTL navigation links */
-[dir="rtl"] nav a {
-    margin-left: 2rem !important;
-    margin-right: 0 !important;
-}
-
-[dir="rtl"] nav .space-x-8 > * + * {
-    margin-left: 2rem;
-    margin-right: 0;
-}
+/* Nav spacing is handled by flexbox `gap`, which works in both LTR and RTL.
+   (An older rule added an extra margin to RTL nav links, spreading the
+   Hebrew menu ~2x wider than the English one — removed.) */
 
 .hero, #hero, .hero-section { position: relative; overflow: hidden; }
 .bg-art {

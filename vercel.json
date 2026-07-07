@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/he/index.html", "destination": "/he/", "permanent": true },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "seenn.ai" }],
+      "destination": "https://www.seenn.ai/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "seennwebsite.vercel.app" }],
+      "destination": "https://www.seenn.ai/:path*",
+      "permanent": true
+    }
+  ]
+}

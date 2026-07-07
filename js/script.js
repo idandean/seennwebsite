@@ -42,7 +42,7 @@ const translations = {
         michaelProductDesc: "Coming soon",
 
         // Hero section
-        heroTitle: "Recover 60% More Payments \u2014 Without Lifting a Phone",
+        heroTitle: "Stop Chasing Payments. Your AI Accounts Receivable Agent Collects Automatically.",
         heroSubtitle: "Seenn deploys AI agents that call overdue clients, send WhatsApp and SMS reminders, and follow up by email \u2014 all on autopilot, all under your brand. Save 10+ hours a week on AR \u2014 no extra staff needed.",
         startTrial: "Start Your Free Trial",
         seeDemo: "See a Demo",
@@ -71,7 +71,7 @@ const translations = {
         step2Title: "Jess Reaches Out Across 4 Channels",
         step2Desc: "When invoices go overdue, Jess contacts your clients via phone, WhatsApp, SMS, and email. She follows up persistently but professionally \u2014 so you never have to pick up the phone yourself.",
         step3Title: "Watch Payments Roll In",
-        step3Desc: "60% more recoveries. 40% better cash flow. Zero uncomfortable conversations. That\u2019s the Seenn effect.",
+        step3Desc: "40% more recoveries. 40% better cash flow. Zero uncomfortable conversations. That\u2019s the Seenn effect.",
         stepPayTitle: "One-Tap Payment Links Close the Loop",
         stepPayDesc: "Every reminder carries a secure payment link loaded with the client's exact outstanding balance \u2014 one tap settles what they owe in full and closes the loop from overdue to paid.",
         buildWorkforce: "Ready for cash collection on autopilot?",
@@ -104,7 +104,7 @@ const translations = {
 
         // Social proof
         trustedBy: "Trusted by businesses across the US and Israel",
-        stat1Number: "60%",
+        stat1Number: "40%",
         stat1Label: "More Payments Recovered",
         stat2Number: "40%",
         stat2Label: "Better Cash Flow",
@@ -175,6 +175,8 @@ const translations = {
         additionalNotes: "Additional Notes",
         requestDemo: "Request Demo",
         sending: "Sending...",
+        demoSuccess: "🎉 Thank you! Your demo request has been received. We'll contact you shortly!",
+        demoError: "❌ Something went wrong. Please try again or email us at hello@seenn.ai",
 
         // Contact page
         home: "Home",
@@ -290,7 +292,7 @@ const translations = {
         michaelProductDesc: "\u05D1\u05E7\u05E8\u05D5\u05D1",
 
         // Hero section
-        heroTitle: "\u05D2\u05D1\u05D5 60% \u05D9\u05D5\u05EA\u05E8 \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u2014 \u05D1\u05DC\u05D9 \u05DC\u05D4\u05E8\u05D9\u05DD \u05D8\u05DC\u05E4\u05D5\u05DF",
+        heroTitle: "\u05EA\u05E4\u05E1\u05D9\u05E7\u05D5 \u05DC\u05E8\u05D3\u05D5\u05E3 \u05D0\u05D7\u05E8\u05D9 \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u2014 \u05EA\u05D5\u05DB\u05E0\u05EA \u05D2\u05D1\u05D9\u05D9\u05D4 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05E2\u05DD \u05E1\u05D5\u05DB\u05DF AI",
         heroSubtitle: "Seenn \u05DE\u05E4\u05E2\u05D9\u05DC \u05E1\u05D5\u05DB\u05E0\u05D9 AI \u05E9\u05DE\u05EA\u05E7\u05E9\u05E8\u05D9\u05DD \u05DC\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA \u05E9\u05D7\u05D9\u05D9\u05D1\u05D9\u05DD, \u05E9\u05D5\u05DC\u05D7\u05D9\u05DD \u05EA\u05D6\u05DB\u05D5\u05E8\u05D5\u05EA \u05D1-WhatsApp \u05D5-SMS, \u05D5\u05E2\u05D5\u05E7\u05D1\u05D9\u05DD \u05D1\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC. \u05D7\u05E1\u05DB\u05D5 10+ \u05E9\u05E2\u05D5\u05EA \u05D1\u05E9\u05D1\u05D5\u05E2 \u05E2\u05DC \u05D2\u05D1\u05D9\u05D9\u05D4 \u2014 \u05D1\u05DC\u05D9 \u05DC\u05D2\u05D9\u05D9\u05E1 \u05E2\u05D5\u05D1\u05D3 \u05E0\u05D5\u05E1\u05E3.",
         startTrial: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05EA\u05E7\u05D5\u05E4\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF \u05D7\u05D9\u05E0\u05DD",
         seeDemo: "\u05E6\u05E4\u05D5 \u05D1\u05D4\u05D3\u05D2\u05DE\u05D4",
@@ -319,7 +321,7 @@ const translations = {
         step2Title: "\u05D2'\u05E1 \u05E4\u05D5\u05E0\u05D4 \u05D1-4 \u05E2\u05E8\u05D5\u05E6\u05D9\u05DD",
         step2Desc: "\u05DB\u05E9\u05D7\u05E9\u05D1\u05D5\u05E0\u05D9\u05EA \u05E2\u05D5\u05D1\u05E8\u05EA \u05D0\u05EA \u05DE\u05D5\u05E2\u05D3 \u05D4\u05EA\u05E9\u05DC\u05D5\u05DD, \u05D2'\u05E1 \u05E4\u05D5\u05E0\u05D4 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05DC\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA \u05D1\u05D8\u05DC\u05E4\u05D5\u05DF, WhatsApp, SMS \u05D5\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC \u2014 \u05D0\u05E8\u05D1\u05E2\u05EA \u05D4\u05E2\u05E8\u05D5\u05E6\u05D9\u05DD \u05D1\u05D9\u05D7\u05D3. \u05D4\u05D9\u05D0 \u05E2\u05D5\u05E7\u05D1\u05EA \u05D1\u05E2\u05E7\u05D1\u05D9\u05D5\u05EA \u05D0\u05D1\u05DC \u05DE\u05E7\u05E6\u05D5\u05E2\u05D9\u05EA, \u05DB\u05DA \u05E9\u05D0\u05EA\u05DD \u05D0\u05E3 \u05E4\u05E2\u05DD \u05DC\u05D0 \u05EA\u05E6\u05D8\u05E8\u05DB\u05D5 \u05DC\u05D4\u05E8\u05D9\u05DD \u05D8\u05DC\u05E4\u05D5\u05DF \u05D0\u05D5 \u05DC\u05E9\u05DC\u05D5\u05D7 \u05EA\u05D6\u05DB\u05D5\u05E8\u05EA \u05D1\u05E2\u05E6\u05DE\u05DB\u05DD.",
         step3Title: "\u05E8\u05D0\u05D5 \u05D0\u05D9\u05DA \u05D4\u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05E0\u05DB\u05E0\u05E1\u05D9\u05DD",
-        step3Desc: "60% \u05D9\u05D5\u05EA\u05E8 \u05D2\u05D1\u05D9\u05D9\u05D4. 40% \u05E9\u05D9\u05E4\u05D5\u05E8 \u05D1\u05EA\u05D6\u05E8\u05D9\u05DD. \u05D0\u05E4\u05E1 \u05E9\u05D9\u05D7\u05D5\u05EA \u05DE\u05D1\u05D9\u05DB\u05D5\u05EA. \u05D6\u05D4 \u05D4\u05D0\u05E4\u05E7\u05D8 \u05E9\u05DC Seenn.",
+        step3Desc: "40% \u05D9\u05D5\u05EA\u05E8 \u05D2\u05D1\u05D9\u05D9\u05D4. 40% \u05E9\u05D9\u05E4\u05D5\u05E8 \u05D1\u05EA\u05D6\u05E8\u05D9\u05DD. \u05D0\u05E4\u05E1 \u05E9\u05D9\u05D7\u05D5\u05EA \u05DE\u05D1\u05D9\u05DB\u05D5\u05EA. \u05D6\u05D4 \u05D4\u05D0\u05E4\u05E7\u05D8 \u05E9\u05DC Seenn.",
         stepPayTitle: "\u05E7\u05D9\u05E9\u05D5\u05E8\u05D9 \u05EA\u05E9\u05DC\u05D5\u05DD \u05D1\u05DC\u05D7\u05D9\u05E6\u05D4 \u05D0\u05D7\u05EA \u05E1\u05D5\u05D2\u05E8\u05D9\u05DD \u05D0\u05EA \u05DE\u05E2\u05D2\u05DC \u05D4\u05EA\u05E9\u05DC\u05D5\u05DD",
         stepPayDesc: "\u05DB\u05DC \u05EA\u05D6\u05DB\u05D5\u05E8\u05EA \u05DB\u05D5\u05DC\u05DC\u05EA \u05E7\u05D9\u05E9\u05D5\u05E8 \u05EA\u05E9\u05DC\u05D5\u05DD \u05DE\u05D0\u05D5\u05D1\u05D8\u05D7 \u05E2\u05DD \u05D4\u05E1\u05DB\u05D5\u05DD \u05D4\u05DE\u05D3\u05D5\u05D9\u05E7 \u05E9\u05DC \u05D4\u05D9\u05EA\u05E8\u05D4 \u05DC\u05EA\u05E9\u05DC\u05D5\u05DD \u2014 \u05D4\u05DC\u05E7\u05D5\u05D7 \u05DE\u05E1\u05DC\u05E7 \u05D0\u05EA \u05DE\u05DC\u05D5\u05D0 \u05D4\u05D7\u05D5\u05D1 \u05D1\u05DC\u05D7\u05D9\u05E6\u05D4 \u05D0\u05D7\u05EA, \u05D5\u05DB\u05DC \u05D7\u05E9\u05D1\u05D5\u05E0\u05D9\u05EA \u05D1\u05D0\u05D9\u05D7\u05D5\u05E8 \u05E0\u05E1\u05D2\u05E8\u05EA \u05DB\u05DE\u05E9\u05D5\u05DC\u05DE\u05EA.",
         buildWorkforce: "\u05DE\u05D5\u05DB\u05E0\u05D9\u05DD \u05DC\u05D2\u05D1\u05D9\u05D9\u05D4 \u05E2\u05DC \u05D8\u05D9\u05D9\u05E1 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9?",
@@ -352,7 +354,7 @@ const translations = {
 
         // Social proof
         trustedBy: "\u05E2\u05E1\u05E7\u05D9\u05DD \u05D1\u05D0\u05E8\u05D4\u05F4\u05D1 \u05D5\u05D1\u05D9\u05E9\u05E8\u05D0\u05DC \u05E1\u05D5\u05DE\u05DB\u05D9\u05DD \u05E2\u05DC\u05D9\u05E0\u05D5",
-        stat1Number: "60%",
+        stat1Number: "40%",
         stat1Label: "\u05D9\u05D5\u05EA\u05E8 \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05E9\u05E0\u05D2\u05D1\u05D5",
         stat2Number: "40%",
         stat2Label: "\u05E9\u05D9\u05E4\u05D5\u05E8 \u05D1\u05EA\u05D6\u05E8\u05D9\u05DD \u05D4\u05DE\u05D6\u05D5\u05DE\u05E0\u05D9\u05DD",
@@ -423,6 +425,8 @@ const translations = {
         additionalNotes: "\u05D4\u05E2\u05E8\u05D5\u05EA \u05E0\u05D5\u05E1\u05E4\u05D5\u05EA",
         requestDemo: "\u05E7\u05D1\u05E2\u05D5 \u05D4\u05D3\u05D2\u05DE\u05D4",
         sending: "\u05E9\u05D5\u05DC\u05D7...",
+        demoSuccess: "\uD83C\uDF89 \u05EA\u05D5\u05D3\u05D4! \u05D1\u05E7\u05E9\u05EA \u05D4\u05D4\u05D3\u05D2\u05DE\u05D4 \u05E9\u05DC\u05DB\u05DD \u05D4\u05EA\u05E7\u05D1\u05DC\u05D4. \u05E0\u05D9\u05E6\u05D5\u05E8 \u05D0\u05D9\u05EA\u05DB\u05DD \u05E7\u05E9\u05E8 \u05D1\u05D4\u05E7\u05D3\u05DD!",
+        demoError: "\u274C \u05DE\u05E9\u05D4\u05D5 \u05D4\u05E9\u05EA\u05D1\u05E9. \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1 \u05D0\u05D5 \u05E9\u05DC\u05D7\u05D5 \u05DC\u05E0\u05D5 \u05DE\u05D9\u05D9\u05DC \u05DC-hello@seenn.ai",
 
         // Contact page
         home: "\u05D3\u05E3 \u05D4\u05D1\u05D9\u05EA",
@@ -641,8 +645,15 @@ async function handleDemoSubmit(event) {
         const data = await response.json();
 
         if (data.success) {
-            // Success message
-            messageDiv.textContent = '🎉 Thank you! Your demo request has been received. We\'ll contact you shortly!';
+            // Track the lead conversion in GA4
+            if (typeof gtag === 'function') {
+                gtag('event', 'generate_lead', {
+                    form: 'demo',
+                    language: (document.documentElement.lang || 'en')
+                });
+            }
+            // Success message (localized, English fallback)
+            messageDiv.textContent = (translations[currentLang] && translations[currentLang].demoSuccess) || '🎉 Thank you! Your demo request has been received. We\'ll contact you shortly!';
             messageDiv.style.backgroundColor = '#d4edda';
             messageDiv.style.color = '#155724';
             messageDiv.style.border = '1px solid #c3e6cb';
@@ -660,8 +671,8 @@ async function handleDemoSubmit(event) {
             throw new Error('Form submission failed');
         }
     } catch (error) {
-        // Error message
-        messageDiv.textContent = '❌ Something went wrong. Please try again or email us at hello@seenn.ai';
+        // Error message (localized, English fallback)
+        messageDiv.textContent = (translations[currentLang] && translations[currentLang].demoError) || '❌ Something went wrong. Please try again or email us at hello@seenn.ai';
         messageDiv.style.backgroundColor = '#f8d7da';
         messageDiv.style.color = '#721c24';
         messageDiv.style.border = '1px solid #f5c6cb';
@@ -683,4 +694,28 @@ async function handleDemoSubmit(event) {
         v.addEventListener('ended', function () { v.currentTime = 0; play(); });
         play();
     });
+})();
+
+// Floating WhatsApp contact button (rendered on every page)
+(function () {
+    function addWhatsApp() {
+        if (document.getElementById('waFloat')) return;
+        var isHe = (document.documentElement.lang || 'en').indexOf('he') === 0;
+        var a = document.createElement('a');
+        a.id = 'waFloat';
+        a.href = 'https://wa.me/972559311784';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.setAttribute('aria-label', isHe ? 'צרו קשר בוואטסאפ' : 'Chat with us on WhatsApp');
+        a.style.cssText = 'position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:#25D366;box-shadow:0 6px 18px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center;z-index:998;transition:transform .15s ease;';
+        a.addEventListener('mouseenter', function () { a.style.transform = 'scale(1.08)'; });
+        a.addEventListener('mouseleave', function () { a.style.transform = 'scale(1)'; });
+        a.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.59 4.46 1.712 6.4L3.2 28.8l6.56-1.716a12.74 12.74 0 0 0 6.244 1.62h.005c7.06 0 12.8-5.74 12.8-12.8a12.72 12.72 0 0 0-3.752-9.056A12.72 12.72 0 0 0 16.004 3.2zm0 23.36a10.6 10.6 0 0 1-5.404-1.48l-.388-.23-4.028 1.056 1.074-3.928-.252-.404a10.56 10.56 0 0 1-1.62-5.63c0-5.86 4.77-10.63 10.632-10.63a10.56 10.56 0 0 1 7.516 3.116 10.56 10.56 0 0 1 3.114 7.52c0 5.86-4.77 10.63-10.63 10.63zm5.83-7.96c-.32-.16-1.89-.932-2.182-1.038-.292-.106-.504-.16-.716.16-.212.32-.82 1.038-1.006 1.25-.186.212-.37.24-.69.08-.32-.16-1.35-.498-2.57-1.586-.95-.848-1.592-1.894-1.778-2.214-.186-.32-.02-.492.14-.652.144-.144.32-.374.48-.56.16-.186.212-.32.32-.532.106-.212.054-.398-.026-.558-.08-.16-.716-1.726-.98-2.364-.258-.62-.52-.536-.716-.546l-.61-.01c-.212 0-.558.08-.85.4-.292.32-1.114 1.09-1.114 2.656 0 1.566 1.14 3.08 1.3 3.292.16.212 2.246 3.43 5.442 4.81.76.328 1.354.524 1.816.67.764.242 1.46.208 2.01.126.612-.092 1.89-.772 2.156-1.518.266-.746.266-1.386.186-1.518-.08-.132-.292-.212-.612-.372z"/></svg>';
+        (document.body || document.documentElement).appendChild(a);
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addWhatsApp);
+    } else {
+        addWhatsApp();
+    }
 })();

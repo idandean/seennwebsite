@@ -1,0 +1,36 @@
+# Seenn
+
+> Seenn is an AI accounts-receivable agent for small and mid-sized businesses. Its AI coworker, Jess, contacts overdue clients by phone, WhatsApp, SMS, and email, follows your payment rules, handles disputes, records outcomes, and gets you paid faster — without adding staff. Serving the United States and Israel. Hebrew site at /he/.
+
+Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started takes minutes: export your receivables from any ERP or accounting system, connect a phone/WhatsApp number, set your collection rules and escalation timing, and Jess starts contacting overdue clients automatically. Every interaction is logged to your dashboard.
+
+## Product
+- [Seenn — AI Accounts Receivable Agent (home)](https://www.seenn.ai/): what Seenn is and how the AI agent Jess collects overdue invoices automatically
+- [About Seenn](https://www.seenn.ai/about.html): the company and why we built an AI collections agent
+- [Contact / Request a Demo](https://www.seenn.ai/contact.html): reach the team or book a demo
+- Pricing: custom plans built around your receivables volume — request a demo from any page
+
+## Guides (English)
+- [AI Accounts Receivable Automation](https://www.seenn.ai/blog/ai-accounts-receivable-automation.html)
+- [The Complete Guide to AI Payment Collection](https://www.seenn.ai/blog/ai-payment-collection-guide.html)
+- [How to Reduce Overdue Payments](https://www.seenn.ai/blog/reduce-overdue-payments.html)
+- [WhatsApp Payment Reminders](https://www.seenn.ai/blog/whatsapp-payment-reminders.html)
+- [Net 30 / 60 / 90 Payment Terms Explained](https://www.seenn.ai/blog/net-30-60-90-payment-terms.html)
+- [Cash Flow Management for Small Businesses](https://www.seenn.ai/blog/cash-flow-management-small-business.html)
+
+## Guides (Hebrew / עברית)
+- [גבייה אוטומטית מלקוחות עם AI](https://www.seenn.ai/he/blog/ai-accounts-receivable-automation.html)
+- [המדריך המלא לגביית תשלומים עם בינה מלאכותית](https://www.seenn.ai/he/blog/ai-payment-collection-guide.html)
+- [איך להקטין חובות פתוחים מלקוחות](https://www.seenn.ai/he/blog/reduce-overdue-payments.html)
+- [תזכורות תשלום בוואטסאפ ללקוחות](https://www.seenn.ai/he/blog/whatsapp-payment-reminders.html)
+- [תנאי תשלום שוטף + 30 / 60 / 90](https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html)
+- [ניהול תזרים מזומנים לעסק קטן](https://www.seenn.ai/he/blog/cash-flow-management-small-business.html)
+
+## Key facts
+- Product: AI accounts-receivable / collections agent (the AI agent is named Jess)
+- Channels: phone (natural voice), WhatsApp, SMS, email
+- Capabilities: automated reminders, payment links, dispute handling, outcome logging, custom escalation rules
+- Integrations: connects with ERP and accounting systems (e.g. Priority, SAP, Hashavshevet)
+- Markets: United States, Israel
+- Languages: English (https://www.seenn.ai/), Hebrew (https://www.seenn.ai/he/)
+- Contact: hello@seenn.ai
