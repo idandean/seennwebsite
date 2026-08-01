@@ -1,0 +1,723 @@
+/**
+ * The widget: DOM, orchestration and lifecycle.
+ *
+ * Everything that can fail lives behind an injectable dependency
+ * (`WidgetDeps`), so the tests drive the real state machine with a fake
+ * microphone, a fake endpoint and a fake transport.
+ */
+
+import { PublicVoiceDemoClient, DemoRequestError, rateLimitScopeFor } from './client';
+import { createLiveKitTransport } from './transport';
+import { directionFor, resolveLocale, stringsFor } from './i18n';
+import { initialContext, isActive, reduce } from './state';
+import { logger } from './logging';
+import { unavailableReason } from './config';
+import type { VoiceDemoConfig } from './config';
+import type { DemoLocale, RecordingConsent } from './contract';
+import type { Strings } from './i18n';
+import type { AnyErrorCode, DemoContext, DemoEvent, DemoState, FinishReason } from './state';
+import type { TransportEvents, TransportFactory, VoiceTransport } from './transport';
+
+export interface WidgetDeps {
+  createClient?: (config: VoiceDemoConfig) => PublicVoiceDemoClient;
+  createTransport?: TransportFactory;
+  /** Overridden in tests; the real one is getUserMedia. */
+  requestMicrophone?: () => Promise<MediaStream>;
+  now?: () => number;
+}
+
+/** Orb modifier per state — the ported orb's vocabulary, reused. */
+const ORB_MODIFIER: Record<DemoState, string> = {
+  unavailable: 'failed',
+  ready: 'idle',
+  requestingMicrophone: 'prompting',
+  connecting: 'submitting',
+  listening: 'dialing',
+  assistantSpeaking: 'dialing',
+  reconnecting: 'submitting',
+  finished: 'onTheWay',
+  rateLimited: 'failed',
+  error: 'failed',
+};
+
+const ICONS = {
+  mic: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>',
+  hangUp: '<path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><path d="M22 2 2 22"/>',
+  spinner: '<path d="M21 12a9 9 0 1 1-6.22-8.56"/>',
+  retry: '<path d="M3 10h6V4"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 10"/>',
+  blocked: '<path d="M4.9 4.9 19.1 19.1"/><circle cx="12" cy="12" r="9"/>',
+};
+
+function icon(paths: string, className = ''): string {
+  return (
+    `<svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" ` +
+    `stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ` +
+    `aria-hidden="true">${paths}</svg>`
+  );
+}
+
+function mmss(seconds: number): string {
+  const total = Math.max(0, Math.round(seconds));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
+function track(event: string, params: Record<string, unknown> = {}): void {
+  try {
+    const gtag = (window as { gtag?: (...args: unknown[]) => void }).gtag;
+    // No consent gate on this site: GA loads unconditionally and there is no
+    // banner. If one is ever added, this is the single choke point.
+    gtag?.('event', event, { event_category: 'voice_demo', ...params });
+  } catch {
+    // Analytics must never break the demo.
+  }
+}
+
+export class VoiceDemoWidget {
+  readonly mount: HTMLElement;
+
+  private readonly config: VoiceDemoConfig;
+  private readonly deps: WidgetDeps;
+  private readonly client: PublicVoiceDemoClient;
+  private readonly makeTransport: TransportFactory;
+  private readonly now: () => number;
+
+  private context: DemoContext;
+  private locale: DemoLocale;
+  private strings: Strings;
+
+  private transport: VoiceTransport | null = null;
+  private microphone: MediaStream | null = null;
+  private abortController: AbortController | null = null;
+  private consentDecision: ((accepted: boolean) => void) | null = null;
+
+  private timers: ReturnType<typeof setTimeout>[] = [];
+  private tickTimer: ReturnType<typeof setInterval> | null = null;
+  private deadline = 0;
+  private destroyed = false;
+
+  private root!: HTMLElement;
+  private orb!: HTMLElement;
+  private primaryButton!: HTMLButtonElement;
+  private disconnectButton!: HTMLButtonElement;
+  private headline!: HTMLElement;
+  private body!: HTMLElement;
+  private hint!: HTMLElement;
+  private consentPanel!: HTMLElement;
+  private consentText!: HTMLElement;
+  private consentLink!: HTMLAnchorElement;
+  private consentAccept!: HTMLButtonElement;
+  private consentDecline!: HTMLButtonElement;
+  private ctaWrap!: HTMLElement;
+  private ctaLink!: HTMLAnchorElement;
+  private audioElement!: HTMLAudioElement;
+  private liveRegion!: HTMLElement;
+
+  private readonly onPageHide = (): void => {
+    // A room that outlives the page keeps burning agent minutes.
+    void this.disconnect('page_hidden');
+  };
+
+  private mountObserver: MutationObserver | null = null;
+
+  constructor(mount: HTMLElement, config: VoiceDemoConfig, deps: WidgetDeps = {}) {
+    this.mount = mount;
+    this.config = config;
+    this.deps = deps;
+    this.now = deps.now ?? (() => Date.now());
+
+    this.client =
+      deps.createClient?.(config) ??
+      new PublicVoiceDemoClient({
+        baseUrl: config.endpointBaseUrl,
+        anonKey: config.anonKey,
+        path: config.endpointPath,
+      });
+
+    this.makeTransport =
+      deps.createTransport ??
+      ((events: TransportEvents) =>
+        createLiveKitTransport(events, { moduleUrl: config.livekitModuleUrl }));
+
+    this.locale = resolveLocale(config.locale, document.documentElement.getAttribute('lang'));
+    this.strings = stringsFor(this.locale);
+    this.context = initialContext(unavailableReason(config));
+
+    this.build();
+    this.render();
+    this.watchLifecycle();
+  }
+
+  get state(): DemoState {
+    return this.context.state;
+  }
+
+  get snapshot(): DemoContext {
+    return this.context;
+  }
+
+  // --- DOM ----------------------------------------------------------------
+
+  private build(): void {
+    const root = document.createElement('div');
+    root.className = 'svd';
+    root.setAttribute('dir', directionFor(this.locale));
+    root.lang = this.locale;
+
+    const size = this.config.orbSize;
+    root.innerHTML = `
+      <div class="svd__stage">
+        <div class="preview-orb" style="width:${size}px;height:${size}px">
+          <span class="preview-orb__glow" aria-hidden="true"></span>
+          <span class="preview-orb__layer preview-orb__layer--a" aria-hidden="true"></span>
+          <span class="preview-orb__layer preview-orb__layer--b" aria-hidden="true"></span>
+          <span class="preview-orb__layer preview-orb__layer--c" aria-hidden="true"></span>
+          <span class="preview-orb__wisp" aria-hidden="true"></span>
+          <span class="preview-orb__rim" aria-hidden="true"></span>
+          <span class="svd__ripples" aria-hidden="true"></span>
+          <span class="svd__level" aria-hidden="true"></span>
+          <button type="button" class="preview-orb__call"></button>
+        </div>
+      </div>
+      <p class="svd__headline"></p>
+      <p class="svd__sub"></p>
+      <p class="svd__hint"></p>
+      <div class="svd__consent" role="group" hidden>
+        <p class="svd__consent-heading"></p>
+        <p class="svd__consent-text"></p>
+        <a class="svd__consent-link" target="_blank" rel="noopener noreferrer" hidden></a>
+        <div class="svd__consent-actions">
+          <button type="button" class="svd__consent-accept"></button>
+          <button type="button" class="svd__consent-decline"></button>
+        </div>
+      </div>
+      <button type="button" class="svd__disconnect" hidden></button>
+      <div class="svd__cta" hidden>
+        <a class="svd__cta-button" href="#"></a>
+      </div>
+      <audio class="svd__audio" playsinline></audio>
+      <span class="svd__sr-only" role="status" aria-live="polite"></span>
+    `;
+
+    const q = <T extends HTMLElement>(selector: string): T => {
+      const el = root.querySelector<T>(selector);
+      if (!el) throw new Error(`voice-demo: missing ${selector}`);
+      return el;
+    };
+
+    this.root = root;
+    this.orb = q('.preview-orb');
+    this.primaryButton = q<HTMLButtonElement>('.preview-orb__call');
+    this.disconnectButton = q<HTMLButtonElement>('.svd__disconnect');
+    this.headline = q('.svd__headline');
+    this.body = q('.svd__sub');
+    this.hint = q('.svd__hint');
+    this.consentPanel = q('.svd__consent');
+    this.consentText = q('.svd__consent-text');
+    this.consentLink = q<HTMLAnchorElement>('.svd__consent-link');
+    this.consentAccept = q<HTMLButtonElement>('.svd__consent-accept');
+    this.consentDecline = q<HTMLButtonElement>('.svd__consent-decline');
+    this.ctaWrap = q('.svd__cta');
+    this.ctaLink = q<HTMLAnchorElement>('.svd__cta-button');
+    this.audioElement = q<HTMLAudioElement>('.svd__audio');
+    this.liveRegion = q('.svd__sr-only');
+
+    this.audioElement.autoplay = true;
+
+    this.primaryButton.addEventListener('click', () => {
+      // The ONLY path that reaches getUserMedia. Nothing on load, nothing on
+      // scroll, nothing on hover.
+      void this.onPrimaryAction();
+    });
+    this.disconnectButton.addEventListener('click', () => {
+      void this.disconnect('user_disconnected');
+    });
+    this.consentAccept.addEventListener('click', () => this.consentDecision?.(true));
+    this.consentDecline.addEventListener('click', () => this.consentDecision?.(false));
+    this.ctaLink.addEventListener('click', () => {
+      track('voice_demo_cta_click', { voice_demo_state: this.context.state });
+    });
+
+    this.mount.appendChild(root);
+  }
+
+  private dispatch(event: DemoEvent): boolean {
+    const next = reduce(this.context, event);
+    if (next === this.context) return false; // rejected transition
+    this.context = next;
+    this.render();
+    return true;
+  }
+
+  private render(): void {
+    if (this.destroyed) return;
+    const { state, pendingConsent } = this.context;
+    const s = this.strings;
+
+    this.root.setAttribute('data-state', state);
+    this.root.setAttribute('dir', directionFor(this.locale));
+    this.root.lang = this.locale;
+    this.root.classList.toggle('svd--consent', pendingConsent !== null);
+
+    this.orb.className = `preview-orb preview-orb--${ORB_MODIFIER[state]}` +
+      (state === 'assistantSpeaking' ? ' preview-orb--reactive' : '');
+
+    const ripples = this.root.querySelector('.svd__ripples');
+    if (ripples) {
+      ripples.innerHTML =
+        state === 'assistantSpeaking'
+          ? '<span class="preview-orb__ripple"></span>' +
+            '<span class="preview-orb__ripple preview-orb__ripple--2"></span>' +
+            '<span class="preview-orb__ripple preview-orb__ripple--3"></span>'
+          : '';
+    }
+
+    const copy = this.copyFor();
+    this.headline.textContent = copy.title;
+    this.body.textContent = copy.body;
+    this.hint.textContent = copy.hint ?? '';
+    this.hint.hidden = !copy.hint;
+
+    // Primary button
+    const busy = state === 'requestingMicrophone' || state === 'connecting' || state === 'reconnecting';
+    this.primaryButton.disabled = busy || state === 'unavailable' || pendingConsent !== null;
+    this.primaryButton.innerHTML =
+      state === 'listening' || state === 'assistantSpeaking'
+        ? icon(ICONS.hangUp)
+        : busy
+          ? icon(ICONS.spinner, 'svd-spin')
+          : state === 'unavailable'
+            ? icon(ICONS.blocked)
+            : state === 'ready'
+              ? icon(ICONS.mic)
+              : icon(ICONS.retry);
+
+    const label =
+      state === 'listening' || state === 'assistantSpeaking'
+        ? s.disconnect
+        : state === 'ready'
+          ? s.startLabel
+          : s.retry;
+    this.primaryButton.setAttribute('aria-label', label);
+    this.primaryButton.setAttribute('title', label);
+
+    // Explicit disconnect control, separate from the orb, whenever a session
+    // is live enough to leak.
+    const canDisconnect = isActive(state);
+    this.disconnectButton.hidden = !canDisconnect;
+    this.disconnectButton.textContent = s.disconnect;
+
+    // Consent — wording is always the server's.
+    this.consentPanel.hidden = pendingConsent === null;
+    if (pendingConsent) {
+      const heading = this.root.querySelector('.svd__consent-heading');
+      if (heading) heading.textContent = s.consentHeading;
+      this.consentText.textContent = pendingConsent.text;
+      this.consentAccept.textContent = s.consentAccept;
+      this.consentDecline.textContent = s.consentDecline;
+      if (pendingConsent.policyUrl) {
+        this.consentLink.href = pendingConsent.policyUrl;
+        this.consentLink.textContent = s.consentPolicyLink;
+        this.consentLink.hidden = false;
+      } else {
+        this.consentLink.hidden = true;
+      }
+    }
+
+    // Conversion moment
+    const showCta = state === 'finished' || state === 'rateLimited';
+    this.ctaWrap.hidden = !showCta;
+    this.ctaLink.textContent = s.signupCta;
+    this.ctaLink.href = `${this.config.signupUrl}?utm_source=website&utm_medium=voice_demo&utm_campaign=hero_orb`;
+
+    this.liveRegion.textContent = `${copy.title}. ${copy.body}`;
+  }
+
+  private copyFor(): { title: string; body: string; hint?: string } {
+    const s = this.strings;
+    const { state, errorCode, rateLimitScope } = this.context;
+
+    switch (state) {
+      case 'unavailable':
+        return { title: s.unavailableTitle, body: s.unavailableBody };
+      case 'ready':
+        return { title: s.readyTitle, body: s.readyBody };
+      case 'requestingMicrophone':
+        return { title: s.micTitle, body: s.micBody };
+      case 'connecting':
+        return { title: s.connectingTitle, body: s.connectingBody };
+      case 'listening':
+        return { title: s.listeningTitle, body: `${s.listeningBody} ${this.remainingLabel()}` };
+      case 'assistantSpeaking':
+        return { title: s.speakingTitle, body: `${s.speakingBody} ${this.remainingLabel()}` };
+      case 'reconnecting':
+        return { title: s.reconnectingTitle, body: s.reconnectingBody };
+      case 'finished':
+        return { title: s.finishedTitle, body: s.finishedBody };
+      case 'rateLimited':
+        return rateLimitScope === 'global_capacity'
+          ? { title: s.rateLimitedCapacityTitle, body: s.rateLimitedCapacityBody }
+          : { title: s.rateLimitedVisitorTitle, body: s.rateLimitedVisitorBody };
+      case 'error': {
+        const key = `err_${errorCode ?? 'server_error'}` as keyof Strings;
+        const body = (s[key] as string | undefined) ?? s.err_server_error;
+        const hint =
+          errorCode === 'microphone_denied' ? s.err_microphone_denied_hint : undefined;
+        return hint ? { title: s.errorTitle, body, hint } : { title: s.errorTitle, body };
+      }
+    }
+  }
+
+  private remainingLabel(): string {
+    if (!this.deadline) return '';
+    return `${mmss((this.deadline - this.now()) / 1000)} ${this.strings.timeRemaining}.`;
+  }
+
+  // --- Flow ---------------------------------------------------------------
+
+  private async onPrimaryAction(): Promise<void> {
+    if (isActive(this.context.state)) {
+      await this.disconnect('user_disconnected');
+      return;
+    }
+    await this.start();
+  }
+
+  /**
+   * Begins a session. Safe to call twice: the machine rejects a second START
+   * while a connection is in flight, and this returns without touching the
+   * microphone or the network.
+   */
+  async start(): Promise<void> {
+    if (this.destroyed) return;
+
+    const reason = unavailableReason(this.config);
+    if (reason) {
+      this.dispatch({ type: 'DEMO_UNAVAILABLE', reason });
+      return;
+    }
+
+    if (!this.dispatch({ type: 'START' })) return; // duplicate — single-flight guard
+
+    const attempt = this.context.attempt;
+    const stale = (): boolean => this.destroyed || this.context.attempt !== attempt;
+
+    track('voice_demo_start', { voice_demo_locale: this.locale });
+
+    // Unlock audio inside the click gesture; iOS Safari grants playback only to
+    // a chain rooted here.
+    this.primeAudio();
+
+    // 1. Microphone — never before this point.
+    let microphone: MediaStream;
+    try {
+      microphone = await this.requestMicrophone();
+    } catch (cause) {
+      if (stale()) return;
+      this.handleMicrophoneError(cause);
+      return;
+    }
+    if (stale()) {
+      microphone.getTracks().forEach((t) => t.stop());
+      return;
+    }
+    this.microphone = microphone;
+    this.dispatch({ type: 'MIC_GRANTED' });
+    track('voice_demo_mic_granted');
+
+    // 2. Session, possibly via a consent round-trip.
+    this.abortController = new AbortController();
+    let session;
+    try {
+      session = await this.obtainSession(attempt);
+    } catch (cause) {
+      if (stale()) return;
+      this.handleRequestError(cause);
+      return;
+    }
+    if (stale() || !session) return;
+
+    this.dispatch({ type: 'SESSION_GRANTED', session });
+
+    if (Date.parse(session.expiresAt) <= this.now()) {
+      this.fail('session_expired_before_start');
+      return;
+    }
+
+    // 3. Real-time leg.
+    try {
+      const transport = this.makeTransport(this.transportEvents(attempt));
+      this.transport = transport;
+      await transport.connect({
+        url: session.livekitUrl,
+        token: session.token,
+        microphone,
+        audioElement: this.audioElement,
+      });
+    } catch (cause) {
+      if (stale()) return;
+      logger.error('transport failed', cause);
+      this.fail('transport_failed');
+      return;
+    }
+    if (stale()) return;
+
+    this.beginCountdown(session.expiresAt);
+    this.dispatch({ type: 'CONNECTED' });
+    track('voice_demo_connected', { voice_demo_session: session.sessionId });
+  }
+
+  /**
+   * Requests a session, satisfying a consent demand if one comes back. At most
+   * two round-trips: ask, accept, ask again.
+   */
+  private async obtainSession(attempt: number): Promise<import('./contract').DemoSession | null> {
+    for (let round = 0; round < 2; round += 1) {
+      const result = await this.client.createSession({
+        locale: this.locale,
+        consent: this.context.acceptedConsent ?? undefined,
+        turnstileToken: undefined,
+        signal: this.abortController?.signal,
+      });
+
+      if (this.destroyed || this.context.attempt !== attempt) return null;
+
+      if (result.kind === 'session') {
+        const recording = result.session.recording;
+        // A session that records but has not been agreed to still needs a yes.
+        if (recording?.required && !this.hasAccepted(recording)) {
+          const accepted = await this.askForConsent(recording, attempt);
+          if (!accepted) return null;
+          continue;
+        }
+        return result.session;
+      }
+
+      const accepted = await this.askForConsent(result.consent, attempt);
+      if (!accepted) return null;
+    }
+
+    this.fail('consent_required');
+    return null;
+  }
+
+  private hasAccepted(consent: RecordingConsent): boolean {
+    return this.context.acceptedConsent?.policyVersion === consent.policyVersion;
+  }
+
+  /** Renders the server's wording and waits for a decision. */
+  private async askForConsent(consent: RecordingConsent, attempt: number): Promise<boolean> {
+    if (!this.dispatch({ type: 'CONSENT_REQUIRED', consent })) return false;
+
+    const accepted = await new Promise<boolean>((resolve) => {
+      this.consentDecision = resolve;
+    });
+    this.consentDecision = null;
+
+    if (this.destroyed || this.context.attempt !== attempt) return false;
+
+    if (!accepted) {
+      track('voice_demo_consent_declined', { voice_demo_policy: consent.policyVersion });
+      this.dispatch({ type: 'CONSENT_DECLINED' });
+      this.releaseMicrophone();
+      return false;
+    }
+
+    this.dispatch({
+      type: 'CONSENT_ACCEPTED',
+      acceptedAt: new Date(this.now()).toISOString(),
+    });
+    track('voice_demo_consent_accepted', { voice_demo_policy: consent.policyVersion });
+    return true;
+  }
+
+  private transportEvents(attempt: number): TransportEvents {
+    const guard = (fn: () => void) => (): void => {
+      if (this.destroyed || this.context.attempt !== attempt) return;
+      fn();
+    };
+
+    return {
+      onConnected: guard(() => undefined),
+      onDisconnected: guard(() => {
+        if (isActive(this.context.state)) void this.disconnect('remote_disconnected');
+      }),
+      onReconnecting: guard(() => {
+        this.dispatch({ type: 'RECONNECTING' });
+        // A reconnect that never resolves must not hang in `reconnecting`.
+        this.after(this.config.reconnectTimeoutSeconds * 1000, () => {
+          if (this.context.state === 'reconnecting') this.fail('reconnect_failed');
+        });
+      }),
+      onReconnected: guard(() => this.dispatch({ type: 'RECONNECTED' })),
+      onAssistantSpeaking: (speaking: boolean) =>
+        guard(() =>
+          this.dispatch({
+            type: speaking ? 'ASSISTANT_SPEAKING_START' : 'ASSISTANT_SPEAKING_END',
+          }),
+        )(),
+      onLevel: (level: number) => {
+        if (this.destroyed) return;
+        this.orb.style.setProperty('--orb-level', level.toFixed(3));
+      },
+      onError: guard(() => this.fail('transport_failed')),
+    };
+  }
+
+  private async requestMicrophone(): Promise<MediaStream> {
+    if (this.deps.requestMicrophone) return this.deps.requestMicrophone();
+    return navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+    });
+  }
+
+  private handleMicrophoneError(cause: unknown): void {
+    const name = (cause as { name?: string })?.name;
+    if (name === 'NotAllowedError' || name === 'PermissionDeniedError' || name === 'SecurityError') {
+      track('voice_demo_mic_denied');
+      this.dispatch({ type: 'MIC_DENIED' });
+      return;
+    }
+    this.dispatch({ type: 'MIC_UNAVAILABLE' });
+  }
+
+  private handleRequestError(cause: unknown): void {
+    if ((cause as { name?: string })?.name === 'AbortError') return;
+
+    if (cause instanceof DemoRequestError) {
+      if (cause.code === 'rate_limited' || cause.code === 'demo_capacity_reached') {
+        this.releaseMicrophone();
+        this.dispatch({ type: 'RATE_LIMITED', scope: rateLimitScopeFor(cause.code) });
+        track('voice_demo_rate_limited', { voice_demo_code: cause.code });
+        return;
+      }
+      if (cause.code === 'demo_disabled' || cause.code === 'demo_unavailable') {
+        this.releaseMicrophone();
+        this.dispatch({ type: 'DEMO_UNAVAILABLE', reason: cause.code });
+        return;
+      }
+      this.fail(cause.code);
+      return;
+    }
+
+    logger.error('session request failed', cause);
+    this.fail('server_error');
+  }
+
+  private fail(code: AnyErrorCode): void {
+    this.releaseMicrophone();
+    void this.teardownTransport();
+    this.clearTimers();
+    this.dispatch({ type: 'ERROR', code });
+    track('voice_demo_error', { voice_demo_code: code });
+  }
+
+  /** Ends the session and releases every resource it held. */
+  async disconnect(reason: FinishReason): Promise<void> {
+    if (!isActive(this.context.state)) return;
+    this.clearTimers();
+    this.abortController?.abort();
+    this.abortController = null;
+    this.releaseMicrophone();
+    await this.teardownTransport();
+    this.dispatch({ type: 'DISCONNECT', reason });
+    track('voice_demo_finished', { voice_demo_reason: reason });
+  }
+
+  private beginCountdown(expiresAt: string): void {
+    const expiry = Date.parse(expiresAt);
+    const cap = this.now() + this.config.maxSessionSeconds * 1000;
+    // Whichever runs out first.
+    this.deadline = Number.isFinite(expiry) ? Math.min(expiry, cap) : cap;
+
+    this.tickTimer = setInterval(() => {
+      if (!isActive(this.context.state)) return;
+      this.render();
+    }, 1000);
+
+    this.after(Math.max(0, this.deadline - this.now()), () => {
+      void this.disconnect('session_expired');
+    });
+  }
+
+  private primeAudio(): void {
+    try {
+      this.audioElement.muted = false;
+      // jsdom returns undefined here rather than a promise, so this cannot
+      // assume a thenable.
+      const played: unknown = this.audioElement.play?.();
+      if (played && typeof (played as Promise<void>).catch === 'function') {
+        void (played as Promise<void>).catch(() => undefined);
+      }
+    } catch {
+      // An empty element that will not play is still unlocked by the attempt.
+    }
+  }
+
+  private releaseMicrophone(): void {
+    this.microphone?.getTracks().forEach((t) => t.stop());
+    this.microphone = null;
+  }
+
+  private async teardownTransport(): Promise<void> {
+    const transport = this.transport;
+    this.transport = null;
+    await transport?.disconnect();
+  }
+
+  private after(ms: number, fn: () => void): void {
+    this.timers.push(setTimeout(fn, ms));
+  }
+
+  private clearTimers(): void {
+    this.timers.forEach(clearTimeout);
+    this.timers = [];
+    if (this.tickTimer !== null) {
+      clearInterval(this.tickTimer);
+      this.tickTimer = null;
+    }
+    this.deadline = 0;
+  }
+
+  // --- Lifecycle ----------------------------------------------------------
+
+  private watchLifecycle(): void {
+    window.addEventListener('pagehide', this.onPageHide);
+
+    // "Cleanup on navigation/modal close": if whatever contained the widget is
+    // torn out of the DOM, the session goes with it.
+    if (typeof MutationObserver === 'function' && this.mount.parentNode) {
+      this.mountObserver = new MutationObserver(() => {
+        if (!this.mount.isConnected) this.destroy();
+      });
+      this.mountObserver.observe(document.body, { childList: true, subtree: true });
+    }
+  }
+
+  /** Idempotent. Releases the microphone, the room, timers and listeners. */
+  destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
+
+    this.clearTimers();
+    this.abortController?.abort();
+    this.abortController = null;
+    this.consentDecision?.(false);
+    this.consentDecision = null;
+    this.releaseMicrophone();
+    void this.teardownTransport();
+
+    window.removeEventListener('pagehide', this.onPageHide);
+    this.mountObserver?.disconnect();
+    this.mountObserver = null;
+
+    this.root.remove();
+  }
+
+  /** Re-renders in a new locale; used when the page's language toggle fires. */
+  setLocale(locale: DemoLocale): void {
+    if (locale === this.locale) return;
+    this.locale = locale;
+    this.strings = stringsFor(locale);
+    this.render();
+  }
+}

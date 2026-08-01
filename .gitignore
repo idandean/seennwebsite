@@ -4,3 +4,6 @@
 .agents/
 .claude/skills/
 skills-lock.json
+
+# Voice-demo toolchain deps (build output js/voice-demo.js IS committed)
+tools/voice-demo/node_modules/

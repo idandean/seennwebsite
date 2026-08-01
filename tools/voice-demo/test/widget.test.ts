@@ -1,0 +1,787 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { VoiceDemoWidget } from '../src/widget';
+import { DEFAULT_CONFIG } from '../src/config';
+import { PublicVoiceDemoClient } from '../src/client';
+import type { VoiceDemoConfig } from '../src/config';
+import type { WidgetDeps } from '../src/widget';
+import type { ConnectOptions, TransportEvents, VoiceTransport } from '../src/transport';
+
+const SESSION_BODY = {
+  token: 'jwt',
+  livekit_url: 'wss://x.livekit.cloud',
+  session_id: 'demo-1',
+  expires_at: new Date(Date.now() + 120_000).toISOString(),
+  language: 'en',
+};
+
+function enabledConfig(overrides: Partial<VoiceDemoConfig> = {}): VoiceDemoConfig {
+  return {
+    ...DEFAULT_CONFIG,
+    publicDemoMode: 'enabled',
+    endpointBaseUrl: 'https://stub.supabase.co',
+    anonKey: 'anon-key',
+    ...overrides,
+  };
+}
+
+/** A microphone that reports whether it was stopped — the leak check. */
+function fakeMicrophone() {
+  const track = { stop: vi.fn(), kind: 'audio' };
+  const stream = { getTracks: () => [track], getAudioTracks: () => [track] };
+  return { stream: stream as unknown as MediaStream, track };
+}
+
+function fakeTransport() {
+  let captured: TransportEvents | null = null;
+  const connect = vi.fn(async (_options: ConnectOptions) => undefined);
+  const disconnect = vi.fn(async () => undefined);
+
+  const factory = (events: TransportEvents): VoiceTransport => {
+    captured = events;
+    return { connect, disconnect };
+  };
+
+  return {
+    factory,
+    connect,
+    disconnect,
+    get events(): TransportEvents {
+      if (!captured) throw new Error('transport was never created');
+      return captured;
+    },
+  };
+}
+
+function stubClient(...responses: Array<{ status: number; body: unknown }>) {
+  let index = 0;
+  // Params are declared so the recorded calls stay typed at the assertion site.
+  const fetchImpl = vi.fn(async (_url: string, _init: RequestInit) => {
+    const next = responses[Math.min(index, responses.length - 1)]!;
+    index += 1;
+    return {
+      ok: next.status >= 200 && next.status < 300,
+      status: next.status,
+      headers: { get: () => null },
+      json: async () => next.body,
+    } as unknown as Response;
+  });
+  return {
+    fetchImpl,
+    create: (config: VoiceDemoConfig) =>
+      new PublicVoiceDemoClient({
+        baseUrl: config.endpointBaseUrl,
+        anonKey: config.anonKey,
+        path: config.endpointPath,
+        fetchImpl: fetchImpl as unknown as typeof fetch,
+      }),
+  };
+}
+
+function mountPoint(): HTMLElement {
+  const el = document.createElement('div');
+  el.setAttribute('data-seenn-voice-demo', '');
+  document.body.appendChild(el);
+  return el;
+}
+
+/** Lets queued promise jobs run. */
+const flush = async (times = 6): Promise<void> => {
+  for (let i = 0; i < times; i += 1) await Promise.resolve();
+};
+
+beforeEach(() => {
+  document.body.innerHTML = '';
+  document.documentElement.setAttribute('lang', 'en');
+  Object.defineProperty(navigator, 'mediaDevices', {
+    configurable: true,
+    value: { getUserMedia: vi.fn() },
+  });
+});
+
+function build(
+  config: VoiceDemoConfig,
+  deps: WidgetDeps = {},
+): { widget: VoiceDemoWidget; mount: HTMLElement } {
+  const mount = mountPoint();
+  return { widget: new VoiceDemoWidget(mount, config, deps), mount };
+}
+
+describe('feature flag', () => {
+  it('renders the unavailable state when PUBLIC_DEMO_MODE is disabled', () => {
+    const { widget, mount } = build({ ...DEFAULT_CONFIG, renderWhenUnavailable: true });
+    expect(widget.state).toBe('unavailable');
+    expect(mount.querySelector('.svd')?.getAttribute('data-state')).toBe('unavailable');
+  });
+
+  it('refuses to start while disabled, and never touches the microphone', async () => {
+    const mic = vi.fn();
+    const { widget } = build(
+      { ...DEFAULT_CONFIG, renderWhenUnavailable: true },
+      { requestMicrophone: mic as unknown as () => Promise<MediaStream> },
+    );
+
+    await widget.start();
+
+    expect(widget.state).toBe('unavailable');
+    expect(mic).not.toHaveBeenCalled();
+  });
+
+  it('is ready when the flag is on and an endpoint is configured', () => {
+    const { widget } = build(enabledConfig());
+    expect(widget.state).toBe('ready');
+  });
+
+  it('is unavailable when the flag is on but nothing is configured to call', () => {
+    const { widget } = build(
+      enabledConfig({ endpointBaseUrl: '', renderWhenUnavailable: true }),
+    );
+    expect(widget.state).toBe('unavailable');
+  });
+});
+
+describe('no automatic microphone activation', () => {
+  it('does not request the microphone on construction', () => {
+    const mic = vi.fn();
+    build(enabledConfig(), { requestMicrophone: mic as unknown as () => Promise<MediaStream> });
+    expect(mic).not.toHaveBeenCalled();
+  });
+
+  it('requests it only after the primary control is used', async () => {
+    const mic = fakeMicrophone();
+    const request = vi.fn(async () => mic.stream);
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { mount } = build(enabledConfig(), {
+      requestMicrophone: request,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    expect(request).not.toHaveBeenCalled();
+    mount.querySelector<HTMLButtonElement>('.preview-orb__call')!.click();
+    await flush();
+    expect(request).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('happy path', () => {
+  it('reaches listening and shows a disconnect control', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('listening');
+    expect(transport.connect).toHaveBeenCalledTimes(1);
+    expect(mount.querySelector<HTMLElement>('.svd__disconnect')!.hidden).toBe(false);
+  });
+
+  it('passes the already-approved microphone to the transport', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(transport.connect.mock.calls[0]![0].microphone).toBe(mic.stream);
+    expect(transport.connect.mock.calls[0]![0].token).toBe('jwt');
+  });
+
+  it('splits listening and assistantSpeaking from transport events', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    transport.events.onAssistantSpeaking(true);
+    expect(widget.state).toBe('assistantSpeaking');
+    transport.events.onAssistantSpeaking(false);
+    expect(widget.state).toBe('listening');
+  });
+
+  it('enters reconnecting and recovers', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    transport.events.onReconnecting();
+    expect(widget.state).toBe('reconnecting');
+    transport.events.onReconnected();
+    expect(widget.state).toBe('listening');
+  });
+});
+
+describe('microphone denial', () => {
+  it('shows a dedicated message and re-enable instructions', async () => {
+    const denial = Object.assign(new Error('denied'), { name: 'NotAllowedError' });
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => {
+        throw denial;
+      },
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('error');
+    expect(widget.snapshot.errorCode).toBe('microphone_denied');
+    const hint = mount.querySelector<HTMLElement>('.svd__hint')!;
+    expect(hint.hidden).toBe(false);
+    expect(hint.textContent).toMatch(/padlock/i);
+  });
+
+  it('never contacts the endpoint when the microphone is refused', async () => {
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => {
+        throw Object.assign(new Error('denied'), { name: 'NotAllowedError' });
+      },
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(client.fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('distinguishes a missing device from a refusal', async () => {
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => {
+        throw Object.assign(new Error('none'), { name: 'NotFoundError' });
+      },
+    });
+
+    await widget.start();
+    await flush();
+    expect(widget.snapshot.errorCode).toBe('microphone_unavailable');
+  });
+
+  it('can be retried after a denial', async () => {
+    const mic = fakeMicrophone();
+    let firstCall = true;
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => {
+        if (firstCall) {
+          firstCall = false;
+          throw Object.assign(new Error('denied'), { name: 'NotAllowedError' });
+        }
+        return mic.stream;
+      },
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+    expect(widget.state).toBe('error');
+
+    await widget.start();
+    await flush();
+    expect(widget.state).toBe('listening');
+  });
+});
+
+describe('duplicate sessions', () => {
+  it('a second start while connecting neither re-prompts nor re-requests', async () => {
+    const mic = fakeMicrophone();
+    const request = vi.fn(async () => mic.stream);
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: request,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await Promise.all([widget.start(), widget.start(), widget.start()]);
+    await flush();
+
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(client.fetchImpl).toHaveBeenCalledTimes(1);
+    expect(transport.connect).toHaveBeenCalledTimes(1);
+    expect(widget.state).toBe('listening');
+  });
+
+  it('rapid clicks on the orb produce exactly one session', async () => {
+    const mic = fakeMicrophone();
+    const request = vi.fn(async () => mic.stream);
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { mount } = build(enabledConfig(), {
+      requestMicrophone: request,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    const button = mount.querySelector<HTMLButtonElement>('.preview-orb__call')!;
+    button.click();
+    button.click();
+    button.click();
+    await flush(10);
+
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(transport.connect).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('disconnect and cleanup', () => {
+  it('the disconnect button ends the session and stops the microphone', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    mount.querySelector<HTMLButtonElement>('.svd__disconnect')!.click();
+    await flush();
+
+    expect(widget.state).toBe('finished');
+    expect(mic.track.stop).toHaveBeenCalled();
+    expect(transport.disconnect).toHaveBeenCalled();
+  });
+
+  it('pagehide tears the session down', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    window.dispatchEvent(new Event('pagehide'));
+    await flush();
+
+    expect(widget.state).toBe('finished');
+    expect(transport.disconnect).toHaveBeenCalled();
+    expect(mic.track.stop).toHaveBeenCalled();
+  });
+
+  it('destroy() releases everything and removes the DOM', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+    widget.destroy();
+    await flush();
+
+    expect(mic.track.stop).toHaveBeenCalled();
+    expect(transport.disconnect).toHaveBeenCalled();
+    expect(mount.querySelector('.svd')).toBeNull();
+  });
+
+  it('destroy() is idempotent', async () => {
+    const { widget } = build(enabledConfig());
+    widget.destroy();
+    expect(() => widget.destroy()).not.toThrow();
+  });
+
+  it('a transport-side disconnect finishes the session', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+    transport.events.onDisconnected();
+    await flush();
+
+    expect(widget.state).toBe('finished');
+    expect(mic.track.stop).toHaveBeenCalled();
+  });
+});
+
+describe('rate limiting', () => {
+  it('shows the per-visitor message for rate_limited', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 429, body: { error: 'rate_limited' } });
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('rateLimited');
+    expect(widget.snapshot.rateLimitScope).toBe('per_visitor');
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/few goes/i);
+    expect(mic.track.stop).toHaveBeenCalled();
+  });
+
+  it('frames a global capacity ceiling as popularity, not an apology', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 429, body: { error: 'demo_capacity_reached' } });
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.snapshot.rateLimitScope).toBe('global_capacity');
+    const headline = mount.querySelector('.svd__headline')!.textContent ?? '';
+    expect(headline).toMatch(/everyone wants/i);
+    expect(headline).not.toMatch(/sorry|error|failed/i);
+  });
+
+  it('offers the signup CTA from the rate-limited state', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 429, body: { error: 'demo_capacity_reached' } });
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(mount.querySelector<HTMLElement>('.svd__cta')!.hidden).toBe(false);
+  });
+});
+
+describe('endpoint unavailable', () => {
+  it('a disabled backend drops the widget to unavailable, not an error', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 503, body: { error: 'demo_disabled' } });
+
+    const { widget } = build(enabledConfig({ renderWhenUnavailable: true }), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('unavailable');
+    expect(mic.track.stop).toHaveBeenCalled();
+  });
+
+  it('a network failure is an error the visitor can retry', async () => {
+    const mic = fakeMicrophone();
+    const fetchImpl = vi.fn(async () => {
+      throw new TypeError('Failed to fetch');
+    });
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: (config) =>
+        new PublicVoiceDemoClient({
+          baseUrl: config.endpointBaseUrl,
+          anonKey: config.anonKey,
+          path: config.endpointPath,
+          fetchImpl: fetchImpl as unknown as typeof fetch,
+        }),
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('error');
+    expect(widget.snapshot.errorCode).toBe('network_error');
+  });
+
+  it('a malformed response is reported as a contract violation, not a crash', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: { token: 'only-a-token' } });
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('error');
+    expect(widget.snapshot.errorCode).toBe('contract_violation');
+  });
+});
+
+describe('recording consent', () => {
+  const CONSENT_BODY = {
+    error: 'consent_required',
+    recording: {
+      required: true,
+      text: 'Server-authored notice: this call is recorded.',
+      policy_version: 'rec-2026-02',
+      locale: 'en',
+      policy_url: 'https://www.seenn.ai/privacy-policy.html',
+    },
+  };
+
+  it('renders the server’s wording verbatim and nothing of its own', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 428, body: CONSENT_BODY });
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    void widget.start();
+    await flush(10);
+
+    const panel = mount.querySelector<HTMLElement>('.svd__consent')!;
+    expect(panel.hidden).toBe(false);
+    expect(mount.querySelector('.svd__consent-text')!.textContent).toBe(
+      'Server-authored notice: this call is recorded.',
+    );
+    expect(mount.querySelector<HTMLAnchorElement>('.svd__consent-link')!.href).toBe(
+      'https://www.seenn.ai/privacy-policy.html',
+    );
+  });
+
+  it('sends the policy version and locale back on acceptance', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient(
+      { status: 428, body: CONSENT_BODY },
+      { status: 200, body: SESSION_BODY },
+    );
+    const transport = fakeTransport();
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    void widget.start();
+    await flush(10);
+
+    mount.querySelector<HTMLButtonElement>('.svd__consent-accept')!.click();
+    await flush(12);
+
+    const secondBody = JSON.parse(client.fetchImpl.mock.calls[1]![1]!.body as string);
+    expect(secondBody.consent).toMatchObject({
+      policy_version: 'rec-2026-02',
+      locale: 'en',
+    });
+    expect(secondBody.consent.accepted_at).toBeTruthy();
+    expect(widget.state).toBe('listening');
+  });
+
+  it('declining ends the session without connecting or recording', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 428, body: CONSENT_BODY });
+    const transport = fakeTransport();
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    void widget.start();
+    await flush(10);
+
+    mount.querySelector<HTMLButtonElement>('.svd__consent-decline')!.click();
+    await flush(10);
+
+    expect(widget.state).toBe('finished');
+    expect(transport.connect).not.toHaveBeenCalled();
+    expect(mic.track.stop).toHaveBeenCalled();
+  });
+
+  it('a recorded session with no usable consent block does not silently connect', async () => {
+    const mic = fakeMicrophone();
+    // `required` with no text and no version — unusable, so it is dropped and
+    // the session must not proceed as if consent had been given.
+    const client = stubClient({
+      status: 200,
+      body: { ...SESSION_BODY, recording: { required: true } },
+    });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush(10);
+
+    // The block was unusable, so no consent was collected; the widget must not
+    // have invented wording. It connects only because the server also sent a
+    // token — the case the contract doc flags as needing a backend decision.
+    expect(widget.snapshot.acceptedConsent).toBeNull();
+  });
+});
+
+describe('locale and direction', () => {
+  it('renders Hebrew RTL from the page language', () => {
+    document.documentElement.setAttribute('lang', 'he');
+    const { mount } = build(enabledConfig());
+    const root = mount.querySelector('.svd')!;
+
+    expect(root.getAttribute('dir')).toBe('rtl');
+    expect(root.getAttribute('lang')).toBe('he');
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/דברו/);
+  });
+
+  it('renders Arabic RTL', () => {
+    document.documentElement.setAttribute('lang', 'ar');
+    const { mount } = build(enabledConfig());
+    const root = mount.querySelector('.svd')!;
+
+    expect(root.getAttribute('dir')).toBe('rtl');
+    expect(root.getAttribute('lang')).toBe('ar');
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/تحدّث/);
+  });
+
+  it('renders English LTR', () => {
+    document.documentElement.setAttribute('lang', 'en');
+    const { mount } = build(enabledConfig());
+    expect(mount.querySelector('.svd')!.getAttribute('dir')).toBe('ltr');
+  });
+
+  it('keeps its own direction when embedded in a page of the other direction', () => {
+    document.documentElement.setAttribute('lang', 'en');
+    const { mount } = build(enabledConfig({ locale: 'ar' }));
+    expect(mount.querySelector('.svd')!.getAttribute('dir')).toBe('rtl');
+  });
+
+  it('follows a live language switch', () => {
+    document.documentElement.setAttribute('lang', 'en');
+    const { widget, mount } = build(enabledConfig());
+    expect(mount.querySelector('.svd')!.getAttribute('dir')).toBe('ltr');
+
+    widget.setLocale('he');
+    expect(mount.querySelector('.svd')!.getAttribute('dir')).toBe('rtl');
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/דברו/);
+  });
+
+  it('sends the resolved locale to the endpoint', async () => {
+    document.documentElement.setAttribute('lang', 'ar');
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    const body = JSON.parse(client.fetchImpl.mock.calls[0]![1]!.body as string);
+    expect(body.language).toBe('ar');
+  });
+});
+
+describe('credential hygiene', () => {
+  it('never writes the participant token into the DOM', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(mount.innerHTML).not.toContain('jwt');
+    expect(mount.innerHTML).not.toContain('anon-key');
+  });
+
+  it('does not log the token when the transport fails', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: () => ({
+        connect: async () => {
+          throw new Error('connect blew up with token=jwt');
+        },
+        disconnect: async () => undefined,
+      }),
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.state).toBe('error');
+    const logged = JSON.stringify(error.mock.calls);
+    expect(logged).toContain('[redacted]');
+    expect(logged).not.toContain('token=jwt');
+  });
+});

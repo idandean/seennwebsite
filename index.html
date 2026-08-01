@@ -45,6 +45,11 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
 <script src="js/script.js"></script>
 <link href="css/style.css" rel="stylesheet"/>
+<!-- In-browser voice demo. The stylesheet must load in <head> so the mount
+     reserves its height before first paint; livekit-client is fetched only
+     when a visitor actually clicks the orb. -->
+<link href="css/voice-demo.css" rel="stylesheet"/>
+<script defer src="js/voice-demo.js"></script>
 
 <!-- Structured Data -->
 <script type="application/ld+json">
@@ -274,6 +279,16 @@
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4">
 <a class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-black bg-[#C9B555] rounded-lg hover:bg-[#BFA34A] transition-colors text-center" href="#" onclick="openDemoModal(); return false;" data-i18n="requestDemoBtn">Request a Demo</a>
 </div>
+
+<!-- In-browser voice demo. Ships HIDDEN: PUBLIC_DEMO_MODE is disabled by
+     default and the backend endpoint does not exist yet.
+
+     To enable on staging, both of these together:
+       1. add <meta name="seenn:public-demo-mode" content="enabled"> to <head>
+       2. remove the `hidden` attribute below
+     The widget also refuses to run without an endpoint + anon key, so neither
+     step alone can expose it. -->
+<div class="svd-mount mt-10 sm:mt-12" data-seenn-voice-demo hidden></div>
 </div>
 
 <!-- Wavy divider -->

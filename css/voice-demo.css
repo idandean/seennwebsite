@@ -1,0 +1,748 @@
+/* ===========================================================================
+   SEENN IN-BROWSER VOICE DEMO — styles
+   ---------------------------------------------------------------------------
+   The `.preview-orb*` block below is a PORT of the orb from the dashboard app
+   repo:  smart-secretary-ai/src/index.css  (component: src/components/
+   preview-call/SecretaryOrb.tsx).
+
+   Class names, gradients, keyframes and per-state animation durations are kept
+   byte-for-byte identical to the origin so the two copies can be diffed and do
+   not silently diverge. Only two things are additive here, both marked
+   "WIDGET ADDITION":
+
+     1. a `--prompting` state (the dashboard has no microphone step), and
+     2. `--orb-level`, a JS-driven 0..1 audio level so the orb reacts while the
+        secretary speaks.
+
+   The origin maps onto this widget's states as:
+     idle -> idle | prompting -> (new) | connecting -> submitting
+     live -> dialing | ended -> onTheWay | denied/busy/error -> failed
+
+   Everything under `.svd*` is widget chrome and has no counterpart upstream.
+   Pure CSS gradients + keyframes — no animation library.
+   =========================================================================== */
+
+/* Reserve the widget's height before JS runs, so a page that *will* show the
+   widget never reflows on load.
+
+   The `:not([hidden])` matters: PUBLIC_DEMO_MODE is disabled by default, and
+   the mount ships with `hidden` set. Reserving unconditionally would leave a
+   360px gap in the hero from first paint until the deferred bundle runs and
+   hides it — a visible hole for a feature that is switched off. The widget
+   removes `hidden` itself, and only once it has actually mounted. */
+.svd-mount:not([hidden]) {
+  min-height: 360px;
+}
+
+@media (max-width: 640px) {
+  .svd-mount:not([hidden]) {
+    min-height: 320px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   PORTED ORB — keep in sync with smart-secretary-ai/src/index.css
+   --------------------------------------------------------------------------- */
+
+.preview-orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  transition: filter 600ms ease, opacity 600ms ease;
+  /* WIDGET ADDITION: audio level, written by JS on every animation frame. */
+  --orb-level: 0;
+}
+
+/* Soft halo bleeding past the orb edge */
+.preview-orb__glow {
+  position: absolute;
+  inset: -14%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 55%,
+    rgba(240, 193, 75, 0.28) 0%,
+    rgba(240, 193, 75, 0.10) 38%,
+    rgba(30, 30, 45, 0) 70%
+  );
+  filter: blur(18px);
+  animation: preview-orb-breathe 7s ease-in-out infinite;
+}
+
+/* Stacked, heavily blurred gradient layers drifting at different speeds */
+.preview-orb__layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  will-change: transform, opacity;
+}
+
+.preview-orb__layer--a {
+  background: radial-gradient(
+      circle at 32% 30%,
+      rgba(245, 217, 139, 0.95) 0%,
+      rgba(232, 178, 58, 0.75) 26%,
+      rgba(120, 92, 60, 0.35) 52%,
+      rgba(15, 18, 38, 0.95) 78%
+    ),
+    radial-gradient(circle at 70% 78%, rgba(60, 68, 122, 0.9) 0%, rgba(15, 18, 38, 0) 60%);
+  filter: blur(14px);
+  /* Full 360° sweep: the off-centre highlight travels around the sphere. */
+  animation: preview-orb-swirl-a 22s linear infinite;
+}
+
+.preview-orb__layer--b {
+  background: radial-gradient(
+    circle at 72% 68%,
+    rgba(120, 132, 214, 0.55) 0%,
+    rgba(42, 47, 85, 0.5) 34%,
+    rgba(15, 18, 38, 0) 68%
+  );
+  filter: blur(20px);
+  mix-blend-mode: screen;
+  /* Counter-rotation against layer A so the two never move as one mass. */
+  animation: preview-orb-swirl-b 30s linear infinite;
+}
+
+.preview-orb__layer--c {
+  background: radial-gradient(
+    circle at 46% 18%,
+    rgba(255, 245, 220, 0.7) 0%,
+    rgba(240, 193, 75, 0) 42%
+  );
+  filter: blur(16px);
+  /* Specular highlight orbiting the upper half. */
+  animation: preview-orb-orbit 12s ease-in-out infinite;
+}
+
+/* Liquid inner wisp — inset far enough that its morphing edge never reaches
+   the rim, so the silhouette stays a clean circle. */
+.preview-orb__wisp {
+  position: absolute;
+  inset: 12%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 236, 190, 0.5) 0%,
+    rgba(240, 193, 75, 0.22) 45%,
+    rgba(60, 68, 122, 0) 78%
+  );
+  filter: blur(16px);
+  mix-blend-mode: screen;
+  /* Dialled back: the video core now carries most of the internal movement. */
+  opacity: 0.45;
+  will-change: transform, border-radius;
+  animation: preview-orb-wisp 17s ease-in-out infinite;
+}
+
+/* Looping liquid video, masked to a circle and faded at the edge so it melts
+   into the gradient sphere instead of reading as a disc pasted on top.
+
+   WIDGET NOTE: nothing currently injects this element — the widget builds a
+   CSS-only orb, and the source video (orb-core.mp4) is not shipped with the
+   site. These rules are kept so this file still diffs cleanly against the
+   origin in smart-secretary-ai/src/index.css. Copy the asset from that repo's
+   public/avatars/ if the video core is ever wanted here. */
+.preview-orb__core {
+  position: absolute;
+  inset: 5%;
+  border-radius: 9999px;
+  object-fit: cover;
+  opacity: 0.82;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 56%, transparent 88%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 56%, transparent 88%);
+  transition: opacity 400ms ease;
+}
+
+.preview-orb--dialing .preview-orb__core {
+  opacity: 0.95;
+}
+
+.preview-orb--idle .preview-orb__core {
+  opacity: 0.72;
+}
+
+/* Thin rim keeps the blurred mass reading as a sphere */
+.preview-orb__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -18px 32px rgba(9, 11, 26, 0.55), 0 18px 40px rgba(9, 11, 26, 0.45);
+}
+
+/* Concentric ripples — dialing state only */
+.preview-orb__ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(240, 193, 75, 0.55);
+  animation: preview-orb-ripple 2.6s ease-out infinite;
+}
+
+.preview-orb__ripple--2 {
+  animation-delay: 0.85s;
+}
+
+.preview-orb__ripple--3 {
+  animation-delay: 1.7s;
+}
+
+/* Dark circular call button overlapping the orb's lower centre */
+.preview-orb__call {
+  position: absolute;
+  bottom: -14px;
+  /* Explicit centring: an absolutely positioned child of a grid container
+     should not depend on static-position alignment. */
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  color: #f0c14b;
+  background: linear-gradient(160deg, #23253a 0%, #12131f 100%);
+  box-shadow: 0 10px 24px rgba(9, 11, 26, 0.55),
+    inset 0 0 0 1px rgba(240, 193, 75, 0.35);
+  transition: transform 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.preview-orb__call:hover:not(:disabled) {
+  transform: translate(-50%, -2px);
+  color: #ffdc86;
+  box-shadow: 0 14px 30px rgba(9, 11, 26, 0.6),
+    inset 0 0 0 1px rgba(240, 193, 75, 0.7);
+}
+
+.preview-orb__call:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(240, 193, 75, 0.45),
+    0 10px 24px rgba(9, 11, 26, 0.55);
+}
+
+.preview-orb__call:disabled {
+  cursor: not-allowed;
+  color: rgba(240, 193, 75, 0.4);
+  box-shadow: 0 6px 16px rgba(9, 11, 26, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* --- States ------------------------------------------------------------- */
+
+/* Idle: slow breathing, muted */
+.preview-orb--idle {
+  filter: saturate(0.82) brightness(0.92);
+}
+
+/* WIDGET ADDITION — Prompting: everything holds its breath while the browser
+   permission sheet is up, so the page is visibly waiting on the visitor. */
+.preview-orb--prompting {
+  filter: saturate(0.7) brightness(0.86);
+}
+
+.preview-orb--prompting .preview-orb__glow,
+.preview-orb--prompting .preview-orb__layer,
+.preview-orb--prompting .preview-orb__wisp {
+  animation-play-state: paused;
+}
+
+/* Submitting: same palette, everything winds up */
+.preview-orb--submitting .preview-orb__glow {
+  animation-duration: 1.6s;
+}
+
+.preview-orb--submitting .preview-orb__layer--a {
+  animation-duration: 8s;
+}
+
+.preview-orb--submitting .preview-orb__layer--b {
+  animation-duration: 11s;
+}
+
+.preview-orb--submitting .preview-orb__layer--c {
+  animation-duration: 4.5s;
+}
+
+.preview-orb--submitting .preview-orb__wisp {
+  animation-duration: 6s;
+}
+
+/* Dialing / ringing: brighter, faster, with ripples */
+.preview-orb--dialing {
+  filter: saturate(1.16) brightness(1.12);
+}
+
+.preview-orb--dialing .preview-orb__glow {
+  animation-duration: 2.4s;
+}
+
+.preview-orb--dialing .preview-orb__layer--a {
+  animation-duration: 11s;
+}
+
+.preview-orb--dialing .preview-orb__layer--b {
+  animation-duration: 15s;
+}
+
+.preview-orb--dialing .preview-orb__layer--c {
+  animation-duration: 6s;
+}
+
+.preview-orb--dialing .preview-orb__wisp {
+  animation-duration: 9s;
+}
+
+/* Call is on its way — calm, still lit, still moving */
+.preview-orb--onTheWay {
+  filter: saturate(0.95) brightness(1.02);
+}
+
+.preview-orb--onTheWay .preview-orb__glow {
+  animation-duration: 5s;
+}
+
+.preview-orb--onTheWay .preview-orb__layer--a {
+  animation-duration: 18s;
+}
+
+.preview-orb--onTheWay .preview-orb__layer--c {
+  animation-duration: 10s;
+}
+
+/* Failed: desaturate to grey */
+.preview-orb--failed {
+  filter: grayscale(1) brightness(0.68);
+}
+
+.preview-orb--failed .preview-orb__glow,
+.preview-orb--failed .preview-orb__layer,
+.preview-orb--failed .preview-orb__wisp {
+  animation-play-state: paused;
+}
+
+@keyframes preview-orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* 0% and 100% match so the linear loop never jumps. */
+@keyframes preview-orb-swirl-a {
+  0% {
+    transform: rotate(0deg) scale(1.02) translate(0, 0);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.05) translate(1%, -1%);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.03) translate(0, 1%);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.06) translate(-1%, 0);
+  }
+  100% {
+    transform: rotate(360deg) scale(1.02) translate(0, 0);
+  }
+}
+
+@keyframes preview-orb-swirl-b {
+  0% {
+    transform: rotate(0deg) scale(1.04);
+    opacity: 0.85;
+  }
+  33% {
+    transform: rotate(-120deg) scale(1);
+    opacity: 1;
+  }
+  66% {
+    transform: rotate(-240deg) scale(1.06);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(-360deg) scale(1.04);
+    opacity: 0.85;
+  }
+}
+
+@keyframes preview-orb-orbit {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+  25% {
+    transform: translate(6%, 4%) scale(1.08);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(2%, 9%) scale(1.02);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translate(-5%, 4%) scale(1.09);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+}
+
+@keyframes preview-orb-wisp {
+  0% {
+    border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    border-radius: 54% 46% 48% 52% / 46% 54% 50% 50%;
+    transform: rotate(180deg) scale(1.07);
+  }
+  100% {
+    border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%;
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes preview-orb-ripple {
+  0% {
+    transform: scale(0.86);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview-orb__glow,
+  .preview-orb__layer,
+  .preview-orb__wisp,
+  .preview-orb__ripple {
+    animation: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   WIDGET ADDITION — audio-reactive level
+   The orb tracks the secretary's voice. Two channels, both cheap: a ring that
+   scales, and a brightness lift on the whole sphere. The transition is short
+   (90ms) so it reads as speech rather than as a slow pulse, and it overrides
+   the 600ms state transition only while live.
+   --------------------------------------------------------------------------- */
+
+.preview-orb--dialing.preview-orb--reactive {
+  filter: saturate(calc(1.16 + var(--orb-level) * 0.22))
+    brightness(calc(1.06 + var(--orb-level) * 0.34));
+  transition: filter 90ms linear;
+}
+
+/* Absolutely positioned so these stay out of the orb's grid flow — every other
+   child of `.preview-orb` is out of flow too, and an in-flow item would become
+   the grid's only sized track. */
+.svd__ripples {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Placeholder for the video core until it is injected on first activation. */
+.svd__core-slot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.svd__level {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  border: 2px solid rgba(240, 193, 75, calc(0.10 + var(--orb-level) * 0.55));
+  transform: scale(calc(1 + var(--orb-level) * 0.09));
+  transition: transform 90ms linear, border-color 90ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Keep the brightness cue — it carries the information — but stop the ring
+     from moving. */
+  .svd__level {
+    transform: none;
+    transition: border-color 120ms linear;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   WIDGET CHROME
+   Rebuilt for the ten-state machine. State names come from src/state.ts;
+   `hidden` is the mechanism for showing and hiding panels, so the reset below
+   has to win against every `display` rule in this file.
+   --------------------------------------------------------------------------- */
+
+.svd [hidden] {
+  display: none !important;
+}
+
+.svd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding-top: 0.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #fff;
+  text-align: center;
+}
+
+.svd__stage {
+  /* Room for the call button, which hangs 14px below the sphere. */
+  padding-bottom: 30px;
+}
+
+.svd__headline {
+  margin: 0;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(9, 11, 26, 0.55);
+}
+
+.svd__sub {
+  margin: 0.35rem 0 0;
+  max-width: 26rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 10px rgba(9, 11, 26, 0.5);
+  /* Monospace digits so the countdown does not jitter the line each second. */
+  font-variant-numeric: tabular-nums;
+}
+
+.svd__hint {
+  max-width: 26rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* --- Recording consent ---------------------------------------------------
+   The notice text is server-authored and rendered verbatim; only the frame is
+   ours. Sized so a two-paragraph legal notice does not blow the hero apart. */
+
+.svd__consent {
+  width: 100%;
+  max-width: 30rem;
+  margin-top: 1rem;
+  padding: 1rem 1.15rem 1.15rem;
+  border: 1px solid rgba(240, 193, 75, 0.35);
+  border-radius: 0.75rem;
+  background: rgba(9, 11, 26, 0.55);
+  backdrop-filter: blur(6px);
+  text-align: start;
+}
+
+.svd__consent-heading {
+  margin: 0 0 0.5rem;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #f0c14b;
+}
+
+.svd__consent-text {
+  margin: 0;
+  max-height: 9rem;
+  overflow-y: auto;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre-line;
+}
+
+.svd__consent-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: #f0c14b;
+  text-underline-offset: 3px;
+}
+
+.svd__consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.svd__consent-accept,
+.svd__consent-decline {
+  flex: 1 1 auto;
+  padding: 0.6rem 1.1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.svd__consent-accept {
+  background: #c9b555;
+  color: #000;
+}
+
+.svd__consent-accept:hover {
+  background: #bfa34a;
+}
+
+.svd__consent-decline {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.svd__consent-decline:hover {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.svd__consent-accept:focus-visible,
+.svd__consent-decline:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* --- Disconnect ----------------------------------------------------------
+   A visible, separate control. The orb doubles as hang-up, but a session the
+   visitor cannot obviously end is a session they will abandon by closing the
+   tab — which is exactly the leak the cleanup path exists to avoid. */
+
+.svd__disconnect {
+  margin-top: 0.85rem;
+  padding: 0.45rem 1.1rem;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(9, 11, 26, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: color 150ms ease, box-shadow 150ms ease;
+}
+
+.svd__disconnect:hover {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.svd__disconnect:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* --- Conversion moment ---------------------------------------------------- */
+
+.svd__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.svd__cta-button {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  background: #c9b555;
+  color: #000;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.svd__cta-button:hover {
+  background: #bfa34a;
+  transform: translateY(-1px);
+}
+
+.svd__cta-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* --- State tweaks --------------------------------------------------------- */
+
+/* While consent is up, the orb is not the subject — the notice is. */
+.svd--consent .svd__stage {
+  opacity: 0.55;
+  transition: opacity 250ms ease;
+}
+
+/* Unavailable and rate-limited are dead ends: nothing to click on the orb. */
+.svd[data-state='unavailable'] .preview-orb__call {
+  cursor: default;
+}
+
+.svd__audio {
+  display: none;
+}
+
+.svd__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.svd-spin {
+  animation: svd-spin 900ms linear infinite;
+}
+
+@keyframes svd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svd-spin {
+    animation: none;
+  }
+}
+
+/* --- RTL -----------------------------------------------------------------
+   The widget sets dir on its own root from the resolved locale, so Hebrew and
+   Arabic are correct even when embedded in an LTR page. Centred content needs
+   no mirroring; only the consent block is text-aligned, and it uses `start`. */
+
+.svd[dir='rtl'] .svd__consent {
+  text-align: start;
+}

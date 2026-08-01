@@ -1,0 +1,290 @@
+/**
+ * The demo's state machine, as a pure reducer.
+ *
+ * Kept free of DOM and network so the transition rules can be tested directly
+ * rather than inferred from the UI. `reduce()` returns the *same* context
+ * object when an event is not legal in the current state, which is what makes
+ * "you cannot start a second session while one is connecting" a property of
+ * the machine instead of a flag somebody remembers to check.
+ */
+
+import type { DemoErrorCode, DemoSession, RecordingConsent } from './contract';
+
+/**
+ * The ten UI states.
+ *
+ * Microphone denial is deliberately NOT an eleventh state: it is `error` with
+ * `errorCode: 'microphone_denied'`, which still renders its own copy and
+ * re-enable instructions. Keeping the state set closed makes the transition
+ * table checkable; the distinct UI comes from the error code.
+ */
+export type DemoState =
+  | 'unavailable'
+  | 'ready'
+  | 'requestingMicrophone'
+  | 'connecting'
+  | 'listening'
+  | 'assistantSpeaking'
+  | 'reconnecting'
+  | 'finished'
+  | 'rateLimited'
+  | 'error';
+
+/** Client-side failures, alongside the server's `DemoErrorCode`. */
+export type ClientErrorCode =
+  | 'microphone_denied'
+  | 'microphone_unavailable'
+  | 'browser_unsupported'
+  | 'network_error'
+  | 'contract_violation'
+  | 'transport_failed'
+  | 'reconnect_failed'
+  | 'consent_declined'
+  | 'session_expired_before_start';
+
+export type AnyErrorCode = DemoErrorCode | ClientErrorCode;
+
+/** Why the demo is refusing traffic — drives distinct copy. */
+export type RateLimitScope = 'per_visitor' | 'global_capacity';
+
+export type FinishReason =
+  | 'user_disconnected'
+  | 'session_expired'
+  | 'remote_disconnected'
+  | 'page_hidden';
+
+export interface DemoContext {
+  state: DemoState;
+  /** Set when `state === 'error'`. */
+  errorCode: AnyErrorCode | null;
+  /** Set when `state === 'rateLimited'`. */
+  rateLimitScope: RateLimitScope | null;
+  /** Set when `state === 'finished'`. */
+  finishReason: FinishReason | null;
+  /** Why the demo is unavailable, when it is. */
+  unavailableReason: string | null;
+  /** Server-authored consent awaiting a decision. Never widget-authored. */
+  pendingConsent: RecordingConsent | null;
+  /** Consent the visitor accepted, echoed back to the backend. */
+  acceptedConsent: { policyVersion: string; locale: string; acceptedAt: string } | null;
+  /** The live session, once granted. Cleared on finish/error. */
+  session: DemoSession | null;
+  /** Guards duplicate sessions: true from START until finished/error. */
+  connectionInFlight: boolean;
+  /** Bumped on every start; lets late async work detect it is stale. */
+  attempt: number;
+}
+
+export type DemoEvent =
+  | { type: 'FLAG_ENABLED' }
+  | { type: 'FLAG_DISABLED'; reason: string }
+  | { type: 'START' }
+  | { type: 'MIC_GRANTED' }
+  | { type: 'MIC_DENIED' }
+  | { type: 'MIC_UNAVAILABLE' }
+  | { type: 'CONSENT_REQUIRED'; consent: RecordingConsent }
+  | { type: 'CONSENT_ACCEPTED'; acceptedAt: string }
+  | { type: 'CONSENT_DECLINED' }
+  | { type: 'SESSION_GRANTED'; session: DemoSession }
+  | { type: 'CONNECTED' }
+  | { type: 'ASSISTANT_SPEAKING_START' }
+  | { type: 'ASSISTANT_SPEAKING_END' }
+  | { type: 'RECONNECTING' }
+  | { type: 'RECONNECTED' }
+  | { type: 'DISCONNECT'; reason: FinishReason }
+  | { type: 'RATE_LIMITED'; scope: RateLimitScope }
+  | { type: 'DEMO_UNAVAILABLE'; reason: string }
+  | { type: 'ERROR'; code: AnyErrorCode }
+  | { type: 'RESET' };
+
+/** States in which a session is live enough that teardown must run. */
+export const ACTIVE_STATES: readonly DemoState[] = [
+  'connecting',
+  'listening',
+  'assistantSpeaking',
+  'reconnecting',
+];
+
+/** States from which the visitor may start a session. */
+const STARTABLE: readonly DemoState[] = ['ready', 'finished', 'error', 'rateLimited'];
+
+export function initialContext(unavailable: string | null): DemoContext {
+  return {
+    state: unavailable ? 'unavailable' : 'ready',
+    errorCode: null,
+    rateLimitScope: null,
+    finishReason: null,
+    unavailableReason: unavailable,
+    pendingConsent: null,
+    acceptedConsent: null,
+    session: null,
+    connectionInFlight: false,
+    attempt: 0,
+  };
+}
+
+export function isActive(state: DemoState): boolean {
+  return ACTIVE_STATES.includes(state);
+}
+
+/**
+ * Applies an event. Returns the identical object reference when the event is
+ * not legal in the current state — callers can use `next === prev` to detect a
+ * rejected transition, and tests assert on it.
+ */
+export function reduce(context: DemoContext, event: DemoEvent): DemoContext {
+  const { state } = context;
+
+  switch (event.type) {
+    case 'FLAG_ENABLED':
+      if (state !== 'unavailable') return context;
+      return { ...context, state: 'ready', unavailableReason: null };
+
+    case 'FLAG_DISABLED':
+      if (state === 'unavailable') return context;
+      return {
+        ...initialContext(event.reason),
+        attempt: context.attempt,
+      };
+
+    case 'START':
+      // The single guard that prevents duplicate sessions.
+      if (!STARTABLE.includes(state) || context.connectionInFlight) return context;
+      return {
+        ...initialContext(null),
+        state: 'requestingMicrophone',
+        // Consent already accepted this page-view carries forward, so a retry
+        // does not re-prompt for the same policy version.
+        acceptedConsent: context.acceptedConsent,
+        connectionInFlight: true,
+        attempt: context.attempt + 1,
+      };
+
+    case 'MIC_GRANTED':
+      if (state !== 'requestingMicrophone') return context;
+      return { ...context, state: 'connecting' };
+
+    case 'MIC_DENIED':
+      if (state !== 'requestingMicrophone') return context;
+      return {
+        ...context,
+        state: 'error',
+        errorCode: 'microphone_denied',
+        connectionInFlight: false,
+      };
+
+    case 'MIC_UNAVAILABLE':
+      if (state !== 'requestingMicrophone') return context;
+      return {
+        ...context,
+        state: 'error',
+        errorCode: 'microphone_unavailable',
+        connectionInFlight: false,
+      };
+
+    case 'CONSENT_REQUIRED':
+      // Consent is collected during `connecting`; the UI swaps the spinner for
+      // the server's wording rather than introducing an eleventh state.
+      if (state !== 'connecting') return context;
+      return { ...context, pendingConsent: event.consent };
+
+    case 'CONSENT_ACCEPTED': {
+      if (state !== 'connecting' || !context.pendingConsent) return context;
+      const consent = context.pendingConsent;
+      return {
+        ...context,
+        pendingConsent: null,
+        acceptedConsent: {
+          policyVersion: consent.policyVersion,
+          locale: consent.locale,
+          acceptedAt: event.acceptedAt,
+        },
+      };
+    }
+
+    case 'CONSENT_DECLINED':
+      if (state !== 'connecting') return context;
+      return {
+        ...context,
+        state: 'finished',
+        finishReason: 'user_disconnected',
+        pendingConsent: null,
+        connectionInFlight: false,
+      };
+
+    case 'SESSION_GRANTED':
+      if (state !== 'connecting') return context;
+      return { ...context, session: event.session };
+
+    case 'CONNECTED':
+      if (state !== 'connecting') return context;
+      return { ...context, state: 'listening' };
+
+    case 'ASSISTANT_SPEAKING_START':
+      if (state !== 'listening') return context;
+      return { ...context, state: 'assistantSpeaking' };
+
+    case 'ASSISTANT_SPEAKING_END':
+      if (state !== 'assistantSpeaking') return context;
+      return { ...context, state: 'listening' };
+
+    case 'RECONNECTING':
+      if (state !== 'listening' && state !== 'assistantSpeaking') return context;
+      return { ...context, state: 'reconnecting' };
+
+    case 'RECONNECTED':
+      if (state !== 'reconnecting') return context;
+      return { ...context, state: 'listening' };
+
+    case 'DISCONNECT':
+      if (!isActive(state)) return context;
+      return {
+        ...context,
+        state: 'finished',
+        finishReason: event.reason,
+        pendingConsent: null,
+        session: null,
+        connectionInFlight: false,
+      };
+
+    case 'RATE_LIMITED':
+      if (state !== 'connecting' && state !== 'requestingMicrophone') return context;
+      return {
+        ...context,
+        state: 'rateLimited',
+        rateLimitScope: event.scope,
+        pendingConsent: null,
+        session: null,
+        connectionInFlight: false,
+      };
+
+    case 'DEMO_UNAVAILABLE':
+      if (state === 'unavailable') return context;
+      return { ...initialContext(event.reason), attempt: context.attempt };
+
+    case 'ERROR':
+      if (state === 'unavailable' || state === 'error') return context;
+      return {
+        ...context,
+        state: 'error',
+        errorCode: event.code,
+        pendingConsent: null,
+        session: null,
+        connectionInFlight: false,
+      };
+
+    case 'RESET':
+      if (state === 'unavailable') return context;
+      return {
+        ...initialContext(null),
+        acceptedConsent: context.acceptedConsent,
+        attempt: context.attempt,
+      };
+
+    default: {
+      // Exhaustiveness: adding an event without handling it fails typecheck.
+      const never: never = event;
+      return never;
+    }
+  }
+}
