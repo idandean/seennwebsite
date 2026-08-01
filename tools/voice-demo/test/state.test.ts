@@ -22,7 +22,7 @@ const CONSENT: RecordingConsent = {
 function at(state: DemoState): DemoContext {
   let ctx = initialContext(null);
   const path: DemoEvent[] = [
-    { type: 'START' },
+    { type: 'START', at: 0 },
     { type: 'MIC_GRANTED' },
     { type: 'SESSION_GRANTED', session: SESSION },
     { type: 'CONNECTED' },
@@ -54,7 +54,7 @@ describe('happy path', () => {
     let ctx = initialContext(null);
     expect(ctx.state).toBe('ready');
 
-    ctx = reduce(ctx, { type: 'START' });
+    ctx = reduce(ctx, { type: 'START', at: 0 });
     expect(ctx.state).toBe('requestingMicrophone');
     expect(ctx.connectionInFlight).toBe(true);
 
@@ -97,8 +97,8 @@ describe('happy path', () => {
 
 describe('duplicate session prevention', () => {
   it('rejects a second START while a connection is in flight', () => {
-    const first = reduce(initialContext(null), { type: 'START' });
-    const second = reduce(first, { type: 'START' });
+    const first = reduce(initialContext(null), { type: 'START', at: 0 });
+    const second = reduce(first, { type: 'START', at: 0 });
     // Identity, not equality: a rejected transition returns the same object.
     expect(second).toBe(first);
     expect(second.attempt).toBe(1);
@@ -107,20 +107,20 @@ describe('duplicate session prevention', () => {
   it('rejects START from every mid-flight state', () => {
     for (const state of ['requestingMicrophone', 'connecting', 'listening', 'assistantSpeaking', 'reconnecting'] as const) {
       const ctx = at(state);
-      expect(reduce(ctx, { type: 'START' })).toBe(ctx);
+      expect(reduce(ctx, { type: 'START', at: 0 })).toBe(ctx);
     }
   });
 
   it('allows a fresh START once finished, and bumps the attempt counter', () => {
     const finished = at('finished');
-    const restarted = reduce(finished, { type: 'START' });
+    const restarted = reduce(finished, { type: 'START', at: 0 });
     expect(restarted.state).toBe('requestingMicrophone');
     expect(restarted.attempt).toBe(finished.attempt + 1);
   });
 
   it('allows retry from error and rateLimited', () => {
-    for (const ctx of [at('error'), reduce(reduce(initialContext(null), { type: 'START' }), { type: 'RATE_LIMITED', scope: 'per_visitor' })]) {
-      expect(reduce(ctx, { type: 'START' }).state).toBe('requestingMicrophone');
+    for (const ctx of [at('error'), reduce(reduce(initialContext(null), { type: 'START', at: 0 }), { type: 'RATE_LIMITED', scope: 'per_visitor' })]) {
+      expect(reduce(ctx, { type: 'START', at: 0 }).state).toBe('requestingMicrophone');
     }
   });
 });
@@ -155,6 +155,70 @@ describe('rate limiting', () => {
   });
 });
 
+describe('Retry-After is actually honoured', () => {
+  const T0 = 1_000_000;
+
+  /** Rate-limited at T0 with a 60s backoff. */
+  function limited(retryAfterSeconds: number | null) {
+    return reduce(at('connecting'), {
+      type: 'RATE_LIMITED',
+      scope: 'per_visitor',
+      retryAfterSeconds,
+      at: T0,
+    });
+  }
+
+  it('records the window as an absolute deadline', () => {
+    expect(limited(60).retryAfterUntil).toBe(T0 + 60_000);
+  });
+
+  it('refuses START inside the window', () => {
+    const ctx = limited(60);
+    expect(reduce(ctx, { type: 'START', at: T0 + 30_000 })).toBe(ctx);
+    expect(reduce(ctx, { type: 'START', at: T0 + 59_999 })).toBe(ctx);
+  });
+
+  it('allows START once the window has passed, and clears the deadline', () => {
+    const ctx = limited(60);
+    const restarted = reduce(ctx, { type: 'START', at: T0 + 60_000 });
+    expect(restarted.state).toBe('requestingMicrophone');
+    expect(restarted.retryAfterUntil).toBeNull();
+  });
+
+  it('does not block when the server sent no Retry-After', () => {
+    const ctx = limited(null);
+    expect(ctx.retryAfterUntil).toBeNull();
+    expect(reduce(ctx, { type: 'START', at: T0 }).state).toBe('requestingMicrophone');
+  });
+
+  it('ignores a zero or negative Retry-After', () => {
+    expect(limited(0).retryAfterUntil).toBeNull();
+    expect(limited(-5).retryAfterUntil).toBeNull();
+  });
+
+  it('survives a RESET — clearing the UI does not clear a server backoff', () => {
+    const ctx = reduce(limited(60), { type: 'RESET' });
+    expect(ctx.retryAfterUntil).toBe(T0 + 60_000);
+    expect(reduce(ctx, { type: 'START', at: T0 + 1000 })).toBe(ctx);
+  });
+});
+
+describe('cancellation from pre-connection states', () => {
+  it('DISCONNECT works while the microphone prompt is open', () => {
+    const ctx = reduce(at('requestingMicrophone'), {
+      type: 'DISCONNECT',
+      reason: 'page_hidden',
+    });
+    expect(ctx.state).toBe('finished');
+    expect(ctx.connectionInFlight).toBe(false);
+  });
+
+  it('DISCONNECT works while connecting', () => {
+    const ctx = reduce(at('connecting'), { type: 'DISCONNECT', reason: 'user_disconnected' });
+    expect(ctx.state).toBe('finished');
+  });
+});
+
 describe('consent', () => {
   it('is collected during connecting without adding an eleventh state', () => {
     const ctx = reduce(at('connecting'), { type: 'CONSENT_REQUIRED', consent: CONSENT });
@@ -184,7 +248,7 @@ describe('consent', () => {
     let ctx = reduce(at('connecting'), { type: 'CONSENT_REQUIRED', consent: CONSENT });
     ctx = reduce(ctx, { type: 'CONSENT_ACCEPTED', acceptedAt: '2026-08-01T10:00:00.000Z' });
     ctx = reduce(ctx, { type: 'ERROR', code: 'transport_failed' });
-    ctx = reduce(ctx, { type: 'START' });
+    ctx = reduce(ctx, { type: 'START', at: 0 });
     expect(ctx.acceptedConsent?.policyVersion).toBe('rec-2026-01');
   });
 
@@ -209,7 +273,7 @@ describe('feature flag transitions', () => {
 
   it('refuses to start while unavailable', () => {
     const ctx = initialContext('flag_disabled');
-    expect(reduce(ctx, { type: 'START' })).toBe(ctx);
+    expect(reduce(ctx, { type: 'START', at: 0 })).toBe(ctx);
   });
 
   it('ignores errors while unavailable', () => {
@@ -241,15 +305,16 @@ describe('rejected transitions', () => {
 
 describe('isActive', () => {
   it('covers exactly the states that hold resources', () => {
-    const holding: DemoState[] = ['connecting', 'listening', 'assistantSpeaking', 'reconnecting'];
-    const idle: DemoState[] = [
-      'unavailable',
-      'ready',
+    // requestingMicrophone counts: a getUserMedia promise in flight can hand
+    // back a live track after the visitor has navigated away.
+    const holding: DemoState[] = [
       'requestingMicrophone',
-      'finished',
-      'rateLimited',
-      'error',
+      'connecting',
+      'listening',
+      'assistantSpeaking',
+      'reconnecting',
     ];
+    const idle: DemoState[] = ['unavailable', 'ready', 'finished', 'rateLimited', 'error'];
     expect(holding.every(isActive)).toBe(true);
     expect(idle.some(isActive)).toBe(false);
   });

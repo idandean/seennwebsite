@@ -73,12 +73,19 @@ export interface DemoContext {
   connectionInFlight: boolean;
   /** Bumped on every start; lets late async work detect it is stale. */
   attempt: number;
+  /**
+   * Epoch ms before which START is refused, from a 429's `Retry-After`.
+   * Honouring this is the difference between telling a visitor to wait and
+   * actually not hammering an endpoint that asked us to back off.
+   */
+  retryAfterUntil: number | null;
 }
 
 export type DemoEvent =
   | { type: 'FLAG_ENABLED' }
   | { type: 'FLAG_DISABLED'; reason: string }
-  | { type: 'START' }
+  /** `at` is the caller's clock, so the Retry-After guard stays pure. */
+  | { type: 'START'; at: number }
   | { type: 'MIC_GRANTED' }
   | { type: 'MIC_DENIED' }
   | { type: 'MIC_UNAVAILABLE' }
@@ -92,13 +99,20 @@ export type DemoEvent =
   | { type: 'RECONNECTING' }
   | { type: 'RECONNECTED' }
   | { type: 'DISCONNECT'; reason: FinishReason }
-  | { type: 'RATE_LIMITED'; scope: RateLimitScope }
+  | { type: 'RATE_LIMITED'; scope: RateLimitScope; retryAfterSeconds?: number | null; at?: number }
   | { type: 'DEMO_UNAVAILABLE'; reason: string }
   | { type: 'ERROR'; code: AnyErrorCode }
   | { type: 'RESET' };
 
-/** States in which a session is live enough that teardown must run. */
+/**
+ * States in which the widget holds something that must be released.
+ *
+ * `requestingMicrophone` counts: a getUserMedia promise in flight can resolve
+ * after the visitor has navigated away, handing a live microphone track to a
+ * page that is gone. `connecting` counts for the same reason plus the room.
+ */
 export const ACTIVE_STATES: readonly DemoState[] = [
+  'requestingMicrophone',
   'connecting',
   'listening',
   'assistantSpeaking',
@@ -120,6 +134,7 @@ export function initialContext(unavailable: string | null): DemoContext {
     session: null,
     connectionInFlight: false,
     attempt: 0,
+    retryAfterUntil: null,
   };
 }
 
@@ -150,6 +165,9 @@ export function reduce(context: DemoContext, event: DemoEvent): DemoContext {
     case 'START':
       // The single guard that prevents duplicate sessions.
       if (!STARTABLE.includes(state) || context.connectionInFlight) return context;
+      // And the one that honours a server's Retry-After instead of just
+      // telling the visitor to wait while letting them hammer it anyway.
+      if (context.retryAfterUntil !== null && event.at < context.retryAfterUntil) return context;
       return {
         ...initialContext(null),
         state: 'requestingMicrophone',
@@ -247,16 +265,20 @@ export function reduce(context: DemoContext, event: DemoEvent): DemoContext {
         connectionInFlight: false,
       };
 
-    case 'RATE_LIMITED':
+    case 'RATE_LIMITED': {
       if (state !== 'connecting' && state !== 'requestingMicrophone') return context;
+      const seconds = event.retryAfterSeconds ?? null;
+      const from = event.at ?? 0;
       return {
         ...context,
         state: 'rateLimited',
         rateLimitScope: event.scope,
+        retryAfterUntil: seconds !== null && seconds > 0 ? from + seconds * 1000 : null,
         pendingConsent: null,
         session: null,
         connectionInFlight: false,
       };
+    }
 
     case 'DEMO_UNAVAILABLE':
       if (state === 'unavailable') return context;
@@ -279,6 +301,8 @@ export function reduce(context: DemoContext, event: DemoEvent): DemoContext {
         ...initialContext(null),
         acceptedConsent: context.acceptedConsent,
         attempt: context.attempt,
+        // A server asked us to back off; clearing the UI does not clear that.
+        retryAfterUntil: context.retryAfterUntil,
       };
 
     default: {

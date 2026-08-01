@@ -1,13 +1,30 @@
 # `public-voice-demo` — what the frontend needs
 
-Status: **proposed, not agreed.** This document states what the website widget
-requires in order to work. It is not a decision about the endpoint's design —
-where a choice is genuinely open, it says so and lists the options the client
-already handles.
+Status: **request side frozen, response side proposed.**
+
+Six product decisions are now frozen and implemented (§0). The response shape
+is still the backend's call; where a choice is open this document says so and
+lists what the client already handles.
 
 The frontend is built and tested against this. `src/contract.ts` is the single
 place the wire format is read, so if the backend lands on different names, that
 one file changes.
+
+---
+
+## 0. Frozen decisions (v1)
+
+1. **The website demo is NOT recorded.** No consent is required. The consent
+   machinery in the client is retained for a possible v2 and is fail-closed:
+   any response demanding recording is rejected, not accommodated.
+2. The frontend sends **no `amount` and no `balance_month`**. The backend
+   supplies its own demo-invoice defaults.
+3. Request body is exactly `{ "language", "turnstile_token" }`.
+4. `apikey` header with a Supabase anon/publishable key. **No Authorization
+   header.**
+5. A successful response must carry `token`, `livekit_url`, `session_id`,
+   `expires_at`, `language`. Aliases remain supported.
+6. `destination_phone` and `tenant_id` are never sent.
 
 ---
 
@@ -35,19 +52,24 @@ pass-through of caller-supplied keys:
 | Field | Type | When |
 |---|---|---|
 | `language` | `"en" \| "he" \| "ar"` | always — the website's current locale |
-| `consent` | object, below | only after the visitor accepted a consent notice |
-| `turnstile_token` | string | only once a Turnstile site key is configured |
+| `turnstile_token` | string | always, once a site key is configured |
 
 ```jsonc
 {
   "language": "he",
-  "consent": {                       // omitted unless previously demanded
-    "policy_version": "rec-2026-02",
-    "locale": "he",
-    "accepted_at": "2026-08-01T10:00:00.000Z"
-  }
+  "turnstile_token": "0.abc123..."
 }
 ```
+
+**Turnstile is mandatory.** The token is fresh and single-use: obtained
+immediately before each POST and discarded afterwards, on success and failure
+alike. The backend must verify it against the Cloudflare siteverify API with
+the matching **secret** key, and must reject a request without one.
+
+When the demo is enabled but any of the endpoint URL, anon key or Turnstile
+site key is missing, the widget refuses to start rather than posting
+unprotected. There is no code path that sends a session request without a
+configured token.
 
 **UNCONFIRMED:** snake_case is assumed for request fields, matching the other
 Supabase functions in this stack. Confirm or correct.
@@ -66,6 +88,23 @@ All five are **required**. The widget refuses the session and reports
 | `session_id` | string | Room/session identifier, for support correlation and logs. |
 | `expires_at` | string | ISO-8601 absolute expiry. Drives the countdown and the hard client-side cut-off. |
 | `language` | string | The locale the backend actually **resolved** for the agent, which may differ from the requested one. |
+
+### Values are validated, not just presence
+
+The client rejects a structurally-complete response whose values it cannot use.
+A token it cannot use is worse than no token: it produces a connected UI
+attached to nothing.
+
+| Rule | Why |
+|---|---|
+| `livekit_url` must be **`wss://`** | `ws://` puts the participant token on the wire in clear. `http/https/ws` are all rejected. |
+| `expires_at` must parse **and be in the future** | A past expiry is a session that dies on arrival. |
+| `language` must canonicalise to **en, he or ar** | A session in a language the widget cannot render. `he-IL`, `iw`, `ar-EG` are accepted and folded; anything else is rejected. |
+| `token` and `session_id` must be **non-empty** | Whitespace-only counts as empty. |
+| A usable token **must not** arrive with `recording.required=true` | v1 is not recorded; this would be a recorded call the visitor never agreed to. |
+
+All failures surface as `contract_violation`, listing every problem found
+rather than only the first.
 
 ```jsonc
 {
@@ -101,8 +140,10 @@ the real shape lands, **cut each list to one** and delete the rest:
 
 ## 3. Recording consent
 
-Only relevant **if the session is recorded.** If it is not, omit the block
-entirely and nothing below applies.
+**v1 answer: the website demo is NOT recorded. Omit this block entirely.**
+
+Everything below applies only to a possible v2. The client keeps the machinery
+but treats it as fail-closed — see the rejection rules at the end.
 
 The widget renders the server's wording **verbatim** and ships no consent copy
 of its own in any locale — consent text is a legal artefact and belongs with
@@ -130,9 +171,9 @@ wording and cannot record an acceptance it cannot identify.
 | `locale` | string | The locale `text` was actually rendered in. Echoed back. |
 | `policy_url` | string | Optional link to the full policy. |
 
-### ⚠️ Backend decision required
+### If v2 ever records
 
-The widget handles **both** of these; the backend must pick one and say which:
+The widget handles **both** of these; the backend would pick one:
 
 - **(a) Consent as a rejection.** Respond `4xx` with `error: "consent_required"`
   plus the `recording` block, and no token. The widget shows the notice, then
@@ -140,11 +181,18 @@ The widget handles **both** of these; the backend must pick one and say which:
 - **(b) Consent inside a normal response.** Respond `200` with the `recording`
   block and **no token**. Same visitor-facing flow.
 
-What must *not* happen is a `200` that carries **both** a usable token and
-`recording.required: true` on the first call: the widget would then hold a
-joinable session for a recorded call the visitor has not yet agreed to. It
-currently does not auto-connect in that case, but the situation is ambiguous and
-should be designed out rather than handled.
+**Fail-closed rules now enforced by the client:**
+
+- A response with a usable token **and** `recording.required=true` is rejected
+  as `contract_violation`. It is not reconciled, and never auto-connects.
+- A `required` recording block missing `text` or `policy_version` is rejected,
+  rather than silently dropped — we will not invent consent wording, and we
+  cannot record an acceptance we cannot identify.
+- `policy_url` must be `http://` or `https://`. Anything else makes the block
+  malformed.
+- A stored acceptance is matched on **both policy version and locale**. The
+  same policy rendered in a different language is a different thing to have
+  agreed to.
 
 ---
 
@@ -188,13 +236,16 @@ them by `rate_limited` vs `demo_capacity_reached`.
 
 ---
 
-## 6. Still open (product, not engineering)
+## 6. Still open
 
-1. **Is the demo recorded at all?** Everything in §3 is dead code if not.
-2. **Consent shape** — (a) or (b) in §3.
-3. **Which Supabase project** the website points at for staging vs production.
-   Both `endpointBaseUrl` and `anonKey` currently ship empty.
-4. **Arabic.** The widget speaks it, but the site has no `/ar/` pages, so no
-   visitor can currently reach an Arabic page. Does the demo need to offer
-   Arabic before the site does?
-5. **Rate-limit code split** — see §4.
+1. **Which Supabase project** the website points at, staging vs production.
+   `endpointBaseUrl`, `anonKey` and `turnstileSiteKey` all ship empty.
+2. **Rate-limit code split** — see §4. The client renders per-visitor and
+   global-capacity limits differently and honours `Retry-After` by refusing to
+   start again until the window has passed.
+3. **Arabic.** The widget speaks it, but the site has no `/ar/` pages, so no
+   visitor can currently reach one. Does the demo offer Arabic before the site
+   does?
+
+Resolved since the last revision: recording (no), `amount`/`balance_month`
+(backend defaults), request body, auth header, Turnstile (mandatory).

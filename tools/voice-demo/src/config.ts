@@ -1,77 +1,84 @@
 /**
  * PUBLIC_DEMO_MODE and the rest of the widget's configuration.
  *
- * This repository is a static site with no build step at the root and no
- * environment-variable system of its own — pages are hand-written HTML served
- * by Vercel. So "environment variable" here means one of four sources, checked
- * in this order:
+ * ---------------------------------------------------------------------------
+ * ENABLING IS ASYMMETRIC — READ THIS BEFORE CHANGING IT
+ * ---------------------------------------------------------------------------
+ * Exactly one source can turn the demo ON:
  *
- *   1. `?voicedemo=` URL parameter          — QA only, never sticky
- *   2. `window.SEENN_VOICE_DEMO`            — per-page inline config
- *   3. `<meta name="seenn:public-demo-mode">` — per-environment, set in HTML
- *   4. `__PUBLIC_DEMO_MODE__`               — build-time define (see scripts/build.mjs)
+ *     window.SEENN_VOICE_DEMO.publicDemoMode === 'enabled'
  *
- * The build-time define is what a staging deploy would set, via
- * `PUBLIC_DEMO_MODE=enabled npm run build` in tools/voice-demo. It defaults to
- * `disabled`, so a build with no environment configured produces a widget that
- * renders nothing.
+ * Every other source is a KILL SWITCH: it can force the demo off, and can
+ * never turn it on. That includes `?voicedemo=`, which used to be able to
+ * enable the widget — a URL anyone could construct, on a page they did not
+ * control, is not an acceptable way to switch on a feature that asks for a
+ * microphone.
+ *
+ * There is deliberately no build-time define. This repository is a static
+ * site: it has no root `package.json`, no build step, and therefore **Vercel
+ * environment variables never reach it**. A define would have implied
+ * otherwise. See tools/voice-demo/CONFIGURATION.md.
+ *
+ * Committed defaults are disabled and empty, and must stay that way.
  */
 
 import { looksLikeServerSecret } from './contract';
 import { logger } from './logging';
 import type { DemoLocale } from './contract';
 
-/** Injected by esbuild at build time; see scripts/build.mjs. */
-declare const __PUBLIC_DEMO_MODE__: string;
-
 export type PublicDemoMode = 'enabled' | 'disabled';
 
 export interface VoiceDemoConfig {
-  /** Master feature flag. Anything other than the literal 'enabled' is off. */
+  /** Only `window.SEENN_VOICE_DEMO` can set this to 'enabled'. */
   publicDemoMode: PublicDemoMode;
 
-  /** Base URL of the Supabase project hosting the endpoint (staging ≠ prod). */
+  /** Supabase project hosting the endpoint. Staging and production differ. */
   endpointBaseUrl: string;
-  /** Supabase ANON key. A service-role key here is refused, loudly. */
+  /** Supabase ANON / publishable key. A secret key here is refused, loudly. */
   anonKey: string;
-  /** Path appended to `endpointBaseUrl`. */
   endpointPath: string;
+
+  /**
+   * Cloudflare Turnstile site key. Required whenever the demo is enabled: a
+   * public, anonymous endpoint that spends AI minutes needs bot protection,
+   * so a missing key fails closed rather than posting unprotected.
+   */
+  turnstileSiteKey: string;
 
   /** null → follow the page's locale. */
   locale: DemoLocale | null;
 
-  /** Cloudflare Turnstile site key; omitted from the request when empty. */
-  turnstileSiteKey: string;
-
-  /** Fetched only on activation — livekit-client is not small. */
+  /** Pinned to an exact immutable version — see the constant below. */
   livekitModuleUrl: string;
 
-  /** Hard client-side ceiling regardless of what the token's expiry says. */
   maxSessionSeconds: number;
-  /** How long a LiveKit reconnect may run before we call it an error. */
   reconnectTimeoutSeconds: number;
 
-  /** Conversion target shown in the finished state. */
   signupUrl: string;
-
-  /** Orb diameter in px. */
   orbSize: number;
 
-  /**
-   * When the flag is off, render nothing at all rather than an "unavailable"
-   * panel. A marketing page should not advertise a demo it cannot give.
-   */
+  /** When blocked, render nothing rather than an "unavailable" panel. */
   renderWhenUnavailable: boolean;
 }
+
+/**
+ * Exact version, not a `@2` range.
+ *
+ * A floating major tag means the code a visitor executes can change without
+ * any commit here — a supply-chain surface on a page that holds a microphone
+ * permission and a session token. Bump this deliberately.
+ */
+export const LIVEKIT_CLIENT_VERSION = '2.21.0';
+export const LIVEKIT_MODULE_URL = `https://cdn.jsdelivr.net/npm/livekit-client@${LIVEKIT_CLIENT_VERSION}/+esm`;
 
 export const DEFAULT_CONFIG: VoiceDemoConfig = {
   publicDemoMode: 'disabled',
   endpointBaseUrl: '',
   anonKey: '',
   endpointPath: '/functions/v1/public-voice-demo',
-  locale: null,
   turnstileSiteKey: '',
-  livekitModuleUrl: 'https://cdn.jsdelivr.net/npm/livekit-client@2/+esm',
+  locale: null,
+  livekitModuleUrl: LIVEKIT_MODULE_URL,
   maxSessionSeconds: 120,
   reconnectTimeoutSeconds: 20,
   signupUrl: 'https://app.seenn.ai/auth/signup',
@@ -79,22 +86,11 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
   renderWhenUnavailable: false,
 };
 
-function buildTimeMode(): string {
-  try {
-    return typeof __PUBLIC_DEMO_MODE__ === 'string' ? __PUBLIC_DEMO_MODE__ : 'disabled';
-  } catch {
-    // Not defined at all (e.g. running under vitest without the define).
-    return 'disabled';
-  }
-}
-
 function metaContent(name: string): string | undefined {
-  const el = document.querySelector(`meta[name="${name}"]`);
-  const content = el?.getAttribute('content');
-  return content ?? undefined;
+  return document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? undefined;
 }
 
-function urlOverride(): string | undefined {
+function urlParameter(): string | undefined {
   try {
     return new URLSearchParams(window.location.search).get('voicedemo') ?? undefined;
   } catch {
@@ -102,21 +98,28 @@ function urlOverride(): string | undefined {
   }
 }
 
-/** Only the exact string 'enabled' turns the demo on. */
-function toMode(raw: string | undefined): PublicDemoMode | undefined {
-  if (raw === undefined) return undefined;
+/** Recognises an explicit "off". Anything else is not a kill signal. */
+function isKillSignal(raw: string | undefined): boolean {
+  if (raw === undefined) return false;
   const value = raw.trim().toLowerCase();
-  if (value === 'enabled' || value === 'on' || value === 'true' || value === '1') return 'enabled';
-  if (value === 'disabled' || value === 'off' || value === 'false' || value === '0') {
-    return 'disabled';
-  }
-  return undefined;
+  return value === 'disabled' || value === 'off' || value === 'false' || value === '0';
+}
+
+/**
+ * Recognises an explicit "on". Only consulted for the inline config.
+ *
+ * Exact match, no trimming and no case folding: the declared type is the
+ * literal `'enabled'`, and anything else — `'ENABLED'`, `' enabled'`, `'on'`,
+ * `true` — is a configuration mistake. A flag that gates a microphone prompt
+ * should fail closed on a typo, not guess what was meant.
+ */
+function isEnableSignal(raw: string | undefined): boolean {
+  return raw === 'enabled';
 }
 
 export interface ConfigSources {
   /** Defaults to `window.SEENN_VOICE_DEMO`. */
   inline?: Partial<VoiceDemoConfig> | undefined;
-  /** Per-mount `data-` attributes. */
   dataset?: DOMStringMap | undefined;
 }
 
@@ -125,31 +128,34 @@ export interface ConfigSources {
  * degrade to `unavailable`, not break the page it is embedded in.
  */
 export function resolveConfig(sources: ConfigSources = {}): VoiceDemoConfig {
-  const inline = sources.inline ?? (window as { SEENN_VOICE_DEMO?: Partial<VoiceDemoConfig> }).SEENN_VOICE_DEMO;
+  const inline =
+    sources.inline ??
+    (window as { SEENN_VOICE_DEMO?: Partial<VoiceDemoConfig> }).SEENN_VOICE_DEMO;
 
   const config: VoiceDemoConfig = { ...DEFAULT_CONFIG, ...(inline ?? {}) };
 
-  // Precedence, lowest first.
-  const fromBuild = toMode(buildTimeMode());
-  const fromMeta = toMode(metaContent('seenn:public-demo-mode'));
-  const fromInline = inline?.publicDemoMode ? toMode(inline.publicDemoMode) : undefined;
-  const fromUrl = toMode(urlOverride());
+  // The one and only way in.
+  let mode: PublicDemoMode = isEnableSignal(inline?.publicDemoMode) ? 'enabled' : 'disabled';
 
-  config.publicDemoMode = fromUrl ?? fromInline ?? fromMeta ?? fromBuild ?? 'disabled';
+  // Kill switches. Either can veto; neither can grant.
+  if (isKillSignal(urlParameter())) mode = 'disabled';
+  if (isKillSignal(metaContent('seenn:public-demo-mode'))) mode = 'disabled';
+
+  config.publicDemoMode = mode;
 
   const dataset = sources.dataset;
   if (dataset) {
-    if (dataset.orbSize) config.orbSize = Number(dataset.orbSize) || config.orbSize;
-    if (dataset.locale) config.locale = dataset.locale as DemoLocale;
+    if (dataset['orbSize']) config.orbSize = Number(dataset['orbSize']) || config.orbSize;
+    if (dataset['locale']) config.locale = dataset['locale'] as DemoLocale;
   }
 
-  // A service-role key or LiveKit API secret in the browser is the failure this
-  // widget must never have. Refuse the credential and switch the demo off
-  // rather than shipping it in a network request.
+  // A service-role or secret key in the browser is the failure this widget
+  // must never have. Refuse the credential and switch the demo off rather than
+  // putting it in a network request.
   if (config.anonKey && looksLikeServerSecret(config.anonKey)) {
     logger.error(
       'refusing to start: the configured key looks like a server-side secret ' +
-        '(service_role / API secret). Use the Supabase ANON key.',
+        '(service_role / sb_secret_ / API secret). Use the Supabase anon or publishable key.',
     );
     config.anonKey = '';
     config.publicDemoMode = 'disabled';
@@ -158,13 +164,20 @@ export function resolveConfig(sources: ConfigSources = {}): VoiceDemoConfig {
   return config;
 }
 
+export type UnavailableReason =
+  | 'flag_disabled'
+  | 'endpoint_not_configured'
+  | 'turnstile_not_configured'
+  | 'browser_unsupported';
+
 /**
- * The demo can only run when the flag is on *and* it has somewhere to call.
- * Returns the reason it cannot, or null when it can.
+ * The demo runs only when the flag is on AND it has somewhere to call AND it
+ * can prove the caller is not a bot. Returns the reason it cannot, or null.
  */
-export function unavailableReason(config: VoiceDemoConfig): string | null {
+export function unavailableReason(config: VoiceDemoConfig): UnavailableReason | null {
   if (config.publicDemoMode !== 'enabled') return 'flag_disabled';
   if (!config.endpointBaseUrl || !config.anonKey) return 'endpoint_not_configured';
+  if (!config.turnstileSiteKey) return 'turnstile_not_configured';
   if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
     return 'browser_unsupported';
   }

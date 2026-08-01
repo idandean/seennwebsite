@@ -4,7 +4,8 @@
  * Built from tools/voice-demo/src by tools/voice-demo/scripts/build.mjs.
  * Edit the TypeScript source and re-run `npm run build` in tools/voice-demo.
  *
- * PUBLIC_DEMO_MODE baked into this build: disabled
+ * The public voice demo is enabled only by a window.SEENN_VOICE_DEMO block in
+ * the page — see tools/voice-demo/CONFIGURATION.md. Nothing is baked in here.
  */
 "use strict";
 (() => {
@@ -43,12 +44,12 @@
     policyUrl: ["policy_url", "policyUrl", "url", "href"]
   };
   var ContractViolation = class extends Error {
-    constructor(missing) {
+    constructor(problems) {
       super(
-        `public-voice-demo response is missing required field(s): ${missing.join(", ")}. See tools/voice-demo/BACKEND-CONTRACT.md.`
+        `public-voice-demo response is unusable: ${problems.join("; ")}. See tools/voice-demo/BACKEND-CONTRACT.md.`
       );
       this.name = "ContractViolation";
-      this.missing = missing;
+      this.problems = problems;
     }
   };
   function isRecord(value) {
@@ -57,7 +58,7 @@
   function pickString(source, keys) {
     for (const key of keys) {
       const value = source[key];
-      if (typeof value === "string" && value.length > 0) return value;
+      if (typeof value === "string" && value.trim().length > 0) return value;
     }
     return void 0;
   }
@@ -75,6 +76,58 @@
     }
     return void 0;
   }
+  function canonicalizeLanguage(raw) {
+    var _a;
+    if (!raw) return null;
+    const tag = raw.trim().toLowerCase().replace(/_/g, "-");
+    const primary = (_a = tag.split("-")[0]) != null ? _a : "";
+    if (primary === "en") return "en";
+    if (primary === "he" || primary === "iw") return "he";
+    if (primary === "ar") return "ar";
+    return null;
+  }
+  function isSecureWebSocketUrl(raw) {
+    try {
+      return new URL(raw).protocol === "wss:";
+    } catch {
+      return false;
+    }
+  }
+  function isHttpUrl(raw) {
+    try {
+      const protocol = new URL(raw).protocol;
+      return protocol === "http:" || protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+  function parseRecording(raw) {
+    var _a;
+    if (!isRecord(raw)) return { status: "absent" };
+    const required = (_a = pickBoolean(raw, RECORDING_ALIASES.required)) != null ? _a : false;
+    const text = pickString(raw, RECORDING_ALIASES.text);
+    const policyVersion = pickString(raw, RECORDING_ALIASES.policyVersion);
+    const locale = pickString(raw, RECORDING_ALIASES.locale);
+    const policyUrl = pickString(raw, RECORDING_ALIASES.policyUrl);
+    if (!text && !policyVersion && !required) return { status: "absent" };
+    if (!text) {
+      return { status: "malformed", required, reason: "recording block has no consent text" };
+    }
+    if (!policyVersion) {
+      return { status: "malformed", required, reason: "recording block has no policy version" };
+    }
+    if (policyUrl !== void 0 && !isHttpUrl(policyUrl)) {
+      return { status: "malformed", required, reason: "recording policy_url is not http(s)" };
+    }
+    const consent = {
+      required,
+      text,
+      policyVersion,
+      locale: locale != null ? locale : ""
+    };
+    if (policyUrl !== void 0) consent.policyUrl = policyUrl;
+    return { status: "ok", consent };
+  }
   function readErrorCode(body, httpStatus) {
     var _a;
     const raw = isRecord(body) ? pickString(body, ["error", "code", "error_code", "errorCode", "type"]) : void 0;
@@ -88,48 +141,58 @@
     if (httpStatus >= 400 && httpStatus < 500) return "invalid_request";
     return "server_error";
   }
-  function normalizeRecording(raw) {
+  function normalizeSession(raw, options = {}) {
     var _a;
-    if (!isRecord(raw)) return void 0;
-    const text = pickString(raw, RECORDING_ALIASES.text);
-    const policyVersion = pickString(raw, RECORDING_ALIASES.policyVersion);
-    const locale = pickString(raw, RECORDING_ALIASES.locale);
-    const required = (_a = pickBoolean(raw, RECORDING_ALIASES.required)) != null ? _a : false;
-    const policyUrl = pickString(raw, RECORDING_ALIASES.policyUrl);
-    if (!text || !policyVersion) return void 0;
-    const consent = {
-      required,
-      text,
-      policyVersion,
-      locale: locale != null ? locale : ""
-    };
-    if (policyUrl !== void 0) consent.policyUrl = policyUrl;
-    return consent;
-  }
-  function normalizeSession(raw) {
-    if (!isRecord(raw)) throw new ContractViolation(["<response body was not an object>"]);
+    if (!isRecord(raw)) throw new ContractViolation(["response body was not an object"]);
+    const now = (_a = options.now) != null ? _a : Date.now();
+    const problems = [];
     const token = pickString(raw, ALIASES.token);
     const livekitUrl = pickString(raw, ALIASES.livekitUrl);
     const sessionId = pickString(raw, ALIASES.sessionId);
     const expiresAt = pickString(raw, ALIASES.expiresAt);
     const language = pickString(raw, ALIASES.language);
-    const missing = [];
-    if (!token) missing.push(PREFERRED_RESPONSE_FIELDS.token);
-    if (!livekitUrl) missing.push(PREFERRED_RESPONSE_FIELDS.livekitUrl);
-    if (!sessionId) missing.push(PREFERRED_RESPONSE_FIELDS.sessionId);
-    if (!expiresAt) missing.push(PREFERRED_RESPONSE_FIELDS.expiresAt);
-    if (!language) missing.push(PREFERRED_RESPONSE_FIELDS.language);
-    if (missing.length > 0) throw new ContractViolation(missing);
+    if (!token) problems.push(`missing ${PREFERRED_RESPONSE_FIELDS.token}`);
+    if (!livekitUrl) {
+      problems.push(`missing ${PREFERRED_RESPONSE_FIELDS.livekitUrl}`);
+    } else if (!isSecureWebSocketUrl(livekitUrl)) {
+      problems.push(`${PREFERRED_RESPONSE_FIELDS.livekitUrl} must be a wss:// URL`);
+    }
+    if (!sessionId) problems.push(`missing ${PREFERRED_RESPONSE_FIELDS.sessionId}`);
+    if (!expiresAt) {
+      problems.push(`missing ${PREFERRED_RESPONSE_FIELDS.expiresAt}`);
+    } else {
+      const parsed = Date.parse(expiresAt);
+      if (Number.isNaN(parsed)) {
+        problems.push(`${PREFERRED_RESPONSE_FIELDS.expiresAt} is not a valid ISO-8601 timestamp`);
+      } else if (parsed <= now) {
+        problems.push(`${PREFERRED_RESPONSE_FIELDS.expiresAt} is already in the past`);
+      }
+    }
+    const canonicalLanguage = canonicalizeLanguage(language);
+    if (!language) {
+      problems.push(`missing ${PREFERRED_RESPONSE_FIELDS.language}`);
+    } else if (!canonicalLanguage) {
+      problems.push(`${PREFERRED_RESPONSE_FIELDS.language} "${language}" is not one of en, he, ar`);
+    }
+    const recording = parseRecording(pickRecord(raw, ALIASES.recording));
+    if (recording.status === "malformed" && recording.required) {
+      problems.push(recording.reason);
+    }
+    if (token && recording.status === "ok" && recording.consent.required) {
+      problems.push("response carries a usable token together with recording.required=true");
+    }
+    if (token && recording.status === "malformed" && recording.required) {
+      problems.push("response carries a usable token together with a required recording block");
+    }
+    if (problems.length > 0) throw new ContractViolation(problems);
     const session = {
-      // Non-null: `missing` is empty, so each was found.
       token,
       livekitUrl,
       sessionId,
       expiresAt,
-      language
+      language: canonicalLanguage
     };
-    const recording = normalizeRecording(pickRecord(raw, ALIASES.recording));
-    if (recording !== void 0) session.recording = recording;
+    if (recording.status === "ok") session.recording = recording.consent;
     return session;
   }
   function looksLikeServerSecret(value) {
@@ -138,12 +201,11 @@
     if (parts.length === 3 && parts[1]) {
       try {
         const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-        const decoded = atob(payload);
-        if (/"role"\s*:\s*"service_role"/.test(decoded)) return true;
+        if (/"role"\s*:\s*"service_role"/.test(atob(payload))) return true;
       } catch {
       }
     }
-    return /service_role|SUPABASE_SERVICE|LIVEKIT_API_SECRET|sk_live|secret_key/i.test(value);
+    return /^sb_secret_/i.test(value.trim()) || /service_role|SUPABASE_SERVICE|SERVICE_ROLE_KEY/i.test(value) || /LIVEKIT_API_SECRET|LIVEKIT_SECRET/i.test(value) || /\bsk_live_|\bsk_test_|secret_key/i.test(value);
   }
 
   // src/logging.ts
@@ -193,33 +255,27 @@
   };
 
   // src/config.ts
+  var LIVEKIT_CLIENT_VERSION = "2.21.0";
+  var LIVEKIT_MODULE_URL = `https://cdn.jsdelivr.net/npm/livekit-client@${LIVEKIT_CLIENT_VERSION}/+esm`;
   var DEFAULT_CONFIG = {
     publicDemoMode: "disabled",
     endpointBaseUrl: "",
     anonKey: "",
     endpointPath: "/functions/v1/public-voice-demo",
-    locale: null,
     turnstileSiteKey: "",
-    livekitModuleUrl: "https://cdn.jsdelivr.net/npm/livekit-client@2/+esm",
+    locale: null,
+    livekitModuleUrl: LIVEKIT_MODULE_URL,
     maxSessionSeconds: 120,
     reconnectTimeoutSeconds: 20,
     signupUrl: "https://app.seenn.ai/auth/signup",
     orbSize: 200,
     renderWhenUnavailable: false
   };
-  function buildTimeMode() {
-    try {
-      return true ? "disabled" : "disabled";
-    } catch {
-      return "disabled";
-    }
-  }
   function metaContent(name) {
-    const el = document.querySelector(`meta[name="${name}"]`);
-    const content = el == null ? void 0 : el.getAttribute("content");
-    return content != null ? content : void 0;
+    var _a, _b;
+    return (_b = (_a = document.querySelector(`meta[name="${name}"]`)) == null ? void 0 : _a.getAttribute("content")) != null ? _b : void 0;
   }
-  function urlOverride() {
+  function urlParameter() {
     var _a;
     try {
       return (_a = new URLSearchParams(window.location.search).get("voicedemo")) != null ? _a : void 0;
@@ -227,32 +283,30 @@
       return void 0;
     }
   }
-  function toMode(raw) {
-    if (raw === void 0) return void 0;
+  function isKillSignal(raw) {
+    if (raw === void 0) return false;
     const value = raw.trim().toLowerCase();
-    if (value === "enabled" || value === "on" || value === "true" || value === "1") return "enabled";
-    if (value === "disabled" || value === "off" || value === "false" || value === "0") {
-      return "disabled";
-    }
-    return void 0;
+    return value === "disabled" || value === "off" || value === "false" || value === "0";
+  }
+  function isEnableSignal(raw) {
+    return raw === "enabled";
   }
   function resolveConfig(sources = {}) {
-    var _a, _b, _c, _d;
+    var _a;
     const inline = (_a = sources.inline) != null ? _a : window.SEENN_VOICE_DEMO;
     const config = { ...DEFAULT_CONFIG, ...inline != null ? inline : {} };
-    const fromBuild = toMode(buildTimeMode());
-    const fromMeta = toMode(metaContent("seenn:public-demo-mode"));
-    const fromInline = (inline == null ? void 0 : inline.publicDemoMode) ? toMode(inline.publicDemoMode) : void 0;
-    const fromUrl = toMode(urlOverride());
-    config.publicDemoMode = (_d = (_c = (_b = fromUrl != null ? fromUrl : fromInline) != null ? _b : fromMeta) != null ? _c : fromBuild) != null ? _d : "disabled";
+    let mode = isEnableSignal(inline == null ? void 0 : inline.publicDemoMode) ? "enabled" : "disabled";
+    if (isKillSignal(urlParameter())) mode = "disabled";
+    if (isKillSignal(metaContent("seenn:public-demo-mode"))) mode = "disabled";
+    config.publicDemoMode = mode;
     const dataset = sources.dataset;
     if (dataset) {
-      if (dataset.orbSize) config.orbSize = Number(dataset.orbSize) || config.orbSize;
-      if (dataset.locale) config.locale = dataset.locale;
+      if (dataset["orbSize"]) config.orbSize = Number(dataset["orbSize"]) || config.orbSize;
+      if (dataset["locale"]) config.locale = dataset["locale"];
     }
     if (config.anonKey && looksLikeServerSecret(config.anonKey)) {
       logger.error(
-        "refusing to start: the configured key looks like a server-side secret (service_role / API secret). Use the Supabase ANON key."
+        "refusing to start: the configured key looks like a server-side secret (service_role / sb_secret_ / API secret). Use the Supabase anon or publishable key."
       );
       config.anonKey = "";
       config.publicDemoMode = "disabled";
@@ -263,6 +317,7 @@
     var _a;
     if (config.publicDemoMode !== "enabled") return "flag_disabled";
     if (!config.endpointBaseUrl || !config.anonKey) return "endpoint_not_configured";
+    if (!config.turnstileSiteKey) return "turnstile_not_configured";
     if (typeof navigator === "undefined" || !((_a = navigator.mediaDevices) == null ? void 0 : _a.getUserMedia)) {
       return "browser_unsupported";
     }
@@ -457,35 +512,52 @@
     const raw = (_a = headers == null ? void 0 : headers.get) == null ? void 0 : _a.call(headers, "retry-after");
     if (!raw) return null;
     const seconds = Number(raw);
-    return Number.isFinite(seconds) ? seconds : null;
+    if (Number.isFinite(seconds) && seconds >= 0) return seconds;
+    const asDate = Date.parse(raw);
+    if (!Number.isNaN(asDate)) return Math.max(0, Math.round((asDate - Date.now()) / 1e3));
+    return null;
   }
   function rateLimitScopeFor(code) {
     return code === "demo_capacity_reached" ? "global_capacity" : "per_visitor";
   }
   var PublicVoiceDemoClient = class {
     constructor(options) {
-      var _a;
+      var _a, _b;
       this.options = options;
       this.doFetch = (_a = options.fetchImpl) != null ? _a : globalThis.fetch.bind(globalThis);
+      this.now = (_b = options.now) != null ? _b : () => Date.now();
     }
     get endpoint() {
       return `${this.options.baseUrl.replace(/\/+$/, "")}${this.options.path}`;
     }
     async createSession(input) {
+      var _a, _b;
+      const turnstileToken = (_b = (_a = input.turnstileToken) == null ? void 0 : _a.trim()) != null ? _b : "";
+      if (this.options.requireTurnstileToken && !turnstileToken) {
+        throw new DemoRequestError(
+          "verification_failed",
+          "refusing to send a session request without a Turnstile token"
+        );
+      }
       const body = { language: input.locale };
-      if (input.consent) body.consent = input.consent;
-      if (input.turnstileToken) body.turnstileToken = input.turnstileToken;
+      if (turnstileToken) body["turnstile_token"] = turnstileToken;
+      if (input.consent) {
+        body["consent"] = {
+          policy_version: input.consent.policyVersion,
+          locale: input.consent.locale,
+          accepted_at: input.consent.acceptedAt
+        };
+      }
       let response;
       try {
         response = await this.doFetch(this.endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Anonymous visitors: the anon key only, never a user token and
-            // never a service-role key (rejected in config.ts).
+            // Anonymous visitors: anon/publishable key only, no user token.
             apikey: this.options.anonKey
           },
-          body: JSON.stringify(this.serializeRequest(body)),
+          body: JSON.stringify(body),
           ...input.signal ? { signal: input.signal } : {}
         });
       } catch (cause) {
@@ -496,8 +568,13 @@
       if (!response.ok) {
         const code = readErrorCode(payload, response.status);
         if (code === "consent_required") {
-          const consent2 = normalizeRecording(this.readConsentBlock(payload));
-          if (consent2) return { kind: "consent_required", consent: consent2 };
+          const parsed = parseRecording(this.readConsentBlock(payload));
+          if (parsed.status === "ok") return { kind: "consent_required", consent: parsed.consent };
+          throw new DemoRequestError(
+            "contract_violation",
+            parsed.status === "malformed" ? `consent demanded but ${parsed.reason}` : "consent demanded but no usable recording block was returned",
+            response.status
+          );
         }
         throw new DemoRequestError(
           code,
@@ -506,13 +583,17 @@
           parseRetryAfter(response.headers)
         );
       }
-      const consentBlock = this.readConsentBlock(payload);
-      const consent = normalizeRecording(consentBlock);
-      if ((consent == null ? void 0 : consent.required) && !this.payloadHasToken(payload)) {
-        return { kind: "consent_required", consent };
+      if (!this.payloadHasToken(payload)) {
+        const parsed = parseRecording(this.readConsentBlock(payload));
+        if (parsed.status === "ok" && parsed.consent.required) {
+          return { kind: "consent_required", consent: parsed.consent };
+        }
+        if (parsed.status === "malformed" && parsed.required) {
+          throw new DemoRequestError("contract_violation", parsed.reason, response.status);
+        }
       }
       try {
-        return { kind: "session", session: normalizeSession(payload) };
+        return { kind: "session", session: normalizeSession(payload, { now: this.now() }) };
       } catch (cause) {
         if (cause instanceof ContractViolation) {
           throw new DemoRequestError("contract_violation", cause.message, response.status);
@@ -520,7 +601,6 @@
         throw cause;
       }
     }
-    /** `consent` may sit at the top level or inside `recording`. */
     readConsentBlock(payload) {
       var _a, _b, _c;
       if (!payload || typeof payload !== "object") return void 0;
@@ -531,27 +611,155 @@
       if (!payload || typeof payload !== "object") return false;
       const record = payload;
       return ["token", "participant_token", "access_token", "accessToken", "participantToken"].some(
-        (key) => typeof record[key] === "string" && record[key].length > 0
+        (key) => typeof record[key] === "string" && record[key].trim().length > 0
       );
     }
-    /**
-     * Wire encoding. Camel-case request fields are sent snake_case, matching the
-     * rest of the Supabase functions in this stack. UNCONFIRMED — flagged in the
-     * contract doc as a thing the backend must confirm.
-     */
-    serializeRequest(body) {
-      const out = { language: body.language };
-      if (body.consent) {
-        out["consent"] = {
-          policy_version: body.consent.policyVersion,
-          locale: body.consent.locale,
-          accepted_at: body.consent.acceptedAt
-        };
-      }
-      if (body.turnstileToken) out["turnstile_token"] = body.turnstileToken;
-      return out;
+  };
+
+  // src/turnstile.ts
+  var TURNSTILE_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+  var TurnstileError = class extends Error {
+    constructor(message) {
+      super(message);
+      this.name = "TurnstileError";
     }
   };
+  function loadTurnstileScript() {
+    if (window.turnstile) return Promise.resolve(window.turnstile);
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(
+        `script[src^="https://challenges.cloudflare.com/turnstile/"]`
+      );
+      const onReady = () => {
+        if (window.turnstile) resolve(window.turnstile);
+        else reject(new TurnstileError("turnstile script loaded but exposed no API"));
+      };
+      if (existing) {
+        existing.addEventListener("load", onReady, { once: true });
+        existing.addEventListener(
+          "error",
+          () => reject(new TurnstileError("turnstile script failed to load")),
+          { once: true }
+        );
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = TURNSTILE_SCRIPT_URL;
+      script.async = true;
+      script.defer = true;
+      script.addEventListener("load", onReady, { once: true });
+      script.addEventListener(
+        "error",
+        () => reject(new TurnstileError("turnstile script failed to load")),
+        { once: true }
+      );
+      document.head.appendChild(script);
+    });
+  }
+  function createTurnstileProvider(options) {
+    var _a, _b;
+    const timeoutMs = (_a = options.timeoutMs) != null ? _a : 2e4;
+    const load = (_b = options.loadScript) != null ? _b : loadTurnstileScript;
+    let api = null;
+    let widgetId = null;
+    let container = null;
+    let pending = null;
+    let destroyed = false;
+    function settle(fn, value) {
+      const current = pending;
+      pending = null;
+      if (!current) return;
+      if (fn === "resolve") current.resolve(value);
+      else current.reject(value);
+    }
+    async function ensureWidget() {
+      if (!api) api = await load();
+      if (destroyed) throw new TurnstileError("turnstile provider was destroyed");
+      if (widgetId === null) {
+        container = document.createElement("div");
+        container.setAttribute("aria-hidden", "true");
+        container.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
+        document.body.appendChild(container);
+        widgetId = api.render(container, {
+          sitekey: options.siteKey,
+          size: "invisible",
+          callback: (token) => settle("resolve", token),
+          "error-callback": (code) => settle("reject", new TurnstileError(`turnstile challenge failed${code ? `: ${code}` : ""}`)),
+          "timeout-callback": () => settle("reject", new TurnstileError("turnstile challenge timed out"))
+        });
+      }
+      return api;
+    }
+    return {
+      /**
+       * Deliberately not `async`: `pending` must be established synchronously,
+       * before any await. Loading the script is asynchronous, so an async
+       * function would leave a window in which a second call sails past the
+       * in-flight guard and `reset()` finds nothing to cancel — orphaning the
+       * first promise forever.
+       */
+      getToken() {
+        if (destroyed) return Promise.reject(new TurnstileError("turnstile provider was destroyed"));
+        if (pending) {
+          return Promise.reject(new TurnstileError("a turnstile challenge is already in flight"));
+        }
+        return new Promise((resolve, reject) => {
+          const timer = setTimeout(() => {
+            settle("reject", new TurnstileError("turnstile challenge timed out"));
+          }, timeoutMs);
+          pending = {
+            resolve: (token) => {
+              clearTimeout(timer);
+              resolve(token);
+            },
+            reject: (error) => {
+              clearTimeout(timer);
+              reject(error);
+            }
+          };
+          void ensureWidget().then((instance) => {
+            if (!pending) return;
+            const id = widgetId;
+            if (id === null) {
+              settle("reject", new TurnstileError("turnstile widget was not rendered"));
+              return;
+            }
+            instance.reset(id);
+            instance.execute(id);
+          }).catch((cause) => {
+            settle(
+              "reject",
+              cause instanceof Error ? cause : new TurnstileError(String(cause))
+            );
+          });
+        });
+      },
+      reset() {
+        settle("reject", new TurnstileError("turnstile challenge was reset"));
+        if (api && widgetId !== null) {
+          try {
+            api.reset(widgetId);
+          } catch (cause) {
+            logger.warn("turnstile reset failed", cause);
+          }
+        }
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        settle("reject", new TurnstileError("turnstile provider was destroyed"));
+        if (api && widgetId !== null) {
+          try {
+            api.remove(widgetId);
+          } catch {
+          }
+        }
+        widgetId = null;
+        container == null ? void 0 : container.remove();
+        container = null;
+      }
+    };
+  }
 
   // src/transport.ts
   function smooth(previous, next) {
@@ -649,6 +857,7 @@
 
   // src/state.ts
   var ACTIVE_STATES = [
+    "requestingMicrophone",
     "connecting",
     "listening",
     "assistantSpeaking",
@@ -666,13 +875,15 @@
       acceptedConsent: null,
       session: null,
       connectionInFlight: false,
-      attempt: 0
+      attempt: 0,
+      retryAfterUntil: null
     };
   }
   function isActive(state) {
     return ACTIVE_STATES.includes(state);
   }
   function reduce(context, event) {
+    var _a, _b;
     const { state } = context;
     switch (event.type) {
       case "FLAG_ENABLED":
@@ -686,6 +897,7 @@
         };
       case "START":
         if (!STARTABLE.includes(state) || context.connectionInFlight) return context;
+        if (context.retryAfterUntil !== null && event.at < context.retryAfterUntil) return context;
         return {
           ...initialContext(null),
           state: "requestingMicrophone",
@@ -767,16 +979,20 @@
           session: null,
           connectionInFlight: false
         };
-      case "RATE_LIMITED":
+      case "RATE_LIMITED": {
         if (state !== "connecting" && state !== "requestingMicrophone") return context;
+        const seconds = (_a = event.retryAfterSeconds) != null ? _a : null;
+        const from = (_b = event.at) != null ? _b : 0;
         return {
           ...context,
           state: "rateLimited",
           rateLimitScope: event.scope,
+          retryAfterUntil: seconds !== null && seconds > 0 ? from + seconds * 1e3 : null,
           pendingConsent: null,
           session: null,
           connectionInFlight: false
         };
+      }
       case "DEMO_UNAVAILABLE":
         if (state === "unavailable") return context;
         return { ...initialContext(event.reason), attempt: context.attempt };
@@ -795,7 +1011,9 @@
         return {
           ...initialContext(null),
           acceptedConsent: context.acceptedConsent,
-          attempt: context.attempt
+          attempt: context.attempt,
+          // A server asked us to back off; clearing the UI does not clear that.
+          retryAfterUntil: context.retryAfterUntil
         };
       default: {
         const never = event;
@@ -841,6 +1059,7 @@
   var VoiceDemoWidget = class {
     constructor(mount, config, deps = {}) {
       this.transport = null;
+      this.turnstile = null;
       this.microphone = null;
       this.abortController = null;
       this.consentDecision = null;
@@ -860,7 +1079,11 @@
       this.client = (_c = (_b = deps.createClient) == null ? void 0 : _b.call(deps, config)) != null ? _c : new PublicVoiceDemoClient({
         baseUrl: config.endpointBaseUrl,
         anonKey: config.anonKey,
-        path: config.endpointPath
+        path: config.endpointPath,
+        // A configured site key makes the token mandatory, in the client, so
+        // no code path can post without one.
+        requireTurnstileToken: config.turnstileSiteKey !== "",
+        now: this.now
       });
       this.makeTransport = (_d = deps.createTransport) != null ? _d : (events) => createLiveKitTransport(events, { moduleUrl: config.livekitModuleUrl });
       this.locale = resolveLocale(config.locale, document.documentElement.getAttribute("lang"));
@@ -1068,9 +1291,9 @@
         this.dispatch({ type: "DEMO_UNAVAILABLE", reason });
         return;
       }
-      if (!this.dispatch({ type: "START" })) return;
+      if (!this.dispatch({ type: "START", at: this.now() })) return;
       const attempt = this.context.attempt;
-      const stale = () => this.destroyed || this.context.attempt !== attempt;
+      const stale = () => this.destroyed || this.context.attempt !== attempt || !isActive(this.context.state);
       track("voice_demo_start", { voice_demo_locale: this.locale });
       this.primeAudio();
       let microphone;
@@ -1118,7 +1341,11 @@
         this.fail("transport_failed");
         return;
       }
-      if (stale()) return;
+      if (stale()) {
+        this.releaseMicrophone();
+        await this.teardownTransport();
+        return;
+      }
       this.beginCountdown(session.expiresAt);
       this.dispatch({ type: "CONNECTED" });
       track("voice_demo_connected", { voice_demo_session: session.sessionId });
@@ -1128,14 +1355,21 @@
      * two round-trips: ask, accept, ask again.
      */
     async obtainSession(attempt) {
-      var _a, _b;
+      var _a, _b, _c;
       for (let round = 0; round < 2; round += 1) {
-        const result = await this.client.createSession({
-          locale: this.locale,
-          consent: (_a = this.context.acceptedConsent) != null ? _a : void 0,
-          turnstileToken: void 0,
-          signal: (_b = this.abortController) == null ? void 0 : _b.signal
-        });
+        const turnstileToken = await this.freshTurnstileToken();
+        if (this.destroyed || this.context.attempt !== attempt) return null;
+        let result;
+        try {
+          result = await this.client.createSession({
+            locale: this.locale,
+            consent: (_a = this.context.acceptedConsent) != null ? _a : void 0,
+            turnstileToken,
+            signal: (_b = this.abortController) == null ? void 0 : _b.signal
+          });
+        } finally {
+          (_c = this.turnstile) == null ? void 0 : _c.reset();
+        }
         if (this.destroyed || this.context.attempt !== attempt) return null;
         if (result.kind === "session") {
           const recording = result.session.recording;
@@ -1152,9 +1386,35 @@
       this.fail("consent_required");
       return null;
     }
+    /**
+     * Obtains a Turnstile token, or throws.
+     *
+     * Returns undefined only when no site key is configured at all — and in that
+     * case `unavailableReason` has already refused to start, so an enabled demo
+     * can never reach the endpoint unprotected.
+     */
+    async freshTurnstileToken() {
+      var _a, _b, _c;
+      const siteKey = this.config.turnstileSiteKey;
+      if (!siteKey) return void 0;
+      if (!this.turnstile) {
+        this.turnstile = (_c = (_b = (_a = this.deps).createTurnstile) == null ? void 0 : _b.call(_a, this.config)) != null ? _c : createTurnstileProvider({ siteKey });
+      }
+      try {
+        return await this.turnstile.getToken();
+      } catch (cause) {
+        logger.warn("turnstile challenge failed", cause);
+        throw new DemoRequestError("verification_failed", "could not obtain a Turnstile token");
+      }
+    }
+    /**
+     * Consent is matched on version AND locale: the same policy rendered in a
+     * different language is a different thing to have agreed to.
+     */
     hasAccepted(consent) {
-      var _a;
-      return ((_a = this.context.acceptedConsent) == null ? void 0 : _a.policyVersion) === consent.policyVersion;
+      const accepted = this.context.acceptedConsent;
+      if (!accepted) return false;
+      return accepted.policyVersion === consent.policyVersion && accepted.locale === consent.locale;
     }
     /** Renders the server's wording and waits for a decision. */
     async askForConsent(consent, attempt) {
@@ -1226,7 +1486,12 @@
       if (cause instanceof DemoRequestError) {
         if (cause.code === "rate_limited" || cause.code === "demo_capacity_reached") {
           this.releaseMicrophone();
-          this.dispatch({ type: "RATE_LIMITED", scope: rateLimitScopeFor(cause.code) });
+          this.dispatch({
+            type: "RATE_LIMITED",
+            scope: rateLimitScopeFor(cause.code),
+            retryAfterSeconds: cause.retryAfterSeconds,
+            at: this.now()
+          });
           track("voice_demo_rate_limited", { voice_demo_code: cause.code });
           return;
         }
@@ -1248,13 +1513,23 @@
       this.dispatch({ type: "ERROR", code });
       track("voice_demo_error", { voice_demo_code: code });
     }
-    /** Ends the session and releases every resource it held. */
+    /**
+     * Ends the session and releases every resource it held.
+     *
+     * Reachable from four places: the disconnect button, the session deadline,
+     * a transport-side drop, and `pagehide`. Because `requestingMicrophone` and
+     * `connecting` are active states, it also serves as cancellation — aborting
+     * the in-flight request and stopping a microphone that may still be
+     * resolving.
+     */
     async disconnect(reason) {
-      var _a;
+      var _a, _b, _c;
       if (!isActive(this.context.state)) return;
       this.clearTimers();
       (_a = this.abortController) == null ? void 0 : _a.abort();
       this.abortController = null;
+      (_b = this.turnstile) == null ? void 0 : _b.reset();
+      (_c = this.consentDecision) == null ? void 0 : _c.call(this, false);
       this.releaseMicrophone();
       await this.teardownTransport();
       this.dispatch({ type: "DISCONNECT", reason });
@@ -1317,7 +1592,7 @@
     }
     /** Idempotent. Releases the microphone, the room, timers and listeners. */
     destroy() {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       if (this.destroyed) return;
       this.destroyed = true;
       this.clearTimers();
@@ -1327,8 +1602,10 @@
       this.consentDecision = null;
       this.releaseMicrophone();
       void this.teardownTransport();
+      (_c = this.turnstile) == null ? void 0 : _c.destroy();
+      this.turnstile = null;
       window.removeEventListener("pagehide", this.onPageHide);
-      (_c = this.mountObserver) == null ? void 0 : _c.disconnect();
+      (_d = this.mountObserver) == null ? void 0 : _d.disconnect();
       this.mountObserver = null;
       this.root.remove();
     }

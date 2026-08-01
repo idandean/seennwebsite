@@ -26,27 +26,34 @@ function stubFetch(...responses: StubResponse[]) {
   return { impl: impl as unknown as typeof fetch, calls };
 }
 
-function makeClient(fetchImpl: typeof fetch) {
+const NOW = Date.parse('2026-08-01T10:00:00Z');
+
+function makeClient(fetchImpl: typeof fetch, requireTurnstileToken = false) {
   return new PublicVoiceDemoClient({
     baseUrl: 'https://stub.supabase.co/',
     anonKey: 'anon-key-123',
     path: '/functions/v1/public-voice-demo',
+    requireTurnstileToken,
     fetchImpl,
+    now: () => NOW,
   });
 }
+
+/** Every call in this suite carries a token, as the widget always does. */
+const INPUT = { locale: 'en' as const, turnstileToken: 'ts-token-1' };
 
 const SESSION_BODY = {
   token: 'jwt',
   livekit_url: 'wss://x.livekit.cloud',
   session_id: 'demo-1',
-  expires_at: '2030-01-01T00:00:00Z',
+  expires_at: '2026-08-01T10:05:00Z',
   language: 'en',
 };
 
 describe('request shape', () => {
   it('POSTs to the public endpoint, not the authenticated one', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-    await makeClient(impl).createSession({ locale: 'en' });
+    await makeClient(impl).createSession(INPUT);
 
     expect(calls[0]!.url).toBe('https://stub.supabase.co/functions/v1/public-voice-demo');
     expect(calls[0]!.url).not.toContain('ar-preview-call');
@@ -54,7 +61,7 @@ describe('request shape', () => {
 
   it('sends the anon key and no user token', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-    await makeClient(impl).createSession({ locale: 'en' });
+    await makeClient(impl).createSession(INPUT);
 
     const headers = calls[0]!.init.headers as Record<string, string>;
     expect(headers['apikey']).toBe('anon-key-123');
@@ -65,19 +72,28 @@ describe('request shape', () => {
   it('sends the website locale', async () => {
     for (const locale of ['en', 'he', 'ar'] as const) {
       const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-      await makeClient(impl).createSession({ locale });
+      await makeClient(impl).createSession({ locale, turnstileToken: 'ts-token-1' });
       expect(JSON.parse(calls[0]!.init.body as string).language).toBe(locale);
     }
   });
 
-  it('never sends a phone number or tenant, whatever else happens', async () => {
+  it('sends exactly the frozen body: language + turnstile_token', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-    await makeClient(impl).createSession({ locale: 'en' });
+    await makeClient(impl).createSession(INPUT);
 
     const body = JSON.parse(calls[0]!.init.body as string);
-    expect(Object.keys(body)).toEqual(['language']);
-    expect(body).not.toHaveProperty('destination_phone');
-    expect(body).not.toHaveProperty('tenant_id');
+    expect(Object.keys(body).sort()).toEqual(['language', 'turnstile_token']);
+    expect(body.turnstile_token).toBe('ts-token-1');
+  });
+
+  it('never sends a phone number, tenant, amount or balance_month', async () => {
+    const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
+    await makeClient(impl).createSession(INPUT);
+
+    const body = JSON.parse(calls[0]!.init.body as string);
+    for (const forbidden of ['destination_phone', 'tenant_id', 'amount', 'balance_month']) {
+      expect(body, forbidden).not.toHaveProperty(forbidden);
+    }
   });
 
   it('includes consent only once accepted, in snake_case', async () => {
@@ -94,17 +110,36 @@ describe('request shape', () => {
     });
   });
 
-  it('omits the turnstile token when none is configured', async () => {
+  it('omits turnstile_token entirely when there is none', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await makeClient(impl).createSession({ locale: 'en' });
     expect(JSON.parse(calls[0]!.init.body as string)).not.toHaveProperty('turnstile_token');
+  });
+
+  it('REFUSES to send at all when a token is required but absent', async () => {
+    const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
+
+    await expect(
+      makeClient(impl, true).createSession({ locale: 'en' }),
+    ).rejects.toMatchObject({ code: 'verification_failed' });
+
+    // The point: nothing went out. Not a request without a token — no request.
+    expect(calls).toHaveLength(0);
+  });
+
+  it('treats a blank token as absent', async () => {
+    const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
+    await expect(
+      makeClient(impl, true).createSession({ locale: 'en', turnstileToken: '   ' }),
+    ).rejects.toMatchObject({ code: 'verification_failed' });
+    expect(calls).toHaveLength(0);
   });
 });
 
 describe('responses', () => {
   it('returns a normalized session', async () => {
     const { impl } = stubFetch({ status: 200, body: SESSION_BODY });
-    const result = await makeClient(impl).createSession({ locale: 'en' });
+    const result = await makeClient(impl).createSession(INPUT);
     expect(result.kind).toBe('session');
     if (result.kind === 'session') expect(result.session.sessionId).toBe('demo-1');
   });
@@ -117,7 +152,7 @@ describe('responses', () => {
         recording: { required: true, text: 'Recorded.', policy_version: 'rec-1', locale: 'en' },
       },
     });
-    const result = await makeClient(impl).createSession({ locale: 'en' });
+    const result = await makeClient(impl).createSession(INPUT);
     expect(result.kind).toBe('consent_required');
     if (result.kind === 'consent_required') {
       expect(result.consent.text).toBe('Recorded.');
@@ -132,11 +167,11 @@ describe('responses', () => {
         recording: { required: true, text: 'Recorded.', policy_version: 'rec-1', locale: 'en' },
       },
     });
-    const result = await makeClient(impl).createSession({ locale: 'en' });
+    const result = await makeClient(impl).createSession(INPUT);
     expect(result.kind).toBe('consent_required');
   });
 
-  it('treats a session that carries a token as a session, consent block or not', async () => {
+  it('rejects a token arriving together with recording.required — v1 is not recorded', async () => {
     const { impl } = stubFetch({
       status: 200,
       body: {
@@ -144,8 +179,39 @@ describe('responses', () => {
         recording: { required: true, text: 'Recorded.', policy_version: 'rec-1', locale: 'en' },
       },
     });
-    const result = await makeClient(impl).createSession({ locale: 'en' });
-    expect(result.kind).toBe('session');
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
+      code: 'contract_violation',
+    });
+  });
+
+  it('fails closed when consent is demanded but unrenderable', async () => {
+    const { impl } = stubFetch({
+      status: 428,
+      body: { error: 'consent_required', recording: { required: true } },
+    });
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
+      code: 'contract_violation',
+    });
+  });
+
+  it('rejects a response whose expiry is already past', async () => {
+    const { impl } = stubFetch({
+      status: 200,
+      body: { ...SESSION_BODY, expires_at: '2026-08-01T09:00:00Z' },
+    });
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
+      code: 'contract_violation',
+    });
+  });
+
+  it('rejects a non-wss livekit_url', async () => {
+    const { impl } = stubFetch({
+      status: 200,
+      body: { ...SESSION_BODY, livekit_url: 'ws://x.livekit.cloud' },
+    });
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
+      code: 'contract_violation',
+    });
   });
 });
 
@@ -162,7 +228,7 @@ describe('errors', () => {
 
     for (const [status, error, expected] of cases) {
       const { impl } = stubFetch({ status, body: { error } });
-      await expect(makeClient(impl).createSession({ locale: 'en' })).rejects.toMatchObject({
+      await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
         code: expected,
       });
     }
@@ -170,7 +236,7 @@ describe('errors', () => {
 
   it('reports a contract violation distinctly from a server error', async () => {
     const { impl } = stubFetch({ status: 200, body: { token: 'only-a-token' } });
-    await expect(makeClient(impl).createSession({ locale: 'en' })).rejects.toMatchObject({
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
       code: 'contract_violation',
     });
   });
@@ -180,7 +246,7 @@ describe('errors', () => {
       throw new TypeError('Failed to fetch');
     }) as unknown as typeof fetch;
 
-    await expect(makeClient(impl).createSession({ locale: 'en' })).rejects.toMatchObject({
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
       code: 'network_error',
     });
   });
@@ -191,10 +257,22 @@ describe('errors', () => {
       body: { error: 'rate_limited' },
       headers: { 'retry-after': '90' },
     });
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
+      retryAfterSeconds: 90,
+    });
+  });
+
+  it('parses an HTTP-date Retry-After too', async () => {
+    const { impl } = stubFetch({
+      status: 429,
+      body: { error: 'rate_limited' },
+      headers: { 'retry-after': new Date(Date.now() + 60_000).toUTCString() },
+    });
     await makeClient(impl)
-      .createSession({ locale: 'en' })
+      .createSession(INPUT)
       .catch((error: DemoRequestError) => {
-        expect(error.retryAfterSeconds).toBe(90);
+        expect(error.retryAfterSeconds).toBeGreaterThan(50);
+        expect(error.retryAfterSeconds).toBeLessThanOrEqual(60);
       });
   });
 
@@ -205,7 +283,7 @@ describe('errors', () => {
       throw error;
     }) as unknown as typeof fetch;
 
-    await expect(makeClient(impl).createSession({ locale: 'en' })).rejects.toMatchObject({
+    await expect(makeClient(impl).createSession(INPUT)).rejects.toMatchObject({
       name: 'AbortError',
     });
   });

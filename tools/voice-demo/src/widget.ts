@@ -7,6 +7,7 @@
  */
 
 import { PublicVoiceDemoClient, DemoRequestError, rateLimitScopeFor } from './client';
+import { createTurnstileProvider } from './turnstile';
 import { createLiveKitTransport } from './transport';
 import { directionFor, resolveLocale, stringsFor } from './i18n';
 import { initialContext, isActive, reduce } from './state';
@@ -17,10 +18,13 @@ import type { DemoLocale, RecordingConsent } from './contract';
 import type { Strings } from './i18n';
 import type { AnyErrorCode, DemoContext, DemoEvent, DemoState, FinishReason } from './state';
 import type { TransportEvents, TransportFactory, VoiceTransport } from './transport';
+import type { TurnstileProvider } from './turnstile';
 
 export interface WidgetDeps {
   createClient?: (config: VoiceDemoConfig) => PublicVoiceDemoClient;
   createTransport?: TransportFactory;
+  /** Overridden in tests so no Cloudflare script is fetched. */
+  createTurnstile?: (config: VoiceDemoConfig) => TurnstileProvider;
   /** Overridden in tests; the real one is getUserMedia. */
   requestMicrophone?: () => Promise<MediaStream>;
   now?: () => number;
@@ -86,6 +90,7 @@ export class VoiceDemoWidget {
   private strings: Strings;
 
   private transport: VoiceTransport | null = null;
+  private turnstile: TurnstileProvider | null = null;
   private microphone: MediaStream | null = null;
   private abortController: AbortController | null = null;
   private consentDecision: ((accepted: boolean) => void) | null = null;
@@ -131,6 +136,10 @@ export class VoiceDemoWidget {
         baseUrl: config.endpointBaseUrl,
         anonKey: config.anonKey,
         path: config.endpointPath,
+        // A configured site key makes the token mandatory, in the client, so
+        // no code path can post without one.
+        requireTurnstileToken: config.turnstileSiteKey !== '',
+        now: this.now,
       });
 
     this.makeTransport =
@@ -396,10 +405,19 @@ export class VoiceDemoWidget {
       return;
     }
 
-    if (!this.dispatch({ type: 'START' })) return; // duplicate — single-flight guard
+    // Rejected when a session is already in flight, or while a server's
+    // Retry-After window is still open.
+    if (!this.dispatch({ type: 'START', at: this.now() })) return;
 
     const attempt = this.context.attempt;
-    const stale = (): boolean => this.destroyed || this.context.attempt !== attempt;
+    /**
+     * True once this attempt's work no longer belongs to the widget's current
+     * state. The `isActive` term is what makes cancellation work: `pagehide`
+     * or the disconnect button moves the machine to `finished` without
+     * bumping `attempt`, and every await below has to notice that.
+     */
+    const stale = (): boolean =>
+      this.destroyed || this.context.attempt !== attempt || !isActive(this.context.state);
 
     track('voice_demo_start', { voice_demo_locale: this.locale });
 
@@ -459,7 +477,15 @@ export class VoiceDemoWidget {
       this.fail('transport_failed');
       return;
     }
-    if (stale()) return;
+
+    // The visitor may have cancelled or navigated while the room was joining.
+    // The connection succeeded regardless, so it has to be closed explicitly —
+    // otherwise it is a room nobody is in, still burning agent minutes.
+    if (stale()) {
+      this.releaseMicrophone();
+      await this.teardownTransport();
+      return;
+    }
 
     this.beginCountdown(session.expiresAt);
     this.dispatch({ type: 'CONNECTED' });
@@ -472,12 +498,25 @@ export class VoiceDemoWidget {
    */
   private async obtainSession(attempt: number): Promise<import('./contract').DemoSession | null> {
     for (let round = 0; round < 2; round += 1) {
-      const result = await this.client.createSession({
-        locale: this.locale,
-        consent: this.context.acceptedConsent ?? undefined,
-        turnstileToken: undefined,
-        signal: this.abortController?.signal,
-      });
+      // A fresh, single-use token immediately before *every* POST, including
+      // the retry after a consent round-trip. Tokens are single-use, so the
+      // second request cannot reuse the first one's.
+      const turnstileToken = await this.freshTurnstileToken();
+      if (this.destroyed || this.context.attempt !== attempt) return null;
+
+      let result;
+      try {
+        result = await this.client.createSession({
+          locale: this.locale,
+          consent: this.context.acceptedConsent ?? undefined,
+          turnstileToken,
+          signal: this.abortController?.signal,
+        });
+      } finally {
+        // Discard on every outcome, success or failure. A token left sitting
+        // in the widget is one that could be replayed on the next attempt.
+        this.turnstile?.reset();
+      }
 
       if (this.destroyed || this.context.attempt !== attempt) return null;
 
@@ -500,8 +539,38 @@ export class VoiceDemoWidget {
     return null;
   }
 
+  /**
+   * Obtains a Turnstile token, or throws.
+   *
+   * Returns undefined only when no site key is configured at all — and in that
+   * case `unavailableReason` has already refused to start, so an enabled demo
+   * can never reach the endpoint unprotected.
+   */
+  private async freshTurnstileToken(): Promise<string | undefined> {
+    const siteKey = this.config.turnstileSiteKey;
+    if (!siteKey) return undefined;
+
+    if (!this.turnstile) {
+      this.turnstile =
+        this.deps.createTurnstile?.(this.config) ?? createTurnstileProvider({ siteKey });
+    }
+
+    try {
+      return await this.turnstile.getToken();
+    } catch (cause) {
+      logger.warn('turnstile challenge failed', cause);
+      throw new DemoRequestError('verification_failed', 'could not obtain a Turnstile token');
+    }
+  }
+
+  /**
+   * Consent is matched on version AND locale: the same policy rendered in a
+   * different language is a different thing to have agreed to.
+   */
   private hasAccepted(consent: RecordingConsent): boolean {
-    return this.context.acceptedConsent?.policyVersion === consent.policyVersion;
+    const accepted = this.context.acceptedConsent;
+    if (!accepted) return false;
+    return accepted.policyVersion === consent.policyVersion && accepted.locale === consent.locale;
   }
 
   /** Renders the server's wording and waits for a decision. */
@@ -586,7 +655,12 @@ export class VoiceDemoWidget {
     if (cause instanceof DemoRequestError) {
       if (cause.code === 'rate_limited' || cause.code === 'demo_capacity_reached') {
         this.releaseMicrophone();
-        this.dispatch({ type: 'RATE_LIMITED', scope: rateLimitScopeFor(cause.code) });
+        this.dispatch({
+          type: 'RATE_LIMITED',
+          scope: rateLimitScopeFor(cause.code),
+          retryAfterSeconds: cause.retryAfterSeconds,
+          at: this.now(),
+        });
         track('voice_demo_rate_limited', { voice_demo_code: cause.code });
         return;
       }
@@ -611,12 +685,23 @@ export class VoiceDemoWidget {
     track('voice_demo_error', { voice_demo_code: code });
   }
 
-  /** Ends the session and releases every resource it held. */
+  /**
+   * Ends the session and releases every resource it held.
+   *
+   * Reachable from four places: the disconnect button, the session deadline,
+   * a transport-side drop, and `pagehide`. Because `requestingMicrophone` and
+   * `connecting` are active states, it also serves as cancellation — aborting
+   * the in-flight request and stopping a microphone that may still be
+   * resolving.
+   */
   async disconnect(reason: FinishReason): Promise<void> {
     if (!isActive(this.context.state)) return;
     this.clearTimers();
     this.abortController?.abort();
     this.abortController = null;
+    // Drop any challenge in flight; its token would be stale by the retry.
+    this.turnstile?.reset();
+    this.consentDecision?.(false);
     this.releaseMicrophone();
     await this.teardownTransport();
     this.dispatch({ type: 'DISCONNECT', reason });
@@ -705,6 +790,8 @@ export class VoiceDemoWidget {
     this.consentDecision = null;
     this.releaseMicrophone();
     void this.teardownTransport();
+    this.turnstile?.destroy();
+    this.turnstile = null;
 
     window.removeEventListener('pagehide', this.onPageHide);
     this.mountObserver?.disconnect();
