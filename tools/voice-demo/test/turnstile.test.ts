@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TURNSTILE_SCRIPT_URL, TurnstileError, createTurnstileProvider } from '../src/turnstile';
+import {
+  TURNSTILE_ACTION,
+  TURNSTILE_SCRIPT_URL,
+  TurnstileError,
+  createTurnstileProvider,
+} from '../src/turnstile';
 
 /** A stand-in for the Cloudflare API, recording how it was driven. */
 function fakeApi() {
@@ -73,6 +78,41 @@ describe('token freshness', () => {
 
     expect(api.render.mock.calls[0]![1]!['sitekey']).toBe('my-site-key');
     expect(api.render.mock.calls[0]![1]!['size']).toBe('invisible');
+  });
+});
+
+describe('action', () => {
+  // Asserted as a string literal, deliberately not via TURNSTILE_ACTION:
+  // the backend compares siteverify's `action` against this exact value, so a
+  // change here has to fail loudly rather than follow the constant.
+  it('renders with action "public_voice_demo"', async () => {
+    const { api } = fakeApi();
+    const provider = createTurnstileProvider({ siteKey: 'k', loadScript: async () => api });
+    await provider.getToken();
+
+    expect(api.render.mock.calls[0]![1]!['action']).toBe('public_voice_demo');
+  });
+
+  it('exports the same value it renders with', async () => {
+    const { api } = fakeApi();
+    const provider = createTurnstileProvider({ siteKey: 'k', loadScript: async () => api });
+    await provider.getToken();
+
+    expect(TURNSTILE_ACTION).toBe('public_voice_demo');
+    expect(api.render.mock.calls[0]![1]!['action']).toBe(TURNSTILE_ACTION);
+  });
+
+  it('keeps the action across repeated challenges', async () => {
+    const { api } = fakeApi();
+    const provider = createTurnstileProvider({ siteKey: 'k', loadScript: async () => api });
+
+    await provider.getToken();
+    await provider.getToken();
+
+    // The widget is rendered once and re-executed, so the action set at render
+    // time is what every later token carries.
+    expect(api.render).toHaveBeenCalledTimes(1);
+    expect(api.render.mock.calls[0]![1]!['action']).toBe('public_voice_demo');
   });
 });
 

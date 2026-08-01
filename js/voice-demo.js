@@ -618,6 +618,7 @@
 
   // src/turnstile.ts
   var TURNSTILE_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+  var TURNSTILE_ACTION = "public_voice_demo";
   var TurnstileError = class extends Error {
     constructor(message) {
       super(message);
@@ -683,6 +684,7 @@
         widgetId = api.render(container, {
           sitekey: options.siteKey,
           size: "invisible",
+          action: TURNSTILE_ACTION,
           callback: (token) => settle("resolve", token),
           "error-callback": (code) => settle("reject", new TurnstileError(`turnstile challenge failed${code ? `: ${code}` : ""}`)),
           "timeout-callback": () => settle("reject", new TurnstileError("turnstile challenge timed out"))

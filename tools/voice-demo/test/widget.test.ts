@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { VoiceDemoWidget } from '../src/widget';
 import { DEFAULT_CONFIG } from '../src/config';
 import { PublicVoiceDemoClient } from '../src/client';
+import { createTurnstileProvider } from '../src/turnstile';
 import type { VoiceDemoConfig } from '../src/config';
 import type { WidgetDeps } from '../src/widget';
 import type { ConnectOptions, TransportEvents, VoiceTransport } from '../src/transport';
@@ -688,6 +689,95 @@ describe('rate limiting', () => {
     await flush();
 
     expect(mount.querySelector<HTMLElement>('.svd__cta')!.hidden).toBe(false);
+  });
+});
+
+describe('turnstile action reaches the endpoint (regression)', () => {
+  /**
+   * Drives the REAL provider — only the Cloudflare script is stubbed — through
+   * a real client, so this covers the whole path rather than a mock of it:
+   *
+   *   render(action) -> execute -> token -> POST body.turnstile_token
+   *
+   * A mocked provider would have proved neither half.
+   */
+  function fakeTurnstileApi(token: string) {
+    let callback: ((value: string) => void) | null = null;
+    const api = {
+      render: vi.fn((_el: HTMLElement, opts: Record<string, unknown>) => {
+        callback = opts['callback'] as (value: string) => void;
+        return 'widget-1';
+      }),
+      execute: vi.fn(() => queueMicrotask(() => callback?.(token))),
+      reset: vi.fn(),
+      remove: vi.fn(),
+    };
+    return api;
+  }
+
+  it('renders with action "public_voice_demo" and sends that token', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+    const api = fakeTurnstileApi('token-from-cloudflare');
+
+    const { widget } = build(enabledConfig({ turnstileSiteKey: 'the-site-key' }), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+      createTurnstile: (config) =>
+        createTurnstileProvider({
+          siteKey: config.turnstileSiteKey,
+          loadScript: async () => api as never,
+        }),
+    });
+
+    await widget.start();
+    await flush(12);
+
+    // 1. Rendered with the exact action the backend will verify against.
+    expect(api.render).toHaveBeenCalledTimes(1);
+    const renderOptions = api.render.mock.calls[0]![1]!;
+    expect(renderOptions['action']).toBe('public_voice_demo');
+    expect(renderOptions['sitekey']).toBe('the-site-key');
+
+    // 2. The token that challenge produced is what went to the endpoint.
+    expect(client.fetchImpl).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(client.fetchImpl.mock.calls[0]![1]!.body as string);
+    expect(body.turnstile_token).toBe('token-from-cloudflare');
+
+    // And the session actually proceeded on the back of it.
+    expect(widget.state).toBe('listening');
+  });
+
+  it('still sends the action-bearing token on a second session', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const transport = fakeTransport();
+    const api = fakeTurnstileApi('token-from-cloudflare');
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: transport.factory,
+      createTurnstile: (config) =>
+        createTurnstileProvider({
+          siteKey: config.turnstileSiteKey,
+          loadScript: async () => api as never,
+        }),
+    });
+
+    await widget.start();
+    await flush(12);
+    await widget.disconnect('user_disconnected');
+    await widget.start();
+    await flush(12);
+
+    expect(api.render).toHaveBeenCalledTimes(1);
+    expect(api.render.mock.calls[0]![1]!['action']).toBe('public_voice_demo');
+
+    const second = JSON.parse(client.fetchImpl.mock.calls[1]![1]!.body as string);
+    expect(second.turnstile_token).toBe('token-from-cloudflare');
   });
 });
 

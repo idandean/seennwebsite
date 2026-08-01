@@ -66,6 +66,25 @@ immediately before each POST and discarded afterwards, on success and failure
 alike. The backend must verify it against the Cloudflare siteverify API with
 the matching **secret** key, and must reject a request without one.
 
+**The widget renders the challenge with `action: "public_voice_demo"`.**
+Cloudflare echoes this back in the siteverify response, and the backend must
+check it:
+
+```jsonc
+// POST https://challenges.cloudflare.com/turnstile/v0/siteverify
+{
+  "success": true,
+  "action": "public_voice_demo",   // <-- must equal this exact string
+  "hostname": "www.seenn.ai",
+  "challenge_ts": "..."
+}
+```
+
+Without that check, a token minted by any other Turnstile widget on any other
+Seenn page would be accepted here. The string is defined once, as
+`TURNSTILE_ACTION` in `src/turnstile.ts`, and pinned by regression tests —
+changing it on either side alone breaks verification.
+
 When the demo is enabled but any of the endpoint URL, anon key or Turnstile
 site key is missing, the widget refuses to start rather than posting
 unprotected. There is no code path that sends a session request without a

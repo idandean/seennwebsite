@@ -28,6 +28,7 @@ interface TurnstileApi {
     options: {
       sitekey: string;
       size?: string;
+      action?: string;
       callback?: (token: string) => void;
       'error-callback'?: (code?: string) => void;
       'timeout-callback'?: () => void;
@@ -46,6 +47,16 @@ declare global {
 
 export const TURNSTILE_SCRIPT_URL =
   'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+
+/**
+ * Sent with every challenge and echoed back in the siteverify response, so the
+ * backend can confirm a token was minted for *this* flow rather than lifted
+ * from another Turnstile widget on another Seenn page.
+ *
+ * The backend must compare siteverify's `action` against this exact string.
+ * Changing it here without changing it there breaks verification.
+ */
+export const TURNSTILE_ACTION = 'public_voice_demo';
 
 export class TurnstileError extends Error {
   constructor(message: string) {
@@ -130,6 +141,7 @@ export function createTurnstileProvider(options: TurnstileOptions): TurnstilePro
       widgetId = api.render(container, {
         sitekey: options.siteKey,
         size: 'invisible',
+        action: TURNSTILE_ACTION,
         callback: (token: string) => settle('resolve', token),
         'error-callback': (code?: string) =>
           settle('reject', new TurnstileError(`turnstile challenge failed${code ? `: ${code}` : ''}`)),
