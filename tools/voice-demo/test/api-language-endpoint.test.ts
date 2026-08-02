@@ -11,7 +11,10 @@
  */
 
 import { describe, expect, it, vi } from 'vitest';
-import handler, { config } from '../src/api/voice-demo-language';
+import rawHandler, { config } from '../src/api/voice-demo-language';
+
+/** The edge path always returns a Response; narrow it once, here. */
+const handler = (request: Request): Response => rawHandler(request) as Response;
 
 function get(country?: string | null, method = 'GET'): Request {
   const headers = new Headers();
@@ -22,8 +25,28 @@ function get(country?: string | null, method = 'GET'): Request {
   return new Request('https://www.seenn.ai/api/voice-demo-language', { method, headers });
 }
 
-async function body(response: Response): Promise<Record<string, unknown>> {
-  return (await response.json()) as Record<string, unknown>;
+async function body(response: Response | void): Promise<Record<string, unknown>> {
+  return (await (response as Response).json()) as Record<string, unknown>;
+}
+
+/** Mimics the Node serverless invocation shape, (req, res). */
+function nodeCall(country?: string | null, method = 'GET') {
+  const headers: Record<string, string> = { 'x-forwarded-for': '203.0.113.42', 'cf-ipcountry': 'JP' };
+  if (country !== undefined && country !== null) headers['x-vercel-ip-country'] = country;
+
+  const sent: { status: number; headers: Record<string, string>; body: string | undefined } = {
+    status: 0,
+    headers: {},
+    body: undefined,
+  };
+  const res = {
+    set statusCode(value: number) { sent.status = value; },
+    get statusCode() { return sent.status; },
+    setHeader(name: string, value: string) { sent.headers[name] = value; },
+    end(payload?: string) { sent.body = payload; },
+  };
+  rawHandler({ method, headers }, res);
+  return sent;
 }
 
 describe('runtime', () => {
@@ -127,5 +150,45 @@ describe('method handling', () => {
 
   it('GET is 200', async () => {
     expect((await handler(get('IL'))).status).toBe(200);
+  });
+});
+
+
+describe('Node serverless invocation shape', () => {
+  // Vercel may build this as a Node function if it does not recognise the
+  // bundled runtime marker. The answer must be identical either way — a
+  // mismatch here is the FUNCTION_INVOCATION_FAILED seen in production.
+  it('resolves the same languages', () => {
+    expect(JSON.parse(nodeCall('IL').body!)).toEqual({ language: 'he' });
+    expect(JSON.parse(nodeCall('EG').body!)).toEqual({ language: 'ar' });
+    expect(JSON.parse(nodeCall('US').body!)).toEqual({ language: 'en' });
+    expect(JSON.parse(nodeCall('XX').body!)).toEqual({ language: null });
+    expect(JSON.parse(nodeCall(undefined).body!)).toEqual({ language: null });
+  });
+
+  it('sets the same headers and status', () => {
+    const sent = nodeCall('IL');
+    expect(sent.status).toBe(200);
+    expect(sent.headers['Cache-Control']).toBe('private, no-store');
+    expect(sent.headers['Content-Type']).toBe('application/json');
+    expect(sent.headers['X-Content-Type-Options']).toBe('nosniff');
+  });
+
+  it('rejects non-GET with 405 and no body', () => {
+    const sent = nodeCall('IL', 'POST');
+    expect(sent.status).toBe(405);
+    expect(sent.body).toBeUndefined();
+  });
+
+  it('leaks neither country nor IP', () => {
+    for (const country of ['IL', 'EG', 'US']) {
+      const sent = nodeCall(country);
+      expect(sent.body, country).not.toContain(country);
+      expect(sent.body, country).not.toContain('203.0.113.42');
+    }
+  });
+
+  it('ignores cf-ipcountry here too', () => {
+    expect(JSON.parse(nodeCall(undefined).body!)).toEqual({ language: null });
   });
 });

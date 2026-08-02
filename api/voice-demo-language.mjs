@@ -75,12 +75,29 @@ var HEADERS = {
   "Cache-Control": "private, no-store",
   "X-Content-Type-Options": "nosniff"
 };
-function handler(request) {
-  if (request.method !== "GET") {
-    return new Response(null, { status: 405, headers: { ...HEADERS, Allow: "GET" } });
+function isWebRequest(value) {
+  return typeof value?.headers?.get === "function";
+}
+function handler(request, response) {
+  if (isWebRequest(request)) {
+    if (request.method !== "GET") {
+      return new Response(null, { status: 405, headers: { ...HEADERS, Allow: "GET" } });
+    }
+    const language = languageForCountry(request.headers.get(COUNTRY_HEADER));
+    return new Response(JSON.stringify({ language }), { status: 200, headers: HEADERS });
   }
-  const language = languageForCountry(request.headers.get(COUNTRY_HEADER));
-  return new Response(JSON.stringify({ language }), { status: 200, headers: HEADERS });
+  if (!response) return;
+  for (const [name, value] of Object.entries(HEADERS)) response.setHeader(name, value);
+  if (request.method !== "GET") {
+    response.setHeader("Allow", "GET");
+    response.statusCode = 405;
+    response.end();
+    return;
+  }
+  const raw = request.headers[COUNTRY_HEADER];
+  const country = Array.isArray(raw) ? raw[0] : raw;
+  response.statusCode = 200;
+  response.end(JSON.stringify({ language: languageForCountry(country ?? null) }));
 }
 export {
   config,
