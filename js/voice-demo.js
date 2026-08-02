@@ -266,6 +266,8 @@
     locale: null,
     languageOverride: null,
     livekitModuleUrl: LIVEKIT_MODULE_URL,
+    languageLookupUrl: "/api/voice-demo-language",
+    languageLookupTimeoutMs: 1500,
     maxSessionSeconds: 120,
     reconnectTimeoutSeconds: 20,
     agentReadinessTimeoutSeconds: 20,
@@ -1489,6 +1491,7 @@
       const stale = () => this.destroyed || this.context.attempt !== attempt || !isActive(this.context.state);
       track("voice_demo_start", { voice_demo_locale: this.locale });
       this.primeAudio();
+      const initialLanguage = this.resolveInitialLanguage();
       let microphone;
       try {
         microphone = await this.requestMicrophone();
@@ -1507,7 +1510,7 @@
       this.abortController = new AbortController();
       let session;
       try {
-        session = await this.obtainSession(attempt);
+        session = await this.obtainSession(attempt, await initialLanguage);
       } catch (cause) {
         if (stale()) return;
         this.handleRequestError(cause);
@@ -1550,23 +1553,56 @@
      * Requests a session, satisfying a consent demand if one comes back. At most
      * two round-trips: ask, accept, ask again.
      */
-    async obtainSession(attempt) {
-      var _a, _b, _c, _d;
+    /**
+     * Asks the same-origin function which language to open in.
+     *
+     * Returns null on ANY failure — non-200, malformed body, unknown country,
+     * timeout, network error. Null means the language property is omitted
+     * entirely, which is the pre-existing automatic behaviour, so this lookup
+     * can only ever improve on it and never break a call.
+     */
+    async resolveInitialLanguage() {
+      if (this.config.languageOverride) return this.config.languageOverride;
+      const url = this.config.languageLookupUrl;
+      if (!url) return null;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), this.config.languageLookupTimeoutMs);
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "omit",
+          cache: "no-store",
+          signal: controller.signal
+        });
+        if (!response.ok) return null;
+        const payload = await response.json();
+        const value = payload == null ? void 0 : payload.language;
+        if (value !== "he" && value !== "en" && value !== "ar") return null;
+        return value;
+      } catch {
+        return null;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    async obtainSession(attempt, initialLanguage) {
+      var _a, _b, _c;
       for (let round = 0; round < 2; round += 1) {
         const turnstileToken = await this.freshTurnstileToken();
         if (this.destroyed || this.context.attempt !== attempt) return null;
         let result;
         try {
           result = await this.client.createSession({
-            // Automatic: no language is sent. `this.locale` drives RENDERING
-            // only — serializing it here would pin the conversation to the page.
-            languageOverride: (_a = this.config.languageOverride) != null ? _a : void 0,
-            consent: (_b = this.context.acceptedConsent) != null ? _b : void 0,
+            // Automatic: `this.locale` drives RENDERING only and is never sent.
+            // What may be sent is the country-resolved starting language, or
+            // nothing at all when it could not be resolved.
+            languageOverride: initialLanguage != null ? initialLanguage : void 0,
+            consent: (_a = this.context.acceptedConsent) != null ? _a : void 0,
             turnstileToken,
-            signal: (_c = this.abortController) == null ? void 0 : _c.signal
+            signal: (_b = this.abortController) == null ? void 0 : _b.signal
           });
         } finally {
-          (_d = this.turnstile) == null ? void 0 : _d.reset();
+          (_c = this.turnstile) == null ? void 0 : _c.reset();
         }
         if (this.destroyed || this.context.attempt !== attempt) return null;
         if (result.kind === "session") {

@@ -15,7 +15,7 @@ import path from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { PublicVoiceDemoClient } from '../src/client';
 import { looksLikeServerSecret } from '../src/contract';
-import { resolveConfig, unavailableReason } from '../src/config';
+import { DEFAULT_CONFIG, resolveConfig, unavailableReason } from '../src/config';
 import type { VoiceDemoConfig } from '../src/config';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -162,6 +162,37 @@ describe('homepages stay hidden and unconfigured', () => {
   it('cannot be switched on by a URL parameter', () => {
     window.history.replaceState({}, '', '/?voicedemo=enabled');
     expect(resolveConfig({ inline: undefined }).publicDemoMode).toBe('disabled');
+  });
+});
+
+describe('same-origin language lookup', () => {
+  it('the staging page does not hardcode the lookup URL — it uses the default', () => {
+    // The default is same-origin '/api/voice-demo-language'; a page overriding
+    // it with an absolute URL would be a cross-origin leak of the visit.
+    expect(STAGING_PAGE).not.toContain('languageLookupUrl');
+  });
+
+  it('the endpoint is same-origin, never a Supabase or third-party URL', () => {
+    expect(DEFAULT_CONFIG.languageLookupUrl).toBe('/api/voice-demo-language');
+    expect(DEFAULT_CONFIG.languageLookupUrl.startsWith('/')).toBe(true);
+    expect(DEFAULT_CONFIG.languageLookupUrl).not.toMatch(/^https?:/);
+  });
+
+  it('neither homepage references the lookup endpoint', () => {
+    for (const page of HOMEPAGES) {
+      expect(read(page), page).not.toContain('voice-demo-language');
+    }
+  });
+
+  it('the generated edge function leaks no country or credential', () => {
+    const fn = read('api/voice-demo-language.js');
+    // The country list is necessarily present as INPUT data; what must not be
+    // present is any credential or any echo of the caller.
+    expect(fn).not.toContain('supabase');
+    expect(fn).not.toContain('sb_publishable_');
+    expect(fn).not.toMatch(/console\.(log|warn|error|info|debug)/);
+    expect(fn).toContain('x-vercel-ip-country');
+    expect(fn).not.toContain('cf-ipcountry');
   });
 });
 

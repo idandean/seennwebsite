@@ -10,6 +10,7 @@ import { PublicVoiceDemoClient, DemoRequestError, rateLimitScopeFor } from './cl
 import { createTurnstileProvider } from './turnstile';
 import { TransportError, createLiveKitTransport } from './transport';
 import { readinessFor } from './agent';
+import type { DemoLanguage } from './country-language';
 import { directionFor, resolveLocale, stringsFor } from './i18n';
 import { agentIsReady, initialContext, isActive, reduce } from './state';
 import { logger } from './logging';
@@ -497,6 +498,11 @@ export class VoiceDemoWidget {
     // a chain rooted here.
     this.primeAudio();
 
+    // Fired now, awaited just before the POST: it runs alongside the
+    // microphone prompt and the Turnstile challenge, so it adds no latency of
+    // its own to the twenty seconds a visitor will tolerate.
+    const initialLanguage = this.resolveInitialLanguage();
+
     // 1. Microphone — never before this point.
     let microphone: MediaStream;
     try {
@@ -518,7 +524,7 @@ export class VoiceDemoWidget {
     this.abortController = new AbortController();
     let session;
     try {
-      session = await this.obtainSession(attempt);
+      session = await this.obtainSession(attempt, await initialLanguage);
     } catch (cause) {
       if (stale()) return;
       this.handleRequestError(cause);
@@ -575,7 +581,50 @@ export class VoiceDemoWidget {
    * Requests a session, satisfying a consent demand if one comes back. At most
    * two round-trips: ask, accept, ask again.
    */
-  private async obtainSession(attempt: number): Promise<import('./contract').DemoSession | null> {
+  /**
+   * Asks the same-origin function which language to open in.
+   *
+   * Returns null on ANY failure — non-200, malformed body, unknown country,
+   * timeout, network error. Null means the language property is omitted
+   * entirely, which is the pre-existing automatic behaviour, so this lookup
+   * can only ever improve on it and never break a call.
+   */
+  private async resolveInitialLanguage(): Promise<DemoLanguage | null> {
+    // An explicit override, if one is ever wired up, wins over geography.
+    if (this.config.languageOverride) return this.config.languageOverride;
+
+    const url = this.config.languageLookupUrl;
+    if (!url) return null;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.config.languageLookupTimeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        credentials: 'omit',
+        cache: 'no-store',
+        signal: controller.signal,
+      });
+      if (!response.ok) return null;
+
+      const payload: unknown = await response.json();
+      const value = (payload as { language?: unknown } | null)?.language;
+      if (value !== 'he' && value !== 'en' && value !== 'ar') return null;
+      return value;
+    } catch {
+      // Deliberately silent: a failed lookup is not a visitor-facing problem,
+      // and the cause could quote a URL we would rather not log.
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  private async obtainSession(
+    attempt: number,
+    initialLanguage: DemoLanguage | null,
+  ): Promise<import('./contract').DemoSession | null> {
     for (let round = 0; round < 2; round += 1) {
       // A fresh, single-use token immediately before *every* POST, including
       // the retry after a consent round-trip. Tokens are single-use, so the
@@ -586,9 +635,10 @@ export class VoiceDemoWidget {
       let result;
       try {
         result = await this.client.createSession({
-          // Automatic: no language is sent. `this.locale` drives RENDERING
-          // only — serializing it here would pin the conversation to the page.
-          languageOverride: this.config.languageOverride ?? undefined,
+          // Automatic: `this.locale` drives RENDERING only and is never sent.
+          // What may be sent is the country-resolved starting language, or
+          // nothing at all when it could not be resolved.
+          languageOverride: initialLanguage ?? undefined,
           consent: this.context.acceptedConsent ?? undefined,
           turnstileToken,
           signal: this.abortController?.signal,

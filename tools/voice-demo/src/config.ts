@@ -62,6 +62,19 @@ export interface VoiceDemoConfig {
   /** Pinned to an exact immutable version — see the constant below. */
   livekitModuleUrl: string;
 
+  /**
+   * Same-origin endpoint that resolves the demo's initial language from the
+   * visitor's approximate country. Empty string disables the lookup entirely,
+   * which simply means automatic (no `language` sent).
+   *
+   * Must stay same-origin: it is only reachable where the widget runs, and it
+   * is NOT a proxy for the Supabase POST — the browser still calls Supabase
+   * directly so per-IP limiting and Turnstile see the real connection.
+   */
+  languageLookupUrl: string;
+  /** Bounded so a slow lookup never delays the call. */
+  languageLookupTimeoutMs: number;
+
   maxSessionSeconds: number;
   reconnectTimeoutSeconds: number;
   /**
@@ -97,6 +110,8 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
   locale: null,
   languageOverride: null,
   livekitModuleUrl: LIVEKIT_MODULE_URL,
+  languageLookupUrl: '/api/voice-demo-language',
+  languageLookupTimeoutMs: 1500,
   maxSessionSeconds: 120,
   reconnectTimeoutSeconds: 20,
   agentReadinessTimeoutSeconds: 20,

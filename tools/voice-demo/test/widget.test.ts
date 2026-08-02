@@ -24,6 +24,10 @@ function enabledConfig(overrides: Partial<VoiceDemoConfig> = {}): VoiceDemoConfi
     endpointBaseUrl: 'https://stub.supabase.co',
     anonKey: 'anon-key',
     turnstileSiteKey: 'site-key',
+    // Not the subject of these suites: an empty URL disables the same-origin
+    // language lookup, so the request stays automatic and no global fetch is
+    // needed. The lookup has its own coverage in language-automatic.test.ts.
+    languageLookupUrl: '',
     ...overrides,
   };
 }

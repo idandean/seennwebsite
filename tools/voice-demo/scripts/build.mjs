@@ -35,6 +35,7 @@ const banner = `/**
  * the page — see tools/voice-demo/CONFIGURATION.md. Nothing is baked in here.
  */`;
 
+// The browser widget.
 const result = await build({
   entryPoints: [path.resolve(root, 'src/index.ts')],
   outfile,
@@ -50,5 +51,26 @@ const result = await build({
   metafile: true,
 });
 
+// The same-origin Vercel Edge Function. ESM, because that is what Vercel's
+// edge runtime expects, and emitted into /api so Vercel routes it with no root
+// package.json and no build step of its own.
+const apiOutfile = path.resolve(root, '../../api/voice-demo-language.js');
+const apiResult = await build({
+  entryPoints: [path.resolve(root, 'src/api/voice-demo-language.ts')],
+  outfile: apiOutfile,
+  bundle: true,
+  format: 'esm',
+  target: ['es2022'],
+  platform: 'neutral',
+  minify: false,
+  sourcemap: false,
+  legalComments: 'none',
+  banner: { js: banner },
+  logLevel: 'info',
+  metafile: true,
+});
+
 const bytes = Object.values(result.metafile.outputs)[0]?.bytes ?? 0;
+const apiBytes = Object.values(apiResult.metafile.outputs)[0]?.bytes ?? 0;
 console.log(`voice-demo: ${(bytes / 1024).toFixed(1)} kB → js/voice-demo.js`);
+console.log(`voice-demo-language: ${(apiBytes / 1024).toFixed(1)} kB → api/voice-demo-language.js`);

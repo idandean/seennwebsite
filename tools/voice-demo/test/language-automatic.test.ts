@@ -102,7 +102,26 @@ const flush = async (times = 10): Promise<void> => {
   for (let i = 0; i < times; i += 1) await Promise.resolve();
 };
 
-async function startWidget(pageLang: string, config: Partial<VoiceDemoConfig> = {}) {
+/** Stubs the same-origin lookup endpoint. `null` => resolver unavailable. */
+function stubLookup(language: 'he' | 'en' | 'ar' | null | 'reject' | 'http-500') {
+  return vi.fn(async (_url: string | URL | Request, _init?: RequestInit) => {
+    if (language === 'reject') throw new TypeError('network down');
+    if (language === 'http-500') {
+      return { ok: false, status: 500, json: async () => ({}) } as unknown as Response;
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ language }),
+    } as unknown as Response;
+  });
+}
+
+async function startWidget(
+  pageLang: string,
+  config: Partial<VoiceDemoConfig> = {},
+  lookup: ReturnType<typeof stubLookup> = stubLookup(null),
+) {
   document.documentElement.setAttribute('lang', pageLang);
   const mount = document.createElement('div');
   mount.setAttribute('data-seenn-voice-demo', '');
@@ -129,10 +148,15 @@ async function startWidget(pageLang: string, config: Partial<VoiceDemoConfig> = 
     }),
   };
 
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = lookup as unknown as typeof fetch;
+
   const widget = new VoiceDemoWidget(mount, enabledConfig(config), deps);
   await widget.start();
   await flush();
-  return { widget, mount, calls };
+
+  globalThis.fetch = realFetch;
+  return { widget, mount, calls, lookup };
 }
 
 beforeEach(() => {
@@ -330,5 +354,76 @@ describe('unrelated contracts are untouched', () => {
     await expect(makeClient(impl).createSession({ turnstileToken: 'ts' })).rejects.toMatchObject({
       code: 'contract_violation',
     });
+  });
+});
+
+
+describe('country-resolved initial language', () => {
+  it('sends the resolved language when the lookup answers', async () => {
+    for (const language of ['he', 'en', 'ar'] as const) {
+      document.body.innerHTML = '';
+      const { calls } = await startWidget('en', {}, stubLookup(language));
+      const body = sentBody(calls);
+
+      expect(Object.prototype.hasOwnProperty.call(body, 'language'), language).toBe(true);
+      expect(body['language'], language).toBe(language);
+    }
+  });
+
+  it('omits language entirely when the lookup returns null', async () => {
+    const { calls } = await startWidget('en', {}, stubLookup(null));
+    expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language')).toBe(false);
+  });
+
+  it('omits language when the lookup fails outright', async () => {
+    for (const failure of ['reject', 'http-500'] as const) {
+      document.body.innerHTML = '';
+      const { calls } = await startWidget('en', {}, stubLookup(failure));
+      expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language'), failure).toBe(false);
+    }
+  });
+
+  it('calls the SAME-ORIGIN path, never Supabase', async () => {
+    const { lookup } = await startWidget('en', {}, stubLookup('he'));
+    const url = String(lookup.mock.calls[0]![0]);
+
+    expect(url).toBe('/api/voice-demo-language');
+    expect(url).not.toContain('supabase');
+    expect(url).not.toContain('http');
+  });
+
+  it('still POSTs the session straight to Supabase — the lookup is not a proxy', async () => {
+    const { calls } = await startWidget('en', {}, stubLookup('he'));
+    expect(calls[0]!.url).toBe('https://stub.supabase.co/functions/v1/public-voice-demo');
+  });
+
+  it('ignores a lookup answer outside he/en/ar', async () => {
+    for (const bogus of ['auto', 'fr', '', 'EN']) {
+      document.body.innerHTML = '';
+      const { calls } = await startWidget(
+        'en',
+        {},
+        stubLookup(bogus as unknown as 'he'),
+      );
+      expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language'), bogus).toBe(false);
+    }
+  });
+
+  it('an empty lookup URL disables the lookup and stays automatic', async () => {
+    const lookup = stubLookup('he');
+    const { calls } = await startWidget('en', { languageLookupUrl: '' }, lookup);
+
+    expect(lookup).not.toHaveBeenCalled();
+    expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language')).toBe(false);
+  });
+
+  it('never sends a country code, only a language', async () => {
+    const { calls } = await startWidget('en', {}, stubLookup('ar'));
+    const raw = calls[0]!.init.body as string;
+
+    expect(raw).toContain('"language":"ar"');
+    for (const country of ['IL', 'EG', 'SA', 'US', 'country']) {
+      expect(raw, country).not.toContain(country);
+    }
   });
 });
