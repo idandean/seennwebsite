@@ -65,72 +65,29 @@
 .hero-demo {
   position: relative;
   width: 100%;
-  /* min() rather than a bare max-width: on a 390px phone, 28rem is wider than
-     the viewport and the card overflows. */
-  max-width: min(28rem, 100%);
+  max-width: min(26rem, 100%);
   margin-inline: auto;
-  padding: 1.5rem 1.25rem 1.75rem;
-  border-radius: 1.5rem;
-  background:
-    radial-gradient(120% 80% at 50% 0%, rgba(240, 193, 75, 0.10) 0%, rgba(240, 193, 75, 0) 60%),
-    linear-gradient(180deg, rgba(9, 11, 26, 0.30) 0%, rgba(9, 11, 26, 0.52) 55%, rgba(9, 11, 26, 0.26) 100%);
-  backdrop-filter: blur(14px) saturate(1.1);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  box-shadow: 0 24px 70px rgba(9, 11, 26, 0.34);
+  /* No panel: no border, no background, no blur, no shadow. The demo sits
+     directly on the aurora, which is what "connected to the fold" finally
+     means — there is no edge left to disconnect. */
+  padding: 0;
 }
 
-/* Gradient edge that FADES OUT downward, so the card dissolves into the next
-   fold instead of ending on a line.
-
-   Done with a masked pseudo-element rather than `border-image`: border-image
-   silently cancels border-radius, which squares the corners off — the exact
-   boxed look this redesign is removing. */
-.hero-demo::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(
-    180deg,
-    rgba(240, 193, 75, 0.40) 0%,
-    rgba(240, 193, 75, 0.14) 45%,
-    rgba(240, 193, 75, 0) 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Ambient halo bleeding past the card into the hero artwork. This is what
-   makes the two read as one composition: the aurora appears to be lighting the
-   card rather than sitting behind it. */
+/* One soft pool of light behind the ball so it has somewhere to sit without a
+   box. Ambient, not a container. */
 .hero-demo::before {
   content: '';
   position: absolute;
-  inset: -12% -14% -18%;
+  inset: -18% -20% -10%;
   z-index: -1;
-  border-radius: inherit;
   background: radial-gradient(
-    58% 46% at 50% 34%,
-    rgba(240, 193, 75, 0.16) 0%,
-    rgba(120, 132, 214, 0.10) 45%,
-    rgba(9, 11, 26, 0) 72%
+    46% 38% at 50% 28%,
+    rgba(240, 193, 75, 0.14) 0%,
+    rgba(120, 132, 214, 0.08) 46%,
+    rgba(9, 11, 26, 0) 74%
   );
-  filter: blur(26px);
+  filter: blur(30px);
   pointer-events: none;
-}
-
-@media (min-width: 1024px) {
-  .hero-demo {
-    padding: 1.75rem 1.5rem 2rem;
-  }
 }
 
 /* Compact on a phone. The orb's size is an inline style set by JS, so this
@@ -325,10 +282,11 @@
   inset: 0;
   border-radius: 50%;
   /* A hairline ring sitting exactly on the edge, plus depth beneath. */
+  /* Only a hairline ring plus outer depth. The heavy inner bottom shadow bit
+     a dark arc out of the sphere once the card behind it was removed. */
   box-shadow:
-    inset 0 0 0 1px rgba(245, 214, 130, 0.42),
-    inset 0 -14px 30px rgba(9, 11, 26, 0.45),
-    0 16px 38px rgba(9, 11, 26, 0.5);
+    inset 0 0 0 1px rgba(245, 214, 130, 0.38),
+    0 20px 44px rgba(9, 11, 26, 0.45);
 }
 
 /* Concentric ripples — dialing state only */
@@ -729,9 +687,14 @@
 .svd__head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
   width: 100%;
+  margin-bottom: 1.1rem;
+}
+
+/* Folded into the footer line instead — fewer words, one place to read them. */
+.svd__duration {
+  display: none;
 }
 
 .svd__eyebrow {
@@ -764,21 +727,20 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+/* The divider belonged to the card; without one there is nothing to divide. */
 .svd__rule {
-  width: 100%;
-  height: 1px;
-  margin: 0.85rem 0 1.1rem;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+  display: none;
 }
 
 /* --- Orb beside the copy, as in the reference ----------------------------- */
 
 .svd__body {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1.15rem;
   width: 100%;
-  text-align: start;
+  text-align: center;
 }
 
 .svd__body .svd__stage {
@@ -787,8 +749,8 @@
 }
 
 .svd__body .svd__copy {
-  align-items: flex-start;
-  text-align: start;
+  align-items: center;
+  text-align: center;
   min-height: 0;
 }
 
@@ -941,9 +903,10 @@
   gap: 0.6rem;
   width: 100%;
   margin-top: 1rem;
-  padding: 0.9rem 1.6rem;
+  padding: 0.95rem 1.6rem;
   border: 0;
-  border-radius: 0.5rem;
+  /* Softly rounded to echo the ball above it. */
+  border-radius: 999px;
   background: #c9b555;
   color: #000;
   font-family: 'Montserrat', 'Inter', sans-serif;

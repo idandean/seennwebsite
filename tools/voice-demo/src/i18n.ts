@@ -132,13 +132,13 @@ const en: Strings = {
   heroEyebrow: 'Talk to Jess — live',
   durationBadge: '~2 min',
   startButton: 'Start voice demo',
-  sessionMeta: 'Microphone required  ·  No signup',
+  sessionMeta: '~2 min  ·  Microphone required',
 
   unavailableTitle: 'The voice demo is not available right now',
   unavailableBody: 'It will be back shortly.',
 
   readyTitle: 'Experience the agent yourself',
-  readyBody: 'She chases you over an overdue invoice — you play the customer.',
+  readyBody: 'You play the overdue customer.',
   startLabel: 'Start the voice demo',
 
   micTitle: 'Allow your microphone',
@@ -211,13 +211,13 @@ const he: Strings = {
   heroEyebrow: 'ג׳ס — בשידור חי',
   durationBadge: '~2 דק׳',
   startButton: 'התחילו את הדמו הקולי',
-  sessionMeta: 'נדרש מיקרופון  ·  בלי הרשמה',
+  sessionMeta: '~2 דק׳  ·  נדרש מיקרופון',
 
   unavailableTitle: 'הדמו הקולי אינו זמין כרגע',
   unavailableBody: 'הוא יחזור בקרוב.',
 
   readyTitle: 'התנסו בסוכנת בעצמכם',
-  readyBody: 'היא רודפת אחריכם על חשבונית באיחור — אתם הלקוח.',
+  readyBody: 'אתם הלקוח שבאיחור.',
   startLabel: 'התחילו את הדמו הקולי',
 
   micTitle: 'אשרו גישה למיקרופון',
@@ -290,13 +290,13 @@ const ar: Strings = {
   heroEyebrow: 'جيس — مباشر',
   durationBadge: '~٢ د',
   startButton: 'ابدأ العرض الصوتي',
-  sessionMeta: 'يلزم ميكروفون  ·  دون تسجيل',
+  sessionMeta: '~٢ د  ·  يلزم ميكروفون',
 
   unavailableTitle: 'العرض الصوتي غير متاح حاليًا',
   unavailableBody: 'سيعود قريبًا.',
 
   readyTitle: 'جرّب الوكيلة بنفسك',
-  readyBody: 'هي تطاردك بشأن فاتورة متأخرة — وأنت العميل.',
+  readyBody: 'أنت العميل المتأخر.',
   startLabel: 'ابدأ العرض الصوتي',
 
   micTitle: 'اسمح باستخدام الميكروفون',

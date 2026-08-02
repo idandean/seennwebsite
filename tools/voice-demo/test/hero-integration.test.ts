@@ -157,7 +157,8 @@ describe('card copy — an invitation, not a test surface', () => {
     expect(s.startButton).toMatch(/start voice demo/i);
     expect(s.durationBadge).toMatch(/2 min/i);
     expect(s.sessionMeta).toMatch(/microphone/i);
-    expect(s.sessionMeta).toMatch(/no signup/i);
+    // '~2 min' folded into the footer when the card header was removed.
+    expect(s.sessionMeta).toMatch(/2 min/i);
   });
 
   it('carries no staging, diagnostic or implementation wording in any locale', () => {
