@@ -34,13 +34,41 @@ export interface VoiceTransport {
   disconnect(): Promise<void>;
 }
 
+/** Which leg of `connect()` failed. */
+export type TransportPhase = 'module_load' | 'room_connect' | 'microphone_publish';
+
+/**
+ * Carries the phase so a failure is actionable without a repro.
+ *
+ * Previously connect and publish shared one try/catch, so a rejected
+ * publication — the token-scope bug — reported "connect failed" and sent
+ * everyone looking at the wrong leg.
+ *
+ * The message deliberately carries only the underlying error's *name*, never
+ * its message: LiveKit failures can quote server text, and a token, room URL
+ * or device label must not end up in a console or a bug-report screenshot.
+ */
+export class TransportError extends Error {
+  readonly phase: TransportPhase;
+  readonly causeName: string;
+
+  constructor(phase: TransportPhase, cause?: unknown) {
+    const causeName = (cause as Error)?.name ?? 'unknown';
+    super(`livekit ${phase} failed (${causeName})`);
+    this.name = 'TransportError';
+    this.phase = phase;
+    this.causeName = causeName;
+  }
+}
+
 export type TransportFactory = (events: TransportEvents) => VoiceTransport;
 
 /** Minimal structural view of the parts of livekit-client we use. */
 interface LiveKitModule {
   Room: new (options?: unknown) => LiveKitRoom;
   RoomEvent: Record<string, string>;
-  Track: { Kind: { Audio: string } };
+  /** `Source` matters: the participant token is scoped to Microphone only. */
+  Track: { Kind: { Audio: string }; Source: { Microphone: string } };
   LocalAudioTrack?: new (track: MediaStreamTrack) => unknown;
 }
 
@@ -50,7 +78,7 @@ interface LiveKitRoom {
   disconnect(): Promise<void> | void;
   startAudio?: () => Promise<void>;
   localParticipant: {
-    publishTrack(track: unknown): Promise<unknown>;
+    publishTrack(track: unknown, options?: unknown): Promise<unknown>;
     setMicrophoneEnabled(enabled: boolean): Promise<unknown>;
   };
   remoteParticipants?: Map<string, RemoteParticipant> | undefined;
@@ -129,9 +157,10 @@ export function createLiveKitTransport(
 
   return {
     async connect({ url, token, microphone, audioElement }: ConnectOptions): Promise<void> {
+      // --- Phase 1: module load ---------------------------------------------
       const lk = await load(options.moduleUrl).catch((cause: unknown) => {
         logger.error('failed to load the audio engine', { module: safeUrl(options.moduleUrl) });
-        throw new Error(`livekit module load failed: ${(cause as Error)?.name ?? 'unknown'}`);
+        throw new TransportError('module_load', cause);
       });
 
       const instance = new lk.Room({ adaptiveStream: true, dynacast: true });
@@ -150,24 +179,41 @@ export function createLiveKitTransport(
       instance.on(lk.RoomEvent['Reconnected'] ?? 'reconnected', () => events.onReconnected());
       instance.on(lk.RoomEvent['Disconnected'] ?? 'disconnected', () => events.onDisconnected());
 
+      // --- Phase 2: room connection -----------------------------------------
       try {
         await instance.connect(url, token);
+      } catch (cause) {
+        throw new TransportError('room_connect', cause);
+      }
 
+      // --- Phase 3: microphone publication ----------------------------------
+      try {
         // Publish the stream the visitor already approved. Calling
         // setMicrophoneEnabled() would run getUserMedia a second time, and
         // Firefox raises a fresh permission sheet every time unless the visitor
         // ticked "Remember" — a second prompt mid-demo.
         const audioTrack = microphone.getAudioTracks()[0];
         if (audioTrack && typeof lk.LocalAudioTrack === 'function') {
-          await instance.localParticipant.publishTrack(new lk.LocalAudioTrack(audioTrack));
+          // The source is REQUIRED. Without it LiveKit registers the track as
+          // Track.Source.Unknown, and our participant token grants only
+          // Track.Source.Microphone — so the server rejects the publication and
+          // the whole session fails after the visitor has already granted the
+          // microphone. This is the one line that bug turned on.
+          await instance.localParticipant.publishTrack(new lk.LocalAudioTrack(audioTrack), {
+            source: lk.Track.Source.Microphone,
+          });
         } else {
+          // Fallback for a build that does not export LocalAudioTrack. This
+          // path captures its own track and LiveKit tags it as Microphone
+          // itself, so it needs no source option.
           await instance.localParticipant.setMicrophoneEnabled(true);
         }
-
-        await instance.startAudio?.().catch(() => undefined);
       } catch (cause) {
-        throw new Error(`livekit connect failed: ${(cause as Error)?.name ?? 'unknown'}`);
+        throw new TransportError('microphone_publish', cause);
       }
+
+      // Non-fatal: playback can be unlocked later by the element itself.
+      await instance.startAudio?.().catch(() => undefined);
 
       startMetering(lk);
       events.onConnected();

@@ -764,6 +764,16 @@
   }
 
   // src/transport.ts
+  var TransportError = class extends Error {
+    constructor(phase, cause) {
+      var _a;
+      const causeName = (_a = cause == null ? void 0 : cause.name) != null ? _a : "unknown";
+      super(`livekit ${phase} failed (${causeName})`);
+      this.name = "TransportError";
+      this.phase = phase;
+      this.causeName = causeName;
+    }
+  };
   function smooth(previous, next) {
     return next > previous ? next : previous + (next - previous) * 0.25;
   }
@@ -810,11 +820,10 @@
     }
     return {
       async connect({ url, token, microphone, audioElement }) {
-        var _a2, _b, _c, _d, _e, _f;
+        var _a2, _b, _c, _d, _e;
         const lk = await load(options.moduleUrl).catch((cause) => {
-          var _a3;
           logger.error("failed to load the audio engine", { module: safeUrl(options.moduleUrl) });
-          throw new Error(`livekit module load failed: ${(_a3 = cause == null ? void 0 : cause.name) != null ? _a3 : "unknown"}`);
+          throw new TransportError("module_load", cause);
         });
         const instance = new lk.Room({ adaptiveStream: true, dynacast: true });
         room = instance;
@@ -830,16 +839,22 @@
         instance.on((_d = lk.RoomEvent["Disconnected"]) != null ? _d : "disconnected", () => events.onDisconnected());
         try {
           await instance.connect(url, token);
+        } catch (cause) {
+          throw new TransportError("room_connect", cause);
+        }
+        try {
           const audioTrack = microphone.getAudioTracks()[0];
           if (audioTrack && typeof lk.LocalAudioTrack === "function") {
-            await instance.localParticipant.publishTrack(new lk.LocalAudioTrack(audioTrack));
+            await instance.localParticipant.publishTrack(new lk.LocalAudioTrack(audioTrack), {
+              source: lk.Track.Source.Microphone
+            });
           } else {
             await instance.localParticipant.setMicrophoneEnabled(true);
           }
-          await ((_e = instance.startAudio) == null ? void 0 : _e.call(instance).catch(() => void 0));
         } catch (cause) {
-          throw new Error(`livekit connect failed: ${(_f = cause == null ? void 0 : cause.name) != null ? _f : "unknown"}`);
+          throw new TransportError("microphone_publish", cause);
         }
+        await ((_e = instance.startAudio) == null ? void 0 : _e.call(instance).catch(() => void 0));
         startMetering(lk);
         events.onConnected();
       },
@@ -1065,6 +1080,12 @@
       this.microphone = null;
       this.abortController = null;
       this.consentDecision = null;
+      /**
+       * Which leg of the real-time connection last failed. Reported to analytics
+       * and the console so a future failure is diagnosable without a repro; never
+       * shown to the visitor, and never carries a token or device detail.
+       */
+      this.lastTransportPhase = null;
       this.timers = [];
       this.tickTimer = null;
       this.deadline = 0;
@@ -1294,6 +1315,7 @@
         return;
       }
       if (!this.dispatch({ type: "START", at: this.now() })) return;
+      this.lastTransportPhase = null;
       const attempt = this.context.attempt;
       const stale = () => this.destroyed || this.context.attempt !== attempt || !isActive(this.context.state);
       track("voice_demo_start", { voice_demo_locale: this.locale });
@@ -1339,7 +1361,11 @@
         });
       } catch (cause) {
         if (stale()) return;
-        logger.error("transport failed", cause);
+        this.lastTransportPhase = cause instanceof TransportError ? cause.phase : "unknown";
+        logger.error("transport failed", {
+          phase: this.lastTransportPhase,
+          cause: cause instanceof TransportError ? cause.causeName : cause == null ? void 0 : cause.name
+        });
         this.fail("transport_failed");
         return;
       }
@@ -1513,7 +1539,14 @@
       void this.teardownTransport();
       this.clearTimers();
       this.dispatch({ type: "ERROR", code });
-      track("voice_demo_error", { voice_demo_code: code });
+      track("voice_demo_error", {
+        voice_demo_code: code,
+        ...this.lastTransportPhase ? { voice_demo_phase: this.lastTransportPhase } : {}
+      });
+    }
+    /** Exposed for QA and tests; not rendered anywhere. */
+    get transportPhase() {
+      return this.lastTransportPhase;
     }
     /**
      * Ends the session and releases every resource it held.

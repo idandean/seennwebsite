@@ -8,7 +8,7 @@
 
 import { PublicVoiceDemoClient, DemoRequestError, rateLimitScopeFor } from './client';
 import { createTurnstileProvider } from './turnstile';
-import { createLiveKitTransport } from './transport';
+import { TransportError, createLiveKitTransport } from './transport';
 import { directionFor, resolveLocale, stringsFor } from './i18n';
 import { initialContext, isActive, reduce } from './state';
 import { logger } from './logging';
@@ -17,7 +17,7 @@ import type { VoiceDemoConfig } from './config';
 import type { DemoLocale, RecordingConsent } from './contract';
 import type { Strings } from './i18n';
 import type { AnyErrorCode, DemoContext, DemoEvent, DemoState, FinishReason } from './state';
-import type { TransportEvents, TransportFactory, VoiceTransport } from './transport';
+import type { TransportEvents, TransportFactory, TransportPhase, VoiceTransport } from './transport';
 import type { TurnstileProvider } from './turnstile';
 
 export interface WidgetDeps {
@@ -94,6 +94,13 @@ export class VoiceDemoWidget {
   private microphone: MediaStream | null = null;
   private abortController: AbortController | null = null;
   private consentDecision: ((accepted: boolean) => void) | null = null;
+
+  /**
+   * Which leg of the real-time connection last failed. Reported to analytics
+   * and the console so a future failure is diagnosable without a repro; never
+   * shown to the visitor, and never carries a token or device detail.
+   */
+  private lastTransportPhase: TransportPhase | 'unknown' | null = null;
 
   private timers: ReturnType<typeof setTimeout>[] = [];
   private tickTimer: ReturnType<typeof setInterval> | null = null;
@@ -409,6 +416,7 @@ export class VoiceDemoWidget {
     // Retry-After window is still open.
     if (!this.dispatch({ type: 'START', at: this.now() })) return;
 
+    this.lastTransportPhase = null; // stale phase must not follow a new attempt
     const attempt = this.context.attempt;
     /**
      * True once this attempt's work no longer belongs to the widget's current
@@ -473,7 +481,12 @@ export class VoiceDemoWidget {
       });
     } catch (cause) {
       if (stale()) return;
-      logger.error('transport failed', cause);
+      // Phase and error *name* only — no token, URL, response body or device.
+      this.lastTransportPhase = cause instanceof TransportError ? cause.phase : 'unknown';
+      logger.error('transport failed', {
+        phase: this.lastTransportPhase,
+        cause: cause instanceof TransportError ? cause.causeName : (cause as Error)?.name,
+      });
       this.fail('transport_failed');
       return;
     }
@@ -682,7 +695,15 @@ export class VoiceDemoWidget {
     void this.teardownTransport();
     this.clearTimers();
     this.dispatch({ type: 'ERROR', code });
-    track('voice_demo_error', { voice_demo_code: code });
+    track('voice_demo_error', {
+      voice_demo_code: code,
+      ...(this.lastTransportPhase ? { voice_demo_phase: this.lastTransportPhase } : {}),
+    });
+  }
+
+  /** Exposed for QA and tests; not rendered anywhere. */
+  get transportPhase(): TransportPhase | 'unknown' | null {
+    return this.lastTransportPhase;
   }
 
   /**

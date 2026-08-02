@@ -3,6 +3,7 @@ import { VoiceDemoWidget } from '../src/widget';
 import { DEFAULT_CONFIG } from '../src/config';
 import { PublicVoiceDemoClient } from '../src/client';
 import { createTurnstileProvider } from '../src/turnstile';
+import { TransportError } from '../src/transport';
 import type { VoiceDemoConfig } from '../src/config';
 import type { WidgetDeps } from '../src/widget';
 import type { ConnectOptions, TransportEvents, VoiceTransport } from '../src/transport';
@@ -275,7 +276,11 @@ describe('turnstile', () => {
     const mic = fakeMicrophone();
     const client = stubClient({ status: 200, body: SESSION_BODY });
     const ts = fakeTurnstile();
-    ts.getToken.mockRejectedValue(new Error('challenge failed'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    // A JWT-shaped string in the cause proves the logger still redacts.
+    ts.getToken.mockRejectedValue(
+      new Error('challenge failed for eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.sig'),
+    );
 
     const { widget } = build(enabledConfig(), {
       requestMicrophone: async () => mic.stream,
@@ -290,6 +295,10 @@ describe('turnstile', () => {
     expect(widget.state).toBe('error');
     expect(widget.snapshot.errorCode).toBe('verification_failed');
     expect(mic.track.stop).toHaveBeenCalled();
+
+    const warned = JSON.stringify(warn.mock.calls);
+    expect(warned).toContain('[redacted]');
+    expect(warned).not.toContain('eyJhbGciOiJIUzI1NiJ9');
   });
 
   it('creates no provider at all until a session is started', () => {
@@ -778,6 +787,82 @@ describe('turnstile action reaches the endpoint (regression)', () => {
 
     const second = JSON.parse(client.fetchImpl.mock.calls[1]![1]!.body as string);
     expect(second.turnstile_token).toBe('token-from-cloudflare');
+  });
+});
+
+describe('transport failure diagnostics', () => {
+  async function failAt(phase: 'module_load' | 'room_connect' | 'microphone_publish') {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: () => ({
+        connect: async () => {
+          throw new TransportError(phase, Object.assign(new Error('boom'), { name: 'PublishError' }));
+        },
+        disconnect: async () => undefined,
+      }),
+    });
+
+    await widget.start();
+    await flush();
+    return { widget, errorSpy, mic };
+  }
+
+  it('records which leg failed', async () => {
+    for (const phase of ['module_load', 'room_connect', 'microphone_publish'] as const) {
+      const { widget } = await failAt(phase);
+      expect(widget.state).toBe('error');
+      expect(widget.transportPhase, phase).toBe(phase);
+    }
+  });
+
+  it('logs the phase without the token or endpoint', async () => {
+    const { errorSpy } = await failAt('microphone_publish');
+    const logged = JSON.stringify(errorSpy.mock.calls);
+
+    expect(logged).toContain('microphone_publish');
+    expect(logged).not.toContain('jwt');
+    expect(logged).not.toContain('stub.supabase.co');
+    expect(logged).not.toContain('anon-key');
+  });
+
+  it('still releases the microphone when publication fails', async () => {
+    const { mic } = await failAt('microphone_publish');
+    expect(mic.track.stop).toHaveBeenCalled();
+  });
+
+  it('does not carry a stale phase into a later successful attempt', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 200, body: SESSION_BODY });
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    let failFirst = true;
+    const { widget } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+      createTransport: () => ({
+        connect: async () => {
+          if (failFirst) {
+            failFirst = false;
+            throw new TransportError('room_connect');
+          }
+        },
+        disconnect: async () => undefined,
+      }),
+    });
+
+    await widget.start();
+    await flush();
+    expect(widget.transportPhase).toBe('room_connect');
+
+    await widget.start();
+    await flush();
+    expect(widget.state).toBe('listening');
+    expect(widget.transportPhase).toBeNull();
   });
 });
 
@@ -1286,7 +1371,10 @@ describe('credential hygiene', () => {
 
     expect(widget.state).toBe('error');
     const logged = JSON.stringify(error.mock.calls);
-    expect(logged).toContain('[redacted]');
+    // Stronger than redaction: the underlying message is never logged, so the
+    // token cannot appear even unredacted.
     expect(logged).not.toContain('token=jwt');
+    expect(logged).not.toContain('jwt');
+    expect(logged).toContain('transport failed');
   });
 });
