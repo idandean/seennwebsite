@@ -48,8 +48,10 @@ export interface Strings {
   heroEyebrow: string;
   /** Right side of the card header. */
   durationBadge: string;
-  /** The labelled primary control. */
+  /** The labelled control. Secondary to the page's own "Request a Demo". */
   startButton: string;
+  /** Small supporting line under the secondary CTA. */
+  startSupport: string;
   /** Expectation-setting line under the button. */
   sessionMeta: string;
 
@@ -131,7 +133,8 @@ export interface Strings {
 const en: Strings = {
   heroEyebrow: 'Talk to Jess — live',
   durationBadge: '~2 min',
-  startButton: 'Start voice demo',
+  startButton: 'Talk to the AI Collection Agent',
+  startSupport: 'Try a short live conversation.',
   sessionMeta: '~2 min  ·  Microphone required',
 
   unavailableTitle: 'The voice demo is not available right now',
@@ -210,7 +213,8 @@ const en: Strings = {
 const he: Strings = {
   heroEyebrow: 'ג׳ס — בשידור חי',
   durationBadge: '~2 דק׳',
-  startButton: 'התחילו את הדמו הקולי',
+  startButton: 'דברו עם סוכן הגבייה החכם',
+  startSupport: 'נסו שיחה קצרה בשידור חי.',
   sessionMeta: '~2 דק׳  ·  נדרש מיקרופון',
 
   unavailableTitle: 'הדמו הקולי אינו זמין כרגע',
@@ -289,7 +293,8 @@ const he: Strings = {
 const ar: Strings = {
   heroEyebrow: 'جيس — مباشر',
   durationBadge: '~٢ د',
-  startButton: 'ابدأ العرض الصوتي',
+  startButton: 'تحدّث إلى وكيل التحصيل الذكي',
+  startSupport: 'جرّب محادثة قصيرة مباشرة.',
   sessionMeta: '~٢ د  ·  يلزم ميكروفون',
 
   unavailableTitle: 'العرض الصوتي غير متاح حاليًا',

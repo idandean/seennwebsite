@@ -126,6 +126,7 @@ export class VoiceDemoWidget {
   private duration!: HTMLElement;
   private startButton!: HTMLButtonElement;
   private sessionMeta!: HTMLElement;
+  private startSupport!: HTMLElement;
   private consentPanel!: HTMLElement;
   private consentText!: HTMLElement;
   private consentLink!: HTMLAnchorElement;
@@ -247,6 +248,7 @@ export class VoiceDemoWidget {
         <span class="svd__start-icon" aria-hidden="true"></span>
         <span class="svd__start-label"></span>
       </button>
+      <p class="svd__start-support"></p>
       <p class="svd__meta"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
@@ -289,6 +291,9 @@ export class VoiceDemoWidget {
     this.buildBars();
     this.startButton = q<HTMLButtonElement>('.svd__start');
     this.sessionMeta = q('.svd__meta');
+    this.startSupport = q('.svd__start-support');
+    const startIcon = this.root.querySelector('.svd__start-icon');
+    if (startIcon) startIcon.innerHTML = icon(ICONS.mic, 'svd__start-mic');
     this.consentPanel = q('.svd__consent');
     this.consentText = q('.svd__consent-text');
     this.consentLink = q<HTMLAnchorElement>('.svd__consent-link');
@@ -468,6 +473,9 @@ export class VoiceDemoWidget {
 
     this.sessionMeta.textContent = s.sessionMeta;
     this.sessionMeta.hidden = state !== 'ready';
+
+    this.startSupport.textContent = s.startSupport;
+    this.startSupport.hidden = state !== 'ready';
 
     // Primary button
     const busy = state === 'requestingMicrophone' || state === 'connecting' || state === 'reconnecting';

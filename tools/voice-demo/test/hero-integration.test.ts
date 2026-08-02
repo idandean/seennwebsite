@@ -143,7 +143,7 @@ describe('card copy — an invitation, not a test surface', () => {
   it('every locale has the eyebrow, invitation, start button and session meta', () => {
     for (const locale of LOCALES) {
       const s = stringsFor(locale);
-      for (const key of ['heroEyebrow', 'durationBadge', 'readyTitle', 'adaptiveHint', 'startButton', 'sessionMeta'] as const) {
+      for (const key of ['heroEyebrow', 'durationBadge', 'readyTitle', 'adaptiveHint', 'startButton', 'startSupport', 'sessionMeta'] as const) {
         expect(s[key], `${locale}.${key}`).toBeTruthy();
       }
     }
@@ -154,7 +154,8 @@ describe('card copy — an invitation, not a test surface', () => {
     expect(s.heroEyebrow).toMatch(/talk to jess\s+.\s+live/i);
     expect(s.adaptiveHint).toMatch(/speak naturally/i);
     expect(s.adaptiveHint).toMatch(/adapts to your language/i);
-    expect(s.startButton).toMatch(/start voice demo/i);
+    expect(s.startButton).toMatch(/talk to the ai collection agent/i);
+    expect(s.startSupport).toMatch(/short live conversation/i);
     expect(s.durationBadge).toMatch(/2 min/i);
     expect(s.sessionMeta).toMatch(/microphone/i);
     // '~2 min' folded into the footer when the card header was removed.
@@ -214,7 +215,7 @@ describe('rendered card', () => {
     expect(text).toMatch(/microphone required/i);
     expect(text).toMatch(/~2 min/i);
     expect(mount.querySelector('.svd__start')).not.toBeNull();
-    expect(mount.querySelector('.svd__start')!.textContent).toMatch(/start voice demo/i);
+    expect(mount.querySelector('.svd__start')!.textContent).toMatch(/talk to the ai collection agent/i);
   });
 
   it('the start control is a real button with an accessible name', () => {

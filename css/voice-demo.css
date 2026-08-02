@@ -901,32 +901,46 @@
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  width: 100%;
+  /* SECONDARY by design. "Request a Demo" is the page's primary action and
+     stays solid gold; this must read as the quieter of the two — outlined,
+     narrower and lighter — while still being obviously clickable. */
+  width: auto;
+  max-width: 100%;
   margin-top: 1rem;
-  padding: 0.95rem 1.6rem;
-  border: 0;
-  /* Softly rounded to echo the ball above it. */
+  padding: 0.6rem 1.15rem;
+  border: 1px solid rgba(240, 193, 75, 0.55);
   border-radius: 999px;
-  background: #c9b555;
-  color: #000;
+  background: rgba(9, 11, 26, 0.34);
+  color: #f0c14b;
   font-family: 'Montserrat', 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 150ms ease, transform 150ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .svd__start-icon {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #0f1220;
-  box-shadow: inset 0 0 0 3px #c9b555;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.svd__start-mic {
+  width: 15px;
+  height: 15px;
+}
+
+.svd__start-support {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.66);
 }
 
 .svd__start:hover {
-  background: #bfa34a;
-  transform: translateY(-1px);
+  background: rgba(240, 193, 75, 0.14);
+  border-color: rgba(240, 193, 75, 0.85);
+  color: #ffdc86;
 }
 
 .svd__start:focus-visible {
@@ -935,17 +949,11 @@
 }
 
 .svd__meta {
-  margin: 0.75rem 0 0;
+  margin: 0.35rem 0 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.42);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .svd__start:hover {
-    transform: none;
-  }
+  color: rgba(255, 255, 255, 0.34);
 }
 
 /* Reassurance that the assistant is multilingual. Deliberately quiet: it

@@ -348,7 +348,8 @@
   var en = {
     heroEyebrow: "Talk to Jess \u2014 live",
     durationBadge: "~2 min",
-    startButton: "Start voice demo",
+    startButton: "Talk to the AI Collection Agent",
+    startSupport: "Try a short live conversation.",
     sessionMeta: "~2 min  \xB7  Microphone required",
     unavailableTitle: "The voice demo is not available right now",
     unavailableBody: "It will be back shortly.",
@@ -411,7 +412,8 @@
   var he = {
     heroEyebrow: "\u05D2\u05F3\u05E1 \u2014 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9",
     durationBadge: "~2 \u05D3\u05E7\u05F3",
-    startButton: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D0\u05EA \u05D4\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9",
+    startButton: "\u05D3\u05D1\u05E8\u05D5 \u05E2\u05DD \u05E1\u05D5\u05DB\u05DF \u05D4\u05D2\u05D1\u05D9\u05D9\u05D4 \u05D4\u05D7\u05DB\u05DD",
+    startSupport: "\u05E0\u05E1\u05D5 \u05E9\u05D9\u05D7\u05D4 \u05E7\u05E6\u05E8\u05D4 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9.",
     sessionMeta: "~2 \u05D3\u05E7\u05F3  \xB7  \u05E0\u05D3\u05E8\u05E9 \u05DE\u05D9\u05E7\u05E8\u05D5\u05E4\u05D5\u05DF",
     unavailableTitle: "\u05D4\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9 \u05D0\u05D9\u05E0\u05D5 \u05D6\u05DE\u05D9\u05DF \u05DB\u05E8\u05D2\u05E2",
     unavailableBody: "\u05D4\u05D5\u05D0 \u05D9\u05D7\u05D6\u05D5\u05E8 \u05D1\u05E7\u05E8\u05D5\u05D1.",
@@ -474,7 +476,8 @@
   var ar = {
     heroEyebrow: "\u062C\u064A\u0633 \u2014 \u0645\u0628\u0627\u0634\u0631",
     durationBadge: "~\u0662 \u062F",
-    startButton: "\u0627\u0628\u062F\u0623 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A",
+    startButton: "\u062A\u062D\u062F\u0651\u062B \u0625\u0644\u0649 \u0648\u0643\u064A\u0644 \u0627\u0644\u062A\u062D\u0635\u064A\u0644 \u0627\u0644\u0630\u0643\u064A",
+    startSupport: "\u062C\u0631\u0651\u0628 \u0645\u062D\u0627\u062F\u062B\u0629 \u0642\u0635\u064A\u0631\u0629 \u0645\u0628\u0627\u0634\u0631\u0629.",
     sessionMeta: "~\u0662 \u062F  \xB7  \u064A\u0644\u0632\u0645 \u0645\u064A\u0643\u0631\u0648\u0641\u0648\u0646",
     unavailableTitle: "\u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A \u063A\u064A\u0631 \u0645\u062A\u0627\u062D \u062D\u0627\u0644\u064A\u064B\u0627",
     unavailableBody: "\u0633\u064A\u0639\u0648\u062F \u0642\u0631\u064A\u0628\u064B\u0627.",
@@ -1325,6 +1328,7 @@
         <span class="svd__start-icon" aria-hidden="true"></span>
         <span class="svd__start-label"></span>
       </button>
+      <p class="svd__start-support"></p>
       <p class="svd__meta"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
@@ -1365,6 +1369,9 @@
       this.buildBars();
       this.startButton = q(".svd__start");
       this.sessionMeta = q(".svd__meta");
+      this.startSupport = q(".svd__start-support");
+      const startIcon = this.root.querySelector(".svd__start-icon");
+      if (startIcon) startIcon.innerHTML = icon(ICONS.mic, "svd__start-mic");
       this.consentPanel = q(".svd__consent");
       this.consentText = q(".svd__consent-text");
       this.consentLink = q(".svd__consent-link");
@@ -1534,6 +1541,8 @@
       this.startButton.hidden = !offerStart;
       this.sessionMeta.textContent = s.sessionMeta;
       this.sessionMeta.hidden = state !== "ready";
+      this.startSupport.textContent = s.startSupport;
+      this.startSupport.hidden = state !== "ready";
       const busy = state === "requestingMicrophone" || state === "connecting" || state === "reconnecting";
       this.primaryButton.disabled = busy || state === "unavailable" || pendingConsent !== null;
       this.primaryButton.innerHTML = state === "listening" || state === "assistantSpeaking" ? icon(ICONS.hangUp) : busy ? icon(ICONS.spinner, "svd-spin") : state === "unavailable" ? icon(ICONS.blocked) : state === "ready" ? icon(ICONS.mic) : icon(ICONS.retry);
