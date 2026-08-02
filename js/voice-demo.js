@@ -346,13 +346,14 @@
     return value === "en" || value === "he" || value === "ar";
   }
   var en = {
-    heroEyebrow: "Talk to Jess live",
+    heroEyebrow: "Talk to Jess \u2014 live",
+    durationBadge: "~2 min",
     startButton: "Start voice demo",
-    sessionMeta: "About 2 minutes \xB7 Microphone required",
+    sessionMeta: "Microphone required  \xB7  No signup",
     unavailableTitle: "The voice demo is not available right now",
     unavailableBody: "It will be back shortly.",
     readyTitle: "Experience the agent yourself",
-    readyBody: "She is chasing you over an overdue invoice \u2014 you play the customer.",
+    readyBody: "She chases you over an overdue invoice \u2014 you play the customer.",
     startLabel: "Start the voice demo",
     micTitle: "Allow your microphone",
     micBody: "Your browser is asking for permission. The demo cannot hear you until you allow it.",
@@ -378,7 +379,7 @@
     retry: "Try again",
     disconnect: "End the call",
     timeRemaining: "left",
-    adaptiveHint: "Speak naturally \u2014 she adapts to your language.",
+    adaptiveHint: "Speak naturally; she adapts to your language.",
     supportIdLabel: "Support ID",
     supportCopy: "Copy",
     supportCopied: "Copied",
@@ -408,9 +409,10 @@
     err_server_error: "Something went wrong on our side."
   };
   var he = {
-    heroEyebrow: "\u05D3\u05D1\u05E8\u05D5 \u05E2\u05DD \u05D2\u05F3\u05E1 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9",
+    heroEyebrow: "\u05D2\u05F3\u05E1 \u2014 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9",
+    durationBadge: "~2 \u05D3\u05E7\u05F3",
     startButton: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D0\u05EA \u05D4\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9",
-    sessionMeta: "\u05DB\u05E9\u05EA\u05D9 \u05D3\u05E7\u05D5\u05EA \xB7 \u05E0\u05D3\u05E8\u05E9 \u05DE\u05D9\u05E7\u05E8\u05D5\u05E4\u05D5\u05DF",
+    sessionMeta: "\u05E0\u05D3\u05E8\u05E9 \u05DE\u05D9\u05E7\u05E8\u05D5\u05E4\u05D5\u05DF  \xB7  \u05D1\u05DC\u05D9 \u05D4\u05E8\u05E9\u05DE\u05D4",
     unavailableTitle: "\u05D4\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9 \u05D0\u05D9\u05E0\u05D5 \u05D6\u05DE\u05D9\u05DF \u05DB\u05E8\u05D2\u05E2",
     unavailableBody: "\u05D4\u05D5\u05D0 \u05D9\u05D7\u05D6\u05D5\u05E8 \u05D1\u05E7\u05E8\u05D5\u05D1.",
     readyTitle: "\u05D4\u05EA\u05E0\u05E1\u05D5 \u05D1\u05E1\u05D5\u05DB\u05E0\u05EA \u05D1\u05E2\u05E6\u05DE\u05DB\u05DD",
@@ -440,7 +442,7 @@
     retry: "\u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1",
     disconnect: "\u05E1\u05D9\u05D5\u05DD \u05D4\u05E9\u05D9\u05D7\u05D4",
     timeRemaining: "\u05E0\u05D5\u05EA\u05E8\u05D5",
-    adaptiveHint: "\u05D3\u05D1\u05E8\u05D5 \u05D8\u05D1\u05E2\u05D9 \u2014 \u05D4\u05D9\u05D0 \u05DE\u05EA\u05D0\u05D9\u05DE\u05D4 \u05D0\u05EA \u05E2\u05E6\u05DE\u05D4 \u05DC\u05E9\u05E4\u05D4 \u05E9\u05DC\u05DB\u05DD.",
+    adaptiveHint: "\u05D3\u05D1\u05E8\u05D5 \u05D8\u05D1\u05E2\u05D9; \u05D4\u05D9\u05D0 \u05DE\u05EA\u05D0\u05D9\u05DE\u05D4 \u05D0\u05EA \u05E2\u05E6\u05DE\u05D4 \u05DC\u05E9\u05E4\u05D4 \u05E9\u05DC\u05DB\u05DD.",
     supportIdLabel: "\u05DE\u05D6\u05D4\u05D4 \u05EA\u05DE\u05D9\u05DB\u05D4",
     supportCopy: "\u05D4\u05E2\u05EA\u05E7\u05D4",
     supportCopied: "\u05D4\u05D5\u05E2\u05EA\u05E7",
@@ -470,9 +472,10 @@
     err_server_error: "\u05DE\u05E9\u05D4\u05D5 \u05D4\u05E9\u05EA\u05D1\u05E9 \u05D0\u05E6\u05DC\u05E0\u05D5."
   };
   var ar = {
-    heroEyebrow: "\u062A\u062D\u062F\u0651\u062B \u0645\u0639 \u062C\u064A\u0633 \u0645\u0628\u0627\u0634\u0631\u0629",
+    heroEyebrow: "\u062C\u064A\u0633 \u2014 \u0645\u0628\u0627\u0634\u0631",
+    durationBadge: "~\u0662 \u062F",
     startButton: "\u0627\u0628\u062F\u0623 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A",
-    sessionMeta: "\u0646\u062D\u0648 \u062F\u0642\u064A\u0642\u062A\u064A\u0646 \xB7 \u064A\u0644\u0632\u0645 \u0645\u064A\u0643\u0631\u0648\u0641\u0648\u0646",
+    sessionMeta: "\u064A\u0644\u0632\u0645 \u0645\u064A\u0643\u0631\u0648\u0641\u0648\u0646  \xB7  \u062F\u0648\u0646 \u062A\u0633\u062C\u064A\u0644",
     unavailableTitle: "\u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A \u063A\u064A\u0631 \u0645\u062A\u0627\u062D \u062D\u0627\u0644\u064A\u064B\u0627",
     unavailableBody: "\u0633\u064A\u0639\u0648\u062F \u0642\u0631\u064A\u0628\u064B\u0627.",
     readyTitle: "\u062C\u0631\u0651\u0628 \u0627\u0644\u0648\u0643\u064A\u0644\u0629 \u0628\u0646\u0641\u0633\u0643",
@@ -502,7 +505,7 @@
     retry: "\u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649",
     disconnect: "\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629",
     timeRemaining: "\u0645\u062A\u0628\u0642\u064D",
-    adaptiveHint: "\u062A\u062D\u062F\u0651\u062B \u0628\u0634\u0643\u0644 \u0637\u0628\u064A\u0639\u064A \u2014 \u062A\u062A\u0623\u0642\u0644\u0645 \u0645\u0639 \u0644\u063A\u062A\u0643.",
+    adaptiveHint: "\u062A\u062D\u062F\u0651\u062B \u0628\u0634\u0643\u0644 \u0637\u0628\u064A\u0639\u064A\u061B \u062A\u062A\u0623\u0642\u0644\u0645 \u0645\u0639 \u0644\u063A\u062A\u0643.",
     supportIdLabel: "\u0645\u0639\u0631\u0651\u0641 \u0627\u0644\u062F\u0639\u0645",
     supportCopy: "\u0646\u0633\u062E",
     supportCopied: "\u062A\u0645 \u0627\u0644\u0646\u0633\u062E",
@@ -1282,7 +1285,11 @@
       root.lang = this.locale;
       const size = this.config.orbSize;
       root.innerHTML = `
-      <p class="svd__eyebrow"></p>
+      <div class="svd__head">
+        <p class="svd__eyebrow"><span class="svd__pulse" aria-hidden="true"></span><span class="svd__eyebrow-text"></span></p>
+        <p class="svd__duration"></p>
+      </div>
+      <div class="svd__rule" aria-hidden="true"></div>
       <div class="svd__wave" aria-hidden="true">
         <svg viewBox="0 0 400 80" preserveAspectRatio="none" focusable="false">
           <g class="svd__wave-track">
@@ -1291,6 +1298,7 @@
           </g>
         </svg>
       </div>
+      <div class="svd__body">
       <div class="svd__stage">
         <div class="preview-orb" style="width:${size}px;height:${size}px">
           <span class="preview-orb__glow" aria-hidden="true"></span>
@@ -1311,7 +1319,12 @@
         <p class="svd__hint"></p>
         <p class="svd__adaptive"></p>
       </div>
-      <button type="button" class="svd__start"></button>
+      </div>
+      <div class="svd__bars" aria-hidden="true"></div>
+      <button type="button" class="svd__start">
+        <span class="svd__start-icon" aria-hidden="true"></span>
+        <span class="svd__start-label"></span>
+      </button>
       <p class="svd__meta"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
@@ -1347,7 +1360,9 @@
       this.body = q(".svd__sub");
       this.hint = q(".svd__hint");
       this.adaptiveHint = q(".svd__adaptive");
-      this.eyebrow = q(".svd__eyebrow");
+      this.eyebrow = q(".svd__eyebrow-text");
+      this.duration = q(".svd__duration");
+      this.buildBars();
       this.startButton = q(".svd__start");
       this.sessionMeta = q(".svd__meta");
       this.consentPanel = q(".svd__consent");
@@ -1426,6 +1441,56 @@
       const played = video.play();
       if (played && typeof played.catch === "function") played.catch(() => void 0);
     }
+    /**
+     * The equaliser. Bars are built once with a fixed pseudo-random rhythm so
+     * the row reads as a voice signature rather than a uniform comb, and each
+     * carries its own phase offset so they ripple instead of pulsing in unison.
+     */
+    buildBars() {
+      const host = this.root.querySelector(".svd__bars");
+      if (!host) return;
+      const SEED = [
+        0.42,
+        0.78,
+        0.35,
+        0.9,
+        0.55,
+        0.28,
+        0.68,
+        1,
+        0.48,
+        0.82,
+        0.36,
+        0.72,
+        0.95,
+        0.5,
+        0.3,
+        0.86,
+        0.44,
+        0.66,
+        0.98,
+        0.4,
+        0.74,
+        0.52,
+        0.88,
+        0.33,
+        0.7,
+        0.46,
+        0.92,
+        0.6,
+        0.38,
+        0.8,
+        0.5,
+        0.26
+      ];
+      for (let i = 0; i < SEED.length; i += 1) {
+        const bar = document.createElement("span");
+        bar.className = "svd__bar";
+        bar.style.setProperty("--h", String(SEED[i]));
+        bar.style.setProperty("--d", `${i % 7 * -0.13}s`);
+        host.appendChild(bar);
+      }
+    }
     prefersReducedMotion() {
       return typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     }
@@ -1462,9 +1527,10 @@
       this.adaptiveHint.textContent = s.adaptiveHint;
       this.adaptiveHint.hidden = !showAdaptive;
       this.eyebrow.textContent = s.heroEyebrow;
-      this.eyebrow.hidden = state !== "ready";
+      this.duration.textContent = s.durationBadge;
       const offerStart = state === "ready" || state === "finished" || state === "error" || state === "rateLimited";
-      this.startButton.textContent = state === "ready" ? s.startButton : s.retry;
+      const startLabel = this.startButton.querySelector(".svd__start-label");
+      if (startLabel) startLabel.textContent = state === "ready" ? s.startButton : s.retry;
       this.startButton.hidden = !offerStart;
       this.sessionMeta.textContent = s.sessionMeta;
       this.sessionMeta.hidden = state !== "ready";

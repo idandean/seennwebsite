@@ -44,8 +44,10 @@ export function isSupported(value: string): value is DemoLocale {
 }
 
 export interface Strings {
-  /** Small label above the orb in the hero card. */
+  /** Small label in the card header. */
   heroEyebrow: string;
+  /** Right side of the card header. */
+  durationBadge: string;
   /** The labelled primary control. */
   startButton: string;
   /** Expectation-setting line under the button. */
@@ -127,15 +129,16 @@ export interface Strings {
 }
 
 const en: Strings = {
-  heroEyebrow: 'Talk to Jess live',
+  heroEyebrow: 'Talk to Jess — live',
+  durationBadge: '~2 min',
   startButton: 'Start voice demo',
-  sessionMeta: 'About 2 minutes · Microphone required',
+  sessionMeta: 'Microphone required  ·  No signup',
 
   unavailableTitle: 'The voice demo is not available right now',
   unavailableBody: 'It will be back shortly.',
 
   readyTitle: 'Experience the agent yourself',
-  readyBody: 'She is chasing you over an overdue invoice — you play the customer.',
+  readyBody: 'She chases you over an overdue invoice — you play the customer.',
   startLabel: 'Start the voice demo',
 
   micTitle: 'Allow your microphone',
@@ -171,7 +174,7 @@ const en: Strings = {
   disconnect: 'End the call',
   timeRemaining: 'left',
 
-  adaptiveHint: 'Speak naturally — she adapts to your language.',
+  adaptiveHint: 'Speak naturally; she adapts to your language.',
 
   supportIdLabel: 'Support ID',
   supportCopy: 'Copy',
@@ -205,9 +208,10 @@ const en: Strings = {
 };
 
 const he: Strings = {
-  heroEyebrow: 'דברו עם ג׳ס בשידור חי',
+  heroEyebrow: 'ג׳ס — בשידור חי',
+  durationBadge: '~2 דק׳',
   startButton: 'התחילו את הדמו הקולי',
-  sessionMeta: 'כשתי דקות · נדרש מיקרופון',
+  sessionMeta: 'נדרש מיקרופון  ·  בלי הרשמה',
 
   unavailableTitle: 'הדמו הקולי אינו זמין כרגע',
   unavailableBody: 'הוא יחזור בקרוב.',
@@ -249,7 +253,7 @@ const he: Strings = {
   disconnect: 'סיום השיחה',
   timeRemaining: 'נותרו',
 
-  adaptiveHint: 'דברו טבעי — היא מתאימה את עצמה לשפה שלכם.',
+  adaptiveHint: 'דברו טבעי; היא מתאימה את עצמה לשפה שלכם.',
 
   supportIdLabel: 'מזהה תמיכה',
   supportCopy: 'העתקה',
@@ -283,9 +287,10 @@ const he: Strings = {
 };
 
 const ar: Strings = {
-  heroEyebrow: 'تحدّث مع جيس مباشرة',
+  heroEyebrow: 'جيس — مباشر',
+  durationBadge: '~٢ د',
   startButton: 'ابدأ العرض الصوتي',
-  sessionMeta: 'نحو دقيقتين · يلزم ميكروفون',
+  sessionMeta: 'يلزم ميكروفون  ·  دون تسجيل',
 
   unavailableTitle: 'العرض الصوتي غير متاح حاليًا',
   unavailableBody: 'سيعود قريبًا.',
@@ -327,7 +332,7 @@ const ar: Strings = {
   disconnect: 'إنهاء المكالمة',
   timeRemaining: 'متبقٍ',
 
-  adaptiveHint: 'تحدّث بشكل طبيعي — تتأقلم مع لغتك.',
+  adaptiveHint: 'تحدّث بشكل طبيعي؛ تتأقلم مع لغتك.',
 
   supportIdLabel: 'معرّف الدعم',
   supportCopy: 'نسخ',

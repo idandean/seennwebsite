@@ -229,6 +229,10 @@
   will-change: transform, opacity;
 }
 
+.preview-orb__layer {
+  opacity: 0.35;
+}
+
 .preview-orb__layer--a {
   background: radial-gradient(
       circle at 32% 30%,
@@ -270,6 +274,7 @@
 /* Liquid inner wisp — inset far enough that its morphing edge never reaches
    the rim, so the silhouette stays a clean circle. */
 .preview-orb__wisp {
+  opacity: 0.18 !important;
   position: absolute;
   inset: 12%;
   background: linear-gradient(
@@ -296,32 +301,34 @@
    public/avatars/ if the video core is ever wanted here. */
 .preview-orb__core {
   position: absolute;
-  inset: 5%;
-  border-radius: 9999px;
+  /* Edge to edge. Previously inset 5% behind a radial mask fading from 56%,
+     which left the ball floating loose inside the sphere instead of the circle
+     framing it. The circle IS the ball's frame now. */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   object-fit: cover;
-  opacity: 0.82;
-  mix-blend-mode: screen;
+  opacity: 1;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 56%, transparent 88%);
-  mask-image: radial-gradient(circle at 50% 50%, #000 56%, transparent 88%);
   transition: opacity 400ms ease;
 }
 
-.preview-orb--dialing .preview-orb__core {
-  opacity: 0.95;
-}
-
+.preview-orb--dialing .preview-orb__core,
 .preview-orb--idle .preview-orb__core {
-  opacity: 0.72;
+  opacity: 1;
 }
 
 /* Thin rim keeps the blurred mass reading as a sphere */
 .preview-orb__rim {
   position: absolute;
   inset: 0;
-  border-radius: 9999px;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35),
-    inset 0 -18px 32px rgba(9, 11, 26, 0.55), 0 18px 40px rgba(9, 11, 26, 0.45);
+  border-radius: 50%;
+  /* A hairline ring sitting exactly on the edge, plus depth beneath. */
+  box-shadow:
+    inset 0 0 0 1px rgba(245, 214, 130, 0.42),
+    inset 0 -14px 30px rgba(9, 11, 26, 0.45),
+    0 16px 38px rgba(9, 11, 26, 0.5);
 }
 
 /* Concentric ripples — dialing state only */
@@ -409,7 +416,11 @@
   animation-duration: 1.6s;
 }
 
-.preview-orb--submitting .preview-orb__layer--a {
+.preview-orb--submitting .preview-orb__layer {
+  opacity: 0.35;
+}
+
+.preview-orb__layer--a {
   animation-duration: 8s;
 }
 
@@ -434,7 +445,11 @@
   animation-duration: 2.4s;
 }
 
-.preview-orb--dialing .preview-orb__layer--a {
+.preview-orb--dialing .preview-orb__layer {
+  opacity: 0.35;
+}
+
+.preview-orb__layer--a {
   animation-duration: 11s;
 }
 
@@ -459,7 +474,11 @@
   animation-duration: 5s;
 }
 
-.preview-orb--onTheWay .preview-orb__layer--a {
+.preview-orb--onTheWay .preview-orb__layer {
+  opacity: 0.35;
+}
+
+.preview-orb__layer--a {
   animation-duration: 18s;
 }
 
@@ -696,6 +715,126 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* The orb's own circular button is redundant inside the hero card: the
+   full-width labelled CTA starts the demo and the disconnect button ends it.
+   Hiding it keeps the ball cleanly framed and leaves exactly one primary
+   action, which is the rule the design skill flags hardest. It stays in the
+   DOM so keyboard users and the staging surface keep the control. */
+.hero-demo .preview-orb__call {
+  display: none;
+}
+
+/* --- Card header ---------------------------------------------------------- */
+
+.svd__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.svd__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.svd__pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade9b;
+  box-shadow: 0 0 0 0 rgba(74, 222, 155, 0.5);
+  animation: svd-pulse 2.4s ease-out infinite;
+}
+
+@keyframes svd-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 155, 0.45); }
+  70% { box-shadow: 0 0 0 7px rgba(74, 222, 155, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 155, 0); }
+}
+
+.svd__duration {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.svd__rule {
+  width: 100%;
+  height: 1px;
+  margin: 0.85rem 0 1.1rem;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+}
+
+/* --- Orb beside the copy, as in the reference ----------------------------- */
+
+.svd__body {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  width: 100%;
+  text-align: start;
+}
+
+.svd__body .svd__stage {
+  flex: 0 0 auto;
+  padding-bottom: 0;
+}
+
+.svd__body .svd__copy {
+  align-items: flex-start;
+  text-align: start;
+  min-height: 0;
+}
+
+/* --- Equaliser ------------------------------------------------------------
+   Replaces the single sine line. Bars carry the same meaning — amplitude is
+   bound to the agent's real audio level while a call is live — but read far
+   more like a voice signature at this size. */
+
+.svd__bars {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  width: 100%;
+  height: 44px;
+  margin-top: 1.1rem;
+}
+
+.svd__bar {
+  flex: 1 1 0;
+  min-width: 2px;
+  max-width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(245, 214, 130, 0.95), rgba(201, 181, 85, 0.7));
+  /* Idle rhythm; --wave-level lifts the whole row while she speaks. */
+  height: calc((18% + var(--h) * 46%) * (1 + var(--wave-level, 0) * 1.1));
+  animation: svd-bar 1.15s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+  transition: height 110ms linear;
+}
+
+@keyframes svd-bar {
+  from { transform: scaleY(0.42); }
+  to { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svd__bar {
+    animation: none;
+    transform: scaleY(0.8);
+  }
+  .svd__pulse {
+    animation: none;
+  }
+}
+
 /* --- Living waveform ------------------------------------------------------
    The signature of a voice product. It sits behind the orb and runs wider than
    the card, bleeding past both edges, which is the second thing tying the card
@@ -706,6 +845,7 @@
    happening. */
 
 .svd__wave {
+  display: none;
   position: absolute;
   left: -8%;
   right: -8%;
@@ -786,25 +926,39 @@
   font-family: 'Montserrat', 'Inter', sans-serif;
   font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #f0c14b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 /* The labelled primary control. Reuses the hero CTA's gold so the two read as
    the same family, at a lower weight so the sales CTA still leads. */
 .svd__start {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
   margin-top: 1rem;
-  padding: 0.7rem 1.6rem;
+  padding: 0.9rem 1.6rem;
   border: 0;
   border-radius: 0.5rem;
   background: #c9b555;
   color: #000;
   font-family: 'Montserrat', 'Inter', sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.svd__start-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0f1220;
+  box-shadow: inset 0 0 0 3px #c9b555;
 }
 
 .svd__start:hover {
@@ -818,9 +972,11 @@
 }
 
 .svd__meta {
-  margin: 0.6rem 0 0;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.58);
+  margin: 0.75rem 0 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.42);
 }
 
 @media (prefers-reduced-motion: reduce) {

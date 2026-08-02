@@ -143,7 +143,7 @@ describe('card copy — an invitation, not a test surface', () => {
   it('every locale has the eyebrow, invitation, start button and session meta', () => {
     for (const locale of LOCALES) {
       const s = stringsFor(locale);
-      for (const key of ['heroEyebrow', 'readyTitle', 'adaptiveHint', 'startButton', 'sessionMeta'] as const) {
+      for (const key of ['heroEyebrow', 'durationBadge', 'readyTitle', 'adaptiveHint', 'startButton', 'sessionMeta'] as const) {
         expect(s[key], `${locale}.${key}`).toBeTruthy();
       }
     }
@@ -151,12 +151,13 @@ describe('card copy — an invitation, not a test surface', () => {
 
   it('the English copy reads as the brief specifies', () => {
     const s = stringsFor('en');
-    expect(s.heroEyebrow).toMatch(/talk to jess live/i);
+    expect(s.heroEyebrow).toMatch(/talk to jess\s+.\s+live/i);
     expect(s.adaptiveHint).toMatch(/speak naturally/i);
     expect(s.adaptiveHint).toMatch(/adapts to your language/i);
     expect(s.startButton).toMatch(/start voice demo/i);
-    expect(s.sessionMeta).toMatch(/2 minutes/i);
+    expect(s.durationBadge).toMatch(/2 min/i);
     expect(s.sessionMeta).toMatch(/microphone/i);
+    expect(s.sessionMeta).toMatch(/no signup/i);
   });
 
   it('carries no staging, diagnostic or implementation wording in any locale', () => {
@@ -207,9 +208,10 @@ describe('rendered card', () => {
     const { mount } = mountWidget('en');
     const text = mount.textContent ?? '';
 
-    expect(text).toMatch(/talk to jess live/i);
+    expect(text).toMatch(/talk to jess\s+.\s+live/i);
     expect(text).toMatch(/speak naturally/i);
     expect(text).toMatch(/microphone required/i);
+    expect(text).toMatch(/~2 min/i);
     expect(mount.querySelector('.svd__start')).not.toBeNull();
     expect(mount.querySelector('.svd__start')!.textContent).toMatch(/start voice demo/i);
   });
@@ -273,21 +275,23 @@ describe('rendered card', () => {
     expect(core!.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('renders the animated waveform with a real path, behind the orb', () => {
+  it('renders a moving equaliser with staggered bars', () => {
     const { mount } = mountWidget('en');
-    const wave = mount.querySelector('.svd__wave');
-    const paths = mount.querySelectorAll<SVGPathElement>('.svd__wave-line');
+    const bars = mount.querySelectorAll<HTMLElement>('.svd__bar');
 
-    expect(wave).not.toBeNull();
-    expect(wave!.getAttribute('aria-hidden')).toBe('true');
-    expect(paths.length).toBe(2);
-    for (const path of paths) {
-      // A zero-length `d` is how this silently shipped invisible the first
-      // time; assert it actually describes a curve.
-      const d = path.getAttribute('d') ?? '';
-      expect(d.startsWith('M')).toBe(true);
-      expect(d.length).toBeGreaterThan(500);
-    }
+    expect(mount.querySelector('.svd__bars')!.getAttribute('aria-hidden')).toBe('true');
+    expect(bars.length).toBeGreaterThan(20);
+
+    // Each bar needs its own height and phase, or the row pulses as one block.
+    const heights = new Set<string>();
+    const delays = new Set<string>();
+    bars.forEach((bar) => {
+      heights.add(bar.style.getPropertyValue('--h'));
+      delays.add(bar.style.getPropertyValue('--d'));
+      expect(bar.style.getPropertyValue('--h')).not.toBe('');
+    });
+    expect(heights.size).toBeGreaterThan(5);
+    expect(delays.size).toBeGreaterThan(1);
   });
 
   it('still renders exactly one orb alongside the wave', () => {

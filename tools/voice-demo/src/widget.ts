@@ -123,6 +123,7 @@ export class VoiceDemoWidget {
   private adaptiveHint!: HTMLElement;
   private coreVideo: HTMLVideoElement | null = null;
   private eyebrow!: HTMLElement;
+  private duration!: HTMLElement;
   private startButton!: HTMLButtonElement;
   private sessionMeta!: HTMLElement;
   private consentPanel!: HTMLElement;
@@ -206,7 +207,11 @@ export class VoiceDemoWidget {
 
     const size = this.config.orbSize;
     root.innerHTML = `
-      <p class="svd__eyebrow"></p>
+      <div class="svd__head">
+        <p class="svd__eyebrow"><span class="svd__pulse" aria-hidden="true"></span><span class="svd__eyebrow-text"></span></p>
+        <p class="svd__duration"></p>
+      </div>
+      <div class="svd__rule" aria-hidden="true"></div>
       <div class="svd__wave" aria-hidden="true">
         <svg viewBox="0 0 400 80" preserveAspectRatio="none" focusable="false">
           <g class="svd__wave-track">
@@ -215,6 +220,7 @@ export class VoiceDemoWidget {
           </g>
         </svg>
       </div>
+      <div class="svd__body">
       <div class="svd__stage">
         <div class="preview-orb" style="width:${size}px;height:${size}px">
           <span class="preview-orb__glow" aria-hidden="true"></span>
@@ -235,7 +241,12 @@ export class VoiceDemoWidget {
         <p class="svd__hint"></p>
         <p class="svd__adaptive"></p>
       </div>
-      <button type="button" class="svd__start"></button>
+      </div>
+      <div class="svd__bars" aria-hidden="true"></div>
+      <button type="button" class="svd__start">
+        <span class="svd__start-icon" aria-hidden="true"></span>
+        <span class="svd__start-label"></span>
+      </button>
       <p class="svd__meta"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
@@ -273,7 +284,9 @@ export class VoiceDemoWidget {
     this.body = q('.svd__sub');
     this.hint = q('.svd__hint');
     this.adaptiveHint = q('.svd__adaptive');
-    this.eyebrow = q('.svd__eyebrow');
+    this.eyebrow = q('.svd__eyebrow-text');
+    this.duration = q('.svd__duration');
+    this.buildBars();
     this.startButton = q<HTMLButtonElement>('.svd__start');
     this.sessionMeta = q('.svd__meta');
     this.consentPanel = q('.svd__consent');
@@ -357,6 +370,30 @@ export class VoiceDemoWidget {
     if (played && typeof played.catch === 'function') played.catch(() => undefined);
   }
 
+  /**
+   * The equaliser. Bars are built once with a fixed pseudo-random rhythm so
+   * the row reads as a voice signature rather than a uniform comb, and each
+   * carries its own phase offset so they ripple instead of pulsing in unison.
+   */
+  private buildBars(): void {
+    const host = this.root.querySelector('.svd__bars');
+    if (!host) return;
+
+    // Deterministic: the same shape every render, no Math.random at runtime.
+    const SEED = [
+      0.42, 0.78, 0.35, 0.9, 0.55, 0.28, 0.68, 1, 0.48, 0.82, 0.36, 0.72, 0.95, 0.5,
+      0.3, 0.86, 0.44, 0.66, 0.98, 0.4, 0.74, 0.52, 0.88, 0.33, 0.7, 0.46, 0.92, 0.6,
+      0.38, 0.8, 0.5, 0.26,
+    ];
+    for (let i = 0; i < SEED.length; i += 1) {
+      const bar = document.createElement('span');
+      bar.className = 'svd__bar';
+      bar.style.setProperty('--h', String(SEED[i]));
+      bar.style.setProperty('--d', `${(i % 7) * -0.13}s`);
+      host.appendChild(bar);
+    }
+  }
+
   private prefersReducedMotion(): boolean {
     return (
       typeof window.matchMedia === 'function' &&
@@ -421,11 +458,12 @@ export class VoiceDemoWidget {
     // Eyebrow and the labelled start control belong to the invitation, before
     // anything is running.
     this.eyebrow.textContent = s.heroEyebrow;
-    this.eyebrow.hidden = state !== 'ready';
+    this.duration.textContent = s.durationBadge;
 
     const offerStart = state === 'ready' || state === 'finished' || state === 'error' ||
       state === 'rateLimited';
-    this.startButton.textContent = state === 'ready' ? s.startButton : s.retry;
+    const startLabel = this.startButton.querySelector('.svd__start-label');
+    if (startLabel) startLabel.textContent = state === 'ready' ? s.startButton : s.retry;
     this.startButton.hidden = !offerStart;
 
     this.sessionMeta.textContent = s.sessionMeta;
