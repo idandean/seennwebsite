@@ -63,18 +63,68 @@
 /* The card. Deliberately quiet: it sits *in* the aurora hero rather than on
    top of it, so the orb reads as part of the artwork. */
 .hero-demo {
+  position: relative;
   width: 100%;
   /* min() rather than a bare max-width: on a 390px phone, 28rem is wider than
      the viewport and the card overflows. */
   max-width: min(28rem, 100%);
   margin-inline: auto;
   padding: 1.5rem 1.25rem 1.75rem;
-  border: 1px solid rgba(240, 193, 75, 0.28);
-  border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(9, 11, 26, 0.42) 0%, rgba(9, 11, 26, 0.62) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 18px 48px rgba(9, 11, 26, 0.38);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(240, 193, 75, 0.10) 0%, rgba(240, 193, 75, 0) 60%),
+    linear-gradient(180deg, rgba(9, 11, 26, 0.30) 0%, rgba(9, 11, 26, 0.52) 55%, rgba(9, 11, 26, 0.26) 100%);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: 0 24px 70px rgba(9, 11, 26, 0.34);
+}
+
+/* Gradient edge that FADES OUT downward, so the card dissolves into the next
+   fold instead of ending on a line.
+
+   Done with a masked pseudo-element rather than `border-image`: border-image
+   silently cancels border-radius, which squares the corners off — the exact
+   boxed look this redesign is removing. */
+.hero-demo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(240, 193, 75, 0.40) 0%,
+    rgba(240, 193, 75, 0.14) 45%,
+    rgba(240, 193, 75, 0) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Ambient halo bleeding past the card into the hero artwork. This is what
+   makes the two read as one composition: the aurora appears to be lighting the
+   card rather than sitting behind it. */
+.hero-demo::before {
+  content: '';
+  position: absolute;
+  inset: -12% -14% -18%;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    58% 46% at 50% 34%,
+    rgba(240, 193, 75, 0.16) 0%,
+    rgba(120, 132, 214, 0.10) 45%,
+    rgba(9, 11, 26, 0) 72%
+  );
+  filter: blur(26px);
+  pointer-events: none;
 }
 
 @media (min-width: 1024px) {
@@ -597,6 +647,7 @@
 }
 
 .svd {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -643,6 +694,90 @@
   font-size: 0.8125rem;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* --- Living waveform ------------------------------------------------------
+   The signature of a voice product. It sits behind the orb and runs wider than
+   the card, bleeding past both edges, which is the second thing tying the card
+   to the hero: the motion continues where the panel stops.
+
+   It carries meaning rather than decoration — the amplitude tracks the agent's
+   real audio level while a call is live, and it idles low when nothing is
+   happening. */
+
+.svd__wave {
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  top: 44%;
+  height: 110px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  /* Fade at both ends so the wave has no hard start or stop. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  transition: opacity 400ms ease;
+}
+
+.svd__wave svg {
+  width: 200%;
+  height: 100%;
+  overflow: visible;
+}
+
+.svd__wave-track {
+  /* Two periods are drawn and the group travels exactly one period, so the
+     loop is seamless with no visible jump. */
+  animation: svd-wave-drift 9s linear infinite;
+  transform-origin: center;
+}
+
+.svd__wave-line {
+  fill: none;
+  stroke: rgba(245, 214, 130, 0.75);
+  stroke-width: 2;
+  stroke-linecap: round;
+  /* Amplitude follows the agent's voice while live; idles gently otherwise. */
+  transform: scaleY(calc(0.55 + var(--wave-level, 0) * 0.85));
+  transform-origin: center;
+  transition: transform 120ms linear;
+}
+
+.svd__wave-line--back {
+  stroke: rgba(190, 205, 255, 0.42);
+  transform: translateX(52px) scaleY(calc(0.42 + var(--wave-level, 0) * 0.7));
+}
+
+@keyframes svd-wave-drift {
+  to {
+    transform: translateX(-400px);
+  }
+}
+
+/* Live states lift the wave forward; idle keeps it as quiet atmosphere. */
+.svd[data-state='listening'] .svd__wave,
+.svd[data-state='assistantThinking'] .svd__wave,
+.svd[data-state='assistantSpeaking'] .svd__wave {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svd__wave-track {
+    animation: none;
+  }
+
+  .svd__wave-line {
+    transition: none;
+  }
+}
+
+/* The orb sits above the wave. */
+.svd__stage,
+.svd__copy,
+.svd__eyebrow {
+  position: relative;
+  z-index: 1;
 }
 
 /* Small label above the orb. */

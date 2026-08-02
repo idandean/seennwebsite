@@ -259,6 +259,44 @@ describe('rendered card', () => {
     expect(mount.querySelector('.svd')!.getAttribute('dir')).toBe('rtl');
   });
 
+  it('mounts the video orb core, muted and silent', () => {
+    const { mount } = mountWidget('en');
+    const core = mount.querySelector<HTMLVideoElement>('video.preview-orb__core');
+
+    expect(core).not.toBeNull();
+    expect(core!.src).toContain('orb-core.mp4');
+    // Decorative motion only. The asset itself has no audio track, and the
+    // element is muted regardless — nothing here can ever make sound.
+    expect(core!.muted).toBe(true);
+    expect(core!.loop).toBe(true);
+    expect(core!.hasAttribute('playsinline')).toBe(true);
+    expect(core!.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('renders the animated waveform with a real path, behind the orb', () => {
+    const { mount } = mountWidget('en');
+    const wave = mount.querySelector('.svd__wave');
+    const paths = mount.querySelectorAll<SVGPathElement>('.svd__wave-line');
+
+    expect(wave).not.toBeNull();
+    expect(wave!.getAttribute('aria-hidden')).toBe('true');
+    expect(paths.length).toBe(2);
+    for (const path of paths) {
+      // A zero-length `d` is how this silently shipped invisible the first
+      // time; assert it actually describes a curve.
+      const d = path.getAttribute('d') ?? '';
+      expect(d.startsWith('M')).toBe(true);
+      expect(d.length).toBeGreaterThan(500);
+    }
+  });
+
+  it('still renders exactly one orb alongside the wave', () => {
+    const { mount } = mountWidget('en');
+    expect(mount.querySelectorAll('.preview-orb').length).toBe(1);
+    expect(mount.querySelectorAll('video.preview-orb__core').length).toBe(1);
+    expect(mount.querySelectorAll('.preview-orb__rim').length).toBe(1);
+  });
+
   it('does not autoplay audio or touch the microphone on mount', () => {
     const getUserMedia = vi.fn();
     Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia } });

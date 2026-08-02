@@ -59,6 +59,13 @@ export interface VoiceDemoConfig {
    */
   languageOverride: DemoLocale | null;
 
+  /**
+   * Looping video that forms the orb's living core. Same-origin and muted —
+   * decorative motion, never audio. Empty string falls back to the CSS-only
+   * gradient sphere.
+   */
+  coreSrc: string;
+
   /** Pinned to an exact immutable version — see the constant below. */
   livekitModuleUrl: string;
 
@@ -117,6 +124,7 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
   turnstileSiteKey: '',
   locale: null,
   languageOverride: null,
+  coreSrc: '/images/orb-core.mp4',
   livekitModuleUrl: LIVEKIT_MODULE_URL,
   languageLookupUrl: '/api/voice-demo-language',
   languageLookupTimeoutMs: 1500,

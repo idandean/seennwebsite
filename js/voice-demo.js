@@ -265,6 +265,7 @@
     turnstileSiteKey: "",
     locale: null,
     languageOverride: null,
+    coreSrc: "/images/orb-core.mp4",
     livekitModuleUrl: LIVEKIT_MODULE_URL,
     languageLookupUrl: "/api/voice-demo-language",
     languageLookupTimeoutMs: 1500,
@@ -1232,6 +1233,7 @@
       this.tickTimer = null;
       this.deadline = 0;
       this.destroyed = false;
+      this.coreVideo = null;
       this.onPageHide = () => {
         void this.disconnect("page_hidden");
       };
@@ -1281,6 +1283,14 @@
       const size = this.config.orbSize;
       root.innerHTML = `
       <p class="svd__eyebrow"></p>
+      <div class="svd__wave" aria-hidden="true">
+        <svg viewBox="0 0 400 80" preserveAspectRatio="none" focusable="false">
+          <g class="svd__wave-track">
+            <path class="svd__wave-line svd__wave-line--back" d="M0,40.0 L4,42.8 L8,45.5 L12,48.1 L16,50.6 L20,52.9 L24,55.1 L28,57.0 L32,58.6 L36,59.9 L40,60.9 L44,61.6 L48,62.0 L52,62.0 L56,61.6 L60,60.9 L64,59.9 L68,58.6 L72,57.0 L76,55.1 L80,52.9 L84,50.6 L88,48.1 L92,45.5 L96,42.8 L100,40.0 L104,37.2 L108,34.5 L112,31.9 L116,29.4 L120,27.1 L124,24.9 L128,23.0 L132,21.4 L136,20.1 L140,19.1 L144,18.4 L148,18.0 L152,18.0 L156,18.4 L160,19.1 L164,20.1 L168,21.4 L172,23.0 L176,24.9 L180,27.1 L184,29.4 L188,31.9 L192,34.5 L196,37.2 L200,40.0 L204,42.8 L208,45.5 L212,48.1 L216,50.6 L220,52.9 L224,55.1 L228,57.0 L232,58.6 L236,59.9 L240,60.9 L244,61.6 L248,62.0 L252,62.0 L256,61.6 L260,60.9 L264,59.9 L268,58.6 L272,57.0 L276,55.1 L280,52.9 L284,50.6 L288,48.1 L292,45.5 L296,42.8 L300,40.0 L304,37.2 L308,34.5 L312,31.9 L316,29.4 L320,27.1 L324,24.9 L328,23.0 L332,21.4 L336,20.1 L340,19.1 L344,18.4 L348,18.0 L352,18.0 L356,18.4 L360,19.1 L364,20.1 L368,21.4 L372,23.0 L376,24.9 L380,27.1 L384,29.4 L388,31.9 L392,34.5 L396,37.2 L400,40.0 L404,42.8 L408,45.5 L412,48.1 L416,50.6 L420,52.9 L424,55.1 L428,57.0 L432,58.6 L436,59.9 L440,60.9 L444,61.6 L448,62.0 L452,62.0 L456,61.6 L460,60.9 L464,59.9 L468,58.6 L472,57.0 L476,55.1 L480,52.9 L484,50.6 L488,48.1 L492,45.5 L496,42.8 L500,40.0 L504,37.2 L508,34.5 L512,31.9 L516,29.4 L520,27.1 L524,24.9 L528,23.0 L532,21.4 L536,20.1 L540,19.1 L544,18.4 L548,18.0 L552,18.0 L556,18.4 L560,19.1 L564,20.1 L568,21.4 L572,23.0 L576,24.9 L580,27.1 L584,29.4 L588,31.9 L592,34.5 L596,37.2 L600,40.0 L604,42.8 L608,45.5 L612,48.1 L616,50.6 L620,52.9 L624,55.1 L628,57.0 L632,58.6 L636,59.9 L640,60.9 L644,61.6 L648,62.0 L652,62.0 L656,61.6 L660,60.9 L664,59.9 L668,58.6 L672,57.0 L676,55.1 L680,52.9 L684,50.6 L688,48.1 L692,45.5 L696,42.8 L700,40.0 L704,37.2 L708,34.5 L712,31.9 L716,29.4 L720,27.1 L724,24.9 L728,23.0 L732,21.4 L736,20.1 L740,19.1 L744,18.4 L748,18.0 L752,18.0 L756,18.4 L760,19.1 L764,20.1 L768,21.4 L772,23.0 L776,24.9 L780,27.1 L784,29.4 L788,31.9 L792,34.5 L796,37.2 L800,40.0"/>
+            <path class="svd__wave-line" d="M0,40.0 L4,42.8 L8,45.5 L12,48.1 L16,50.6 L20,52.9 L24,55.1 L28,57.0 L32,58.6 L36,59.9 L40,60.9 L44,61.6 L48,62.0 L52,62.0 L56,61.6 L60,60.9 L64,59.9 L68,58.6 L72,57.0 L76,55.1 L80,52.9 L84,50.6 L88,48.1 L92,45.5 L96,42.8 L100,40.0 L104,37.2 L108,34.5 L112,31.9 L116,29.4 L120,27.1 L124,24.9 L128,23.0 L132,21.4 L136,20.1 L140,19.1 L144,18.4 L148,18.0 L152,18.0 L156,18.4 L160,19.1 L164,20.1 L168,21.4 L172,23.0 L176,24.9 L180,27.1 L184,29.4 L188,31.9 L192,34.5 L196,37.2 L200,40.0 L204,42.8 L208,45.5 L212,48.1 L216,50.6 L220,52.9 L224,55.1 L228,57.0 L232,58.6 L236,59.9 L240,60.9 L244,61.6 L248,62.0 L252,62.0 L256,61.6 L260,60.9 L264,59.9 L268,58.6 L272,57.0 L276,55.1 L280,52.9 L284,50.6 L288,48.1 L292,45.5 L296,42.8 L300,40.0 L304,37.2 L308,34.5 L312,31.9 L316,29.4 L320,27.1 L324,24.9 L328,23.0 L332,21.4 L336,20.1 L340,19.1 L344,18.4 L348,18.0 L352,18.0 L356,18.4 L360,19.1 L364,20.1 L368,21.4 L372,23.0 L376,24.9 L380,27.1 L384,29.4 L388,31.9 L392,34.5 L396,37.2 L400,40.0 L404,42.8 L408,45.5 L412,48.1 L416,50.6 L420,52.9 L424,55.1 L428,57.0 L432,58.6 L436,59.9 L440,60.9 L444,61.6 L448,62.0 L452,62.0 L456,61.6 L460,60.9 L464,59.9 L468,58.6 L472,57.0 L476,55.1 L480,52.9 L484,50.6 L488,48.1 L492,45.5 L496,42.8 L500,40.0 L504,37.2 L508,34.5 L512,31.9 L516,29.4 L520,27.1 L524,24.9 L528,23.0 L532,21.4 L536,20.1 L540,19.1 L544,18.4 L548,18.0 L552,18.0 L556,18.4 L560,19.1 L564,20.1 L568,21.4 L572,23.0 L576,24.9 L580,27.1 L584,29.4 L588,31.9 L592,34.5 L596,37.2 L600,40.0 L604,42.8 L608,45.5 L612,48.1 L616,50.6 L620,52.9 L624,55.1 L628,57.0 L632,58.6 L636,59.9 L640,60.9 L644,61.6 L648,62.0 L652,62.0 L656,61.6 L660,60.9 L664,59.9 L668,58.6 L672,57.0 L676,55.1 L680,52.9 L684,50.6 L688,48.1 L692,45.5 L696,42.8 L700,40.0 L704,37.2 L708,34.5 L712,31.9 L716,29.4 L720,27.1 L724,24.9 L728,23.0 L732,21.4 L736,20.1 L740,19.1 L744,18.4 L748,18.0 L752,18.0 L756,18.4 L760,19.1 L764,20.1 L768,21.4 L772,23.0 L776,24.9 L780,27.1 L784,29.4 L788,31.9 L792,34.5 L796,37.2 L800,40.0"/>
+          </g>
+        </svg>
+      </div>
       <div class="svd__stage">
         <div class="preview-orb" style="width:${size}px;height:${size}px">
           <span class="preview-orb__glow" aria-hidden="true"></span>
@@ -1289,6 +1299,7 @@
           <span class="preview-orb__layer preview-orb__layer--c" aria-hidden="true"></span>
           <span class="preview-orb__wisp" aria-hidden="true"></span>
           <span class="preview-orb__rim" aria-hidden="true"></span>
+          <span class="svd__core-slot" aria-hidden="true"></span>
           <span class="svd__ripples" aria-hidden="true"></span>
           <span class="svd__level" aria-hidden="true"></span>
           <button type="button" class="preview-orb__call"></button>
@@ -1353,6 +1364,7 @@
       this.audioElement = q(".svd__audio");
       this.liveRegion = q(".svd__sr-only");
       this.audioElement.autoplay = true;
+      this.mountCore();
       this.startButton.addEventListener("click", () => {
         void this.onPrimaryAction();
       });
@@ -1382,6 +1394,41 @@
       });
       this.mount.appendChild(root);
     }
+    /**
+     * Swaps the placeholder for the looping video core.
+     *
+     * Muted, playsInline and decorative: it carries no audio track at all, so
+     * there is nothing that could autoplay. Under prefers-reduced-motion it is
+     * left paused on its first frame rather than removed, so the orb keeps its
+     * depth without moving.
+     */
+    mountCore() {
+      const slot = this.root.querySelector(".svd__core-slot");
+      if (!slot || !this.config.coreSrc) return;
+      const video = document.createElement("video");
+      video.className = "preview-orb__core";
+      video.src = this.config.coreSrc;
+      video.loop = true;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.autoplay = true;
+      video.tabIndex = -1;
+      video.setAttribute("playsinline", "");
+      video.setAttribute("aria-hidden", "true");
+      video.setAttribute("disableremoteplayback", "");
+      video.preload = "auto";
+      slot.replaceWith(video);
+      this.coreVideo = video;
+      if (this.prefersReducedMotion()) {
+        video.pause();
+        return;
+      }
+      const played = video.play();
+      if (played && typeof played.catch === "function") played.catch(() => void 0);
+    }
+    prefersReducedMotion() {
+      return typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
     dispatch(event) {
       const next = reduce(this.context, event);
       if (next === this.context) return false;
@@ -1398,6 +1445,9 @@
       this.root.setAttribute("dir", directionFor(this.locale));
       this.root.lang = this.locale;
       this.root.classList.toggle("svd--consent", pendingConsent !== null);
+      if (this.coreVideo && !this.prefersReducedMotion()) {
+        this.coreVideo.playbackRate = state === "assistantSpeaking" ? 1.35 : state === "assistantThinking" ? 1.15 : 0.75;
+      }
       this.orb.className = `preview-orb preview-orb--${ORB_MODIFIER[state]}` + (state === "assistantSpeaking" ? " preview-orb--reactive" : "");
       const ripples = this.root.querySelector(".svd__ripples");
       if (ripples) {
@@ -1722,7 +1772,9 @@
         onAgentState: (raw) => guard(() => this.applyAgentState(raw))(),
         onLevel: (level) => {
           if (this.destroyed) return;
-          this.orb.style.setProperty("--orb-level", level.toFixed(3));
+          const value = level.toFixed(3);
+          this.orb.style.setProperty("--orb-level", value);
+          this.root.style.setProperty("--wave-level", value);
         },
         onError: guard(() => this.fail("transport_failed"))
       };
