@@ -54,7 +54,12 @@ const result = await build({
 // The same-origin Vercel Edge Function. ESM, because that is what Vercel's
 // edge runtime expects, and emitted into /api so Vercel routes it with no root
 // package.json and no build step of its own.
-const apiOutfile = path.resolve(root, '../../api/voice-demo-language.js');
+// .mjs, not .js: this repository has no root package.json (deliberately — see
+// CONFIGURATION.md), so Vercel's Node builder parses a bare .js as CommonJS
+// and an ESM `export` becomes a SyntaxError at invocation. `.mjs` is
+// unambiguously ESM regardless of package.json, which is what lets the
+// `export const config = { runtime: 'edge' }` marker be read at all.
+const apiOutfile = path.resolve(root, '../../api/voice-demo-language.mjs');
 const apiResult = await build({
   entryPoints: [path.resolve(root, 'src/api/voice-demo-language.ts')],
   outfile: apiOutfile,
@@ -73,4 +78,4 @@ const apiResult = await build({
 const bytes = Object.values(result.metafile.outputs)[0]?.bytes ?? 0;
 const apiBytes = Object.values(apiResult.metafile.outputs)[0]?.bytes ?? 0;
 console.log(`voice-demo: ${(bytes / 1024).toFixed(1)} kB → js/voice-demo.js`);
-console.log(`voice-demo-language: ${(apiBytes / 1024).toFixed(1)} kB → api/voice-demo-language.js`);
+console.log(`voice-demo-language: ${(apiBytes / 1024).toFixed(1)} kB → api/voice-demo-language.mjs`);

@@ -184,8 +184,15 @@ describe('same-origin language lookup', () => {
     }
   });
 
+  it('is emitted as .mjs so Vercel parses it as ESM without a root package.json', () => {
+    // A bare .js is treated as CommonJS here and the `export` becomes a
+    // SyntaxError at invocation — observed as FUNCTION_INVOCATION_FAILED.
+    expect(() => read('api/voice-demo-language.mjs')).not.toThrow();
+    expect(read('api/voice-demo-language.mjs')).toContain("runtime: \"edge\"");
+  });
+
   it('the generated edge function leaks no country or credential', () => {
-    const fn = read('api/voice-demo-language.js');
+    const fn = read('api/voice-demo-language.mjs');
     // The country list is necessarily present as INPUT data; what must not be
     // present is any credential or any echo of the caller.
     expect(fn).not.toContain('supabase');
