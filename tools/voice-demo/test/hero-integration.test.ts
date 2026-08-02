@@ -143,7 +143,7 @@ describe('card copy — an invitation, not a test surface', () => {
   it('every locale has the eyebrow, invitation, start button and session meta', () => {
     for (const locale of LOCALES) {
       const s = stringsFor(locale);
-      for (const key of ['heroEyebrow', 'durationBadge', 'readyTitle', 'adaptiveHint', 'startButton', 'startSupport', 'sessionMeta'] as const) {
+      for (const key of ['readyTitle', 'readyBody', 'startButton', 'sessionMeta'] as const) {
         expect(s[key], `${locale}.${key}`).toBeTruthy();
       }
     }
@@ -151,12 +151,7 @@ describe('card copy — an invitation, not a test surface', () => {
 
   it('the English copy reads as the brief specifies', () => {
     const s = stringsFor('en');
-    expect(s.heroEyebrow).toMatch(/talk to jess\s+.\s+live/i);
-    expect(s.adaptiveHint).toMatch(/speak naturally/i);
-    expect(s.adaptiveHint).toMatch(/adapts to your language/i);
     expect(s.startButton).toMatch(/talk to the ai collection agent/i);
-    expect(s.startSupport).toMatch(/short live conversation/i);
-    expect(s.durationBadge).toMatch(/2 min/i);
     expect(s.sessionMeta).toMatch(/microphone/i);
     // '~2 min' folded into the footer when the card header was removed.
     expect(s.sessionMeta).toMatch(/2 min/i);
@@ -206,14 +201,11 @@ describe('rendered card', () => {
     return { widget: new VoiceDemoWidget(mount, config, {}), mount };
   }
 
-  it('shows the eyebrow, invitation, start button and meta line', () => {
+  it('shows only the invitation, the button and the practical line', () => {
     const { mount } = mountWidget('en');
     const text = mount.textContent ?? '';
 
-    expect(text).toMatch(/talk to jess\s+.\s+live/i);
-    expect(text).toMatch(/speak naturally/i);
     expect(text).toMatch(/microphone required/i);
-    expect(text).toMatch(/~2 min/i);
     expect(mount.querySelector('.svd__start')).not.toBeNull();
     expect(mount.querySelector('.svd__start')!.textContent).toMatch(/talk to the ai collection agent/i);
   });

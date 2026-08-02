@@ -120,13 +120,9 @@ export class VoiceDemoWidget {
   private headline!: HTMLElement;
   private body!: HTMLElement;
   private hint!: HTMLElement;
-  private adaptiveHint!: HTMLElement;
   private coreVideo: HTMLVideoElement | null = null;
-  private eyebrow!: HTMLElement;
-  private duration!: HTMLElement;
   private startButton!: HTMLButtonElement;
   private sessionMeta!: HTMLElement;
-  private startSupport!: HTMLElement;
   private consentPanel!: HTMLElement;
   private consentText!: HTMLElement;
   private consentLink!: HTMLAnchorElement;
@@ -208,10 +204,6 @@ export class VoiceDemoWidget {
 
     const size = this.config.orbSize;
     root.innerHTML = `
-      <div class="svd__head">
-        <p class="svd__eyebrow"><span class="svd__pulse" aria-hidden="true"></span><span class="svd__eyebrow-text"></span></p>
-        <p class="svd__duration"></p>
-      </div>
       <div class="svd__rule" aria-hidden="true"></div>
       <div class="svd__wave" aria-hidden="true">
         <svg viewBox="0 0 400 80" preserveAspectRatio="none" focusable="false">
@@ -240,7 +232,6 @@ export class VoiceDemoWidget {
         <p class="svd__headline"></p>
         <p class="svd__sub"></p>
         <p class="svd__hint"></p>
-        <p class="svd__adaptive"></p>
       </div>
       </div>
       <div class="svd__bars" aria-hidden="true"></div>
@@ -248,7 +239,6 @@ export class VoiceDemoWidget {
         <span class="svd__start-icon" aria-hidden="true"></span>
         <span class="svd__start-label"></span>
       </button>
-      <p class="svd__start-support"></p>
       <p class="svd__meta"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
@@ -285,13 +275,10 @@ export class VoiceDemoWidget {
     this.headline = q('.svd__headline');
     this.body = q('.svd__sub');
     this.hint = q('.svd__hint');
-    this.adaptiveHint = q('.svd__adaptive');
-    this.eyebrow = q('.svd__eyebrow-text');
-    this.duration = q('.svd__duration');
+
     this.buildBars();
     this.startButton = q<HTMLButtonElement>('.svd__start');
     this.sessionMeta = q('.svd__meta');
-    this.startSupport = q('.svd__start-support');
     const startIcon = this.root.querySelector('.svd__start-icon');
     if (startIcon) startIcon.innerHTML = icon(ICONS.mic, 'svd__start-mic');
     this.consentPanel = q('.svd__consent');
@@ -448,23 +435,6 @@ export class VoiceDemoWidget {
     this.hint.textContent = copy.hint ?? '';
     this.hint.hidden = !copy.hint;
 
-    // Reassurance, not a control: the assistant is multilingual and adapts to
-    // whoever is speaking. Shown before the call and while it is live, so the
-    // visitor never looks for a language picker that deliberately is not there.
-    const showAdaptive =
-      state === 'ready' ||
-      state === 'connecting' ||
-      state === 'listening' ||
-      state === 'assistantThinking' ||
-      state === 'assistantSpeaking';
-    this.adaptiveHint.textContent = s.adaptiveHint;
-    this.adaptiveHint.hidden = !showAdaptive;
-
-    // Eyebrow and the labelled start control belong to the invitation, before
-    // anything is running.
-    this.eyebrow.textContent = s.heroEyebrow;
-    this.duration.textContent = s.durationBadge;
-
     const offerStart = state === 'ready' || state === 'finished' || state === 'error' ||
       state === 'rateLimited';
     const startLabel = this.startButton.querySelector('.svd__start-label');
@@ -473,9 +443,6 @@ export class VoiceDemoWidget {
 
     this.sessionMeta.textContent = s.sessionMeta;
     this.sessionMeta.hidden = state !== 'ready';
-
-    this.startSupport.textContent = s.startSupport;
-    this.startSupport.hidden = state !== 'ready';
 
     // Primary button
     const busy = state === 'requestingMicrophone' || state === 'connecting' || state === 'reconnecting';

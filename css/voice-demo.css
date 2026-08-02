@@ -684,13 +684,7 @@
 
 /* --- Card header ---------------------------------------------------------- */
 
-.svd__head {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 1.1rem;
-}
+/* Header row removed: its "Talk to Jess — live" label duplicated the button. */
 
 /* Folded into the footer line instead — fewer words, one place to read them. */
 .svd__duration {

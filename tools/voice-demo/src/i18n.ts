@@ -50,8 +50,6 @@ export interface Strings {
   durationBadge: string;
   /** The labelled control. Secondary to the page's own "Request a Demo". */
   startButton: string;
-  /** Small supporting line under the secondary CTA. */
-  startSupport: string;
   /** Expectation-setting line under the button. */
   sessionMeta: string;
 
@@ -95,8 +93,6 @@ export interface Strings {
   disconnect: string;
   timeRemaining: string;
 
-  /** Reassurance that the assistant is multilingual — never a form. */
-  adaptiveHint: string;
 
   supportIdLabel: string;
   supportCopy: string;
@@ -134,14 +130,13 @@ const en: Strings = {
   heroEyebrow: 'Talk to Jess — live',
   durationBadge: '~2 min',
   startButton: 'Talk to the AI Collection Agent',
-  startSupport: 'Try a short live conversation.',
   sessionMeta: '~2 min  ·  Microphone required',
 
   unavailableTitle: 'The voice demo is not available right now',
   unavailableBody: 'It will be back shortly.',
 
-  readyTitle: 'Experience the agent yourself',
-  readyBody: 'You play the overdue customer.',
+  readyTitle: 'Try the agent yourself',
+  readyBody: 'Play the overdue customer.',
   startLabel: 'Start the voice demo',
 
   micTitle: 'Allow your microphone',
@@ -177,7 +172,6 @@ const en: Strings = {
   disconnect: 'End the call',
   timeRemaining: 'left',
 
-  adaptiveHint: 'Speak naturally; she adapts to your language.',
 
   supportIdLabel: 'Support ID',
   supportCopy: 'Copy',
@@ -214,14 +208,13 @@ const he: Strings = {
   heroEyebrow: 'ג׳ס — בשידור חי',
   durationBadge: '~2 דק׳',
   startButton: 'דברו עם סוכן הגבייה החכם',
-  startSupport: 'נסו שיחה קצרה בשידור חי.',
   sessionMeta: '~2 דק׳  ·  נדרש מיקרופון',
 
   unavailableTitle: 'הדמו הקולי אינו זמין כרגע',
   unavailableBody: 'הוא יחזור בקרוב.',
 
-  readyTitle: 'התנסו בסוכנת בעצמכם',
-  readyBody: 'אתם הלקוח שבאיחור.',
+  readyTitle: 'נסו את הסוכנת בעצמכם',
+  readyBody: 'שחקו את הלקוח שבאיחור.',
   startLabel: 'התחילו את הדמו הקולי',
 
   micTitle: 'אשרו גישה למיקרופון',
@@ -257,7 +250,6 @@ const he: Strings = {
   disconnect: 'סיום השיחה',
   timeRemaining: 'נותרו',
 
-  adaptiveHint: 'דברו טבעי; היא מתאימה את עצמה לשפה שלכם.',
 
   supportIdLabel: 'מזהה תמיכה',
   supportCopy: 'העתקה',
@@ -294,14 +286,13 @@ const ar: Strings = {
   heroEyebrow: 'جيس — مباشر',
   durationBadge: '~٢ د',
   startButton: 'تحدّث إلى وكيل التحصيل الذكي',
-  startSupport: 'جرّب محادثة قصيرة مباشرة.',
   sessionMeta: '~٢ د  ·  يلزم ميكروفون',
 
   unavailableTitle: 'العرض الصوتي غير متاح حاليًا',
   unavailableBody: 'سيعود قريبًا.',
 
   readyTitle: 'جرّب الوكيلة بنفسك',
-  readyBody: 'أنت العميل المتأخر.',
+  readyBody: 'مثّل دور العميل المتأخر.',
   startLabel: 'ابدأ العرض الصوتي',
 
   micTitle: 'اسمح باستخدام الميكروفون',
@@ -337,7 +328,6 @@ const ar: Strings = {
   disconnect: 'إنهاء المكالمة',
   timeRemaining: 'متبقٍ',
 
-  adaptiveHint: 'تحدّث بشكل طبيعي؛ تتأقلم مع لغتك.',
 
   supportIdLabel: 'معرّف الدعم',
   supportCopy: 'نسخ',

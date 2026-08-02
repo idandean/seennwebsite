@@ -293,25 +293,12 @@ describe('canonical response language', () => {
   });
 });
 
-describe('reassuring copy', () => {
-  it('tells the visitor she adapts, with no language form', async () => {
+describe('no language control is offered', () => {
+  it('shows no selector, form or language input', async () => {
     const { mount } = await startWidget('en');
-    const text = mount.textContent ?? '';
-
-    expect(text).toMatch(/adapts to your language/i);
     expect(mount.querySelector('select')).toBeNull();
-  });
-
-  it('is present in all three locales', async () => {
-    for (const [lang, pattern] of [
-      ['en', /adapts to your language/i],
-      ['he', /מתאימה/],
-      ['ar', /لغتك/],
-    ] as const) {
-      document.body.innerHTML = '';
-      const { mount } = await startWidget(lang);
-      expect(mount.textContent ?? '', lang).toMatch(pattern);
-    }
+    expect(mount.querySelector('form')).toBeNull();
+    expect(mount.querySelector('[name="language"]')).toBeNull();
   });
 });
 
