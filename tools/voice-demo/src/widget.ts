@@ -119,6 +119,7 @@ export class VoiceDemoWidget {
   private headline!: HTMLElement;
   private body!: HTMLElement;
   private hint!: HTMLElement;
+  private adaptiveHint!: HTMLElement;
   private consentPanel!: HTMLElement;
   private consentText!: HTMLElement;
   private consentLink!: HTMLAnchorElement;
@@ -216,6 +217,7 @@ export class VoiceDemoWidget {
       <p class="svd__headline"></p>
       <p class="svd__sub"></p>
       <p class="svd__hint"></p>
+      <p class="svd__adaptive"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
         <p class="svd__consent-text"></p>
@@ -251,6 +253,7 @@ export class VoiceDemoWidget {
     this.headline = q('.svd__headline');
     this.body = q('.svd__sub');
     this.hint = q('.svd__hint');
+    this.adaptiveHint = q('.svd__adaptive');
     this.consentPanel = q('.svd__consent');
     this.consentText = q('.svd__consent-text');
     this.consentLink = q<HTMLAnchorElement>('.svd__consent-link');
@@ -327,6 +330,18 @@ export class VoiceDemoWidget {
     this.body.textContent = copy.body;
     this.hint.textContent = copy.hint ?? '';
     this.hint.hidden = !copy.hint;
+
+    // Reassurance, not a control: the assistant is multilingual and adapts to
+    // whoever is speaking. Shown before the call and while it is live, so the
+    // visitor never looks for a language picker that deliberately is not there.
+    const showAdaptive =
+      state === 'ready' ||
+      state === 'connecting' ||
+      state === 'listening' ||
+      state === 'assistantThinking' ||
+      state === 'assistantSpeaking';
+    this.adaptiveHint.textContent = s.adaptiveHint;
+    this.adaptiveHint.hidden = !showAdaptive;
 
     // Primary button
     const busy = state === 'requestingMicrophone' || state === 'connecting' || state === 'reconnecting';
@@ -571,7 +586,9 @@ export class VoiceDemoWidget {
       let result;
       try {
         result = await this.client.createSession({
-          locale: this.locale,
+          // Automatic: no language is sent. `this.locale` drives RENDERING
+          // only — serializing it here would pin the conversation to the page.
+          languageOverride: this.config.languageOverride ?? undefined,
           consent: this.context.acceptedConsent ?? undefined,
           turnstileToken,
           signal: this.abortController?.signal,

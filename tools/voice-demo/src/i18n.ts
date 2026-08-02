@@ -84,6 +84,9 @@ export interface Strings {
   disconnect: string;
   timeRemaining: string;
 
+  /** Reassurance that the assistant is multilingual — never a form. */
+  adaptiveHint: string;
+
   supportIdLabel: string;
   supportCopy: string;
   supportCopied: string;
@@ -157,6 +160,8 @@ const en: Strings = {
   disconnect: 'End the call',
   timeRemaining: 'left',
 
+  adaptiveHint: 'Speak naturally — she can adapt to your language.',
+
   supportIdLabel: 'Support ID',
   supportCopy: 'Copy',
   supportCopied: 'Copied',
@@ -229,6 +234,8 @@ const he: Strings = {
   disconnect: 'סיום השיחה',
   timeRemaining: 'נותרו',
 
+  adaptiveHint: 'דברו טבעי — היא יודעת להתאים את עצמה לשפה שלכם.',
+
   supportIdLabel: 'מזהה תמיכה',
   supportCopy: 'העתקה',
   supportCopied: 'הועתק',
@@ -300,6 +307,8 @@ const ar: Strings = {
   retry: 'حاول مرة أخرى',
   disconnect: 'إنهاء المكالمة',
   timeRemaining: 'متبقٍ',
+
+  adaptiveHint: 'تحدّث بشكل طبيعي — يمكنها التأقلم مع لغتك.',
 
   supportIdLabel: 'معرّف الدعم',
   supportCopy: 'نسخ',

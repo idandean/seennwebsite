@@ -264,6 +264,7 @@
     endpointPath: "/functions/v1/public-voice-demo",
     turnstileSiteKey: "",
     locale: null,
+    languageOverride: null,
     livekitModuleUrl: LIVEKIT_MODULE_URL,
     maxSessionSeconds: 120,
     reconnectTimeoutSeconds: 20,
@@ -370,6 +371,7 @@
     retry: "Try again",
     disconnect: "End the call",
     timeRemaining: "left",
+    adaptiveHint: "Speak naturally \u2014 she can adapt to your language.",
     supportIdLabel: "Support ID",
     supportCopy: "Copy",
     supportCopied: "Copied",
@@ -428,6 +430,7 @@
     retry: "\u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1",
     disconnect: "\u05E1\u05D9\u05D5\u05DD \u05D4\u05E9\u05D9\u05D7\u05D4",
     timeRemaining: "\u05E0\u05D5\u05EA\u05E8\u05D5",
+    adaptiveHint: "\u05D3\u05D1\u05E8\u05D5 \u05D8\u05D1\u05E2\u05D9 \u2014 \u05D4\u05D9\u05D0 \u05D9\u05D5\u05D3\u05E2\u05EA \u05DC\u05D4\u05EA\u05D0\u05D9\u05DD \u05D0\u05EA \u05E2\u05E6\u05DE\u05D4 \u05DC\u05E9\u05E4\u05D4 \u05E9\u05DC\u05DB\u05DD.",
     supportIdLabel: "\u05DE\u05D6\u05D4\u05D4 \u05EA\u05DE\u05D9\u05DB\u05D4",
     supportCopy: "\u05D4\u05E2\u05EA\u05E7\u05D4",
     supportCopied: "\u05D4\u05D5\u05E2\u05EA\u05E7",
@@ -486,6 +489,7 @@
     retry: "\u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649",
     disconnect: "\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629",
     timeRemaining: "\u0645\u062A\u0628\u0642\u064D",
+    adaptiveHint: "\u062A\u062D\u062F\u0651\u062B \u0628\u0634\u0643\u0644 \u0637\u0628\u064A\u0639\u064A \u2014 \u064A\u0645\u0643\u0646\u0647\u0627 \u0627\u0644\u062A\u0623\u0642\u0644\u0645 \u0645\u0639 \u0644\u063A\u062A\u0643.",
     supportIdLabel: "\u0645\u0639\u0631\u0651\u0641 \u0627\u0644\u062F\u0639\u0645",
     supportCopy: "\u0646\u0633\u062E",
     supportCopied: "\u062A\u0645 \u0627\u0644\u0646\u0633\u062E",
@@ -529,6 +533,15 @@
       this.retryAfterSeconds = retryAfterSeconds;
     }
   };
+  function normalizeLanguageOverride(value) {
+    if (value === "he" || value === "en" || value === "ar") return value;
+    if (value !== null && value !== void 0 && value !== "") {
+      logger.warn("ignoring an invalid language override; falling back to automatic", {
+        received: value
+      });
+    }
+    return null;
+  }
   function parseRetryAfter(headers) {
     var _a;
     const raw = (_a = headers == null ? void 0 : headers.get) == null ? void 0 : _a.call(headers, "retry-after");
@@ -561,7 +574,9 @@
           "refusing to send a session request without a Turnstile token"
         );
       }
-      const body = { language: input.locale };
+      const body = {};
+      const override = normalizeLanguageOverride(input.languageOverride);
+      if (override) body["language"] = override;
       if (turnstileToken) body["turnstile_token"] = turnstileToken;
       if (input.consent) {
         body["consent"] = {
@@ -1269,6 +1284,7 @@
       <p class="svd__headline"></p>
       <p class="svd__sub"></p>
       <p class="svd__hint"></p>
+      <p class="svd__adaptive"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
         <p class="svd__consent-text"></p>
@@ -1302,6 +1318,7 @@
       this.headline = q(".svd__headline");
       this.body = q(".svd__sub");
       this.hint = q(".svd__hint");
+      this.adaptiveHint = q(".svd__adaptive");
       this.consentPanel = q(".svd__consent");
       this.consentText = q(".svd__consent-text");
       this.consentLink = q(".svd__consent-link");
@@ -1368,6 +1385,9 @@
       this.body.textContent = copy.body;
       this.hint.textContent = (_a = copy.hint) != null ? _a : "";
       this.hint.hidden = !copy.hint;
+      const showAdaptive = state === "ready" || state === "connecting" || state === "listening" || state === "assistantThinking" || state === "assistantSpeaking";
+      this.adaptiveHint.textContent = s.adaptiveHint;
+      this.adaptiveHint.hidden = !showAdaptive;
       const busy = state === "requestingMicrophone" || state === "connecting" || state === "reconnecting";
       this.primaryButton.disabled = busy || state === "unavailable" || pendingConsent !== null;
       this.primaryButton.innerHTML = state === "listening" || state === "assistantSpeaking" ? icon(ICONS.hangUp) : busy ? icon(ICONS.spinner, "svd-spin") : state === "unavailable" ? icon(ICONS.blocked) : state === "ready" ? icon(ICONS.mic) : icon(ICONS.retry);
@@ -1531,20 +1551,22 @@
      * two round-trips: ask, accept, ask again.
      */
     async obtainSession(attempt) {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       for (let round = 0; round < 2; round += 1) {
         const turnstileToken = await this.freshTurnstileToken();
         if (this.destroyed || this.context.attempt !== attempt) return null;
         let result;
         try {
           result = await this.client.createSession({
-            locale: this.locale,
-            consent: (_a = this.context.acceptedConsent) != null ? _a : void 0,
+            // Automatic: no language is sent. `this.locale` drives RENDERING
+            // only — serializing it here would pin the conversation to the page.
+            languageOverride: (_a = this.config.languageOverride) != null ? _a : void 0,
+            consent: (_b = this.context.acceptedConsent) != null ? _b : void 0,
             turnstileToken,
-            signal: (_b = this.abortController) == null ? void 0 : _b.signal
+            signal: (_c = this.abortController) == null ? void 0 : _c.signal
           });
         } finally {
-          (_c = this.turnstile) == null ? void 0 : _c.reset();
+          (_d = this.turnstile) == null ? void 0 : _d.reset();
         }
         if (this.destroyed || this.context.attempt !== attempt) return null;
         if (result.kind === "session") {

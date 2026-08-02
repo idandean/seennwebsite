@@ -1327,7 +1327,7 @@ describe('locale and direction', () => {
     expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/דברו/);
   });
 
-  it('sends the resolved locale to the endpoint', async () => {
+  it('sends NO language to the endpoint, whatever the page locale', async () => {
     document.documentElement.setAttribute('lang', 'ar');
     const mic = fakeMicrophone();
     const client = stubClient({ status: 200, body: SESSION_BODY });
@@ -1343,7 +1343,8 @@ describe('locale and direction', () => {
     await flush();
 
     const body = JSON.parse(client.fetchImpl.mock.calls[0]![1]!.body as string);
-    expect(body.language).toBe('ar');
+    // Automatic: the page renders in Arabic, the request stays language-free.
+    expect(Object.prototype.hasOwnProperty.call(body, 'language')).toBe(false);
   });
 });
 

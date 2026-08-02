@@ -543,6 +543,17 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* Reassurance that the assistant is multilingual. Deliberately quiet: it
+   replaces a language picker rather than pointing at one. */
+.svd__adaptive {
+  max-width: 26rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.62);
+  text-shadow: 0 1px 10px rgba(9, 11, 26, 0.5);
+}
+
 /* --- Recording consent ---------------------------------------------------
    The notice text is server-authored and rendered verbatim; only the frame is
    ours. Sized so a two-paragraph legal notice does not blow the hero apart. */

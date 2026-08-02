@@ -12,6 +12,7 @@
  */
 
 import { ContractViolation, normalizeSession, parseRecording, readErrorCode } from './contract';
+import { logger } from './logging';
 import type { DemoErrorCode, DemoLocale, DemoSession, RecordingConsent } from './contract';
 
 /** A demand for consent rather than a session. Retained for a possible v2. */
@@ -65,12 +66,42 @@ export interface ClientOptions {
 }
 
 export interface CreateSessionInput {
-  locale: DemoLocale;
+  /**
+   * EXPLICIT override only — and there is no UI for it yet.
+   *
+   * Leave this undefined for automatic, which is the only behaviour a visitor
+   * currently sees. Automatic means the request carries no `language` property
+   * at all, so the backend chooses the initial greeting from the visitor's
+   * approximate network country and the agent adapts once it hears them.
+   *
+   * Deliberately NOT defaulted to the page language or `navigator.language`:
+   * doing so would silently pin the conversation to whatever the page happened
+   * to be rendered in, which is exactly the lock-in this design avoids.
+   */
+  languageOverride?: DemoLocale | undefined;
   /** A fresh, single-use Turnstile token. */
   turnstileToken?: string | undefined;
   /** Retained for a possible v2; matched on version *and* locale. */
   consent?: { policyVersion: string; locale: string; acceptedAt: string } | undefined;
   signal?: AbortSignal | undefined;
+}
+
+/**
+ * Exact values only: `he`, `en`, `ar`.
+ *
+ * Anything else — `auto`, `EN`, `he-IL`, an empty string — falls back to
+ * automatic rather than being sent. Automatic is the safe default, so a bad
+ * override degrades to correct behaviour instead of pinning the conversation
+ * to something the backend did not choose.
+ */
+export function normalizeLanguageOverride(value: string | null | undefined): DemoLocale | null {
+  if (value === 'he' || value === 'en' || value === 'ar') return value;
+  if (value !== null && value !== undefined && value !== '') {
+    logger.warn('ignoring an invalid language override; falling back to automatic', {
+      received: value,
+    });
+  }
+  return null;
 }
 
 function parseRetryAfter(headers: Headers | undefined): number | null {
@@ -117,8 +148,15 @@ export class PublicVoiceDemoClient {
       );
     }
 
-    // Frozen decision 3: exactly these fields, built as a literal.
-    const body: Record<string, unknown> = { language: input.locale };
+    // Built as a literal, and `language` is ADDED only for an explicit
+    // override. Absence is the signal for automatic — not "auto", not null,
+    // not "". An explicit null or empty string would survive JSON.stringify
+    // and read to the backend as a real instruction.
+    const body: Record<string, unknown> = {};
+
+    const override = normalizeLanguageOverride(input.languageOverride);
+    if (override) body['language'] = override;
+
     if (turnstileToken) body['turnstile_token'] = turnstileToken;
     if (input.consent) {
       body['consent'] = {

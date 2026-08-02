@@ -45,8 +45,19 @@ export interface VoiceDemoConfig {
    */
   turnstileSiteKey: string;
 
-  /** null → follow the page's locale. */
+  /** Widget RENDERING locale. null → follow the page. Never sent to the API. */
   locale: DemoLocale | null;
+
+  /**
+   * Explicit conversation-language override for the API request. null means
+   * automatic, which is the only behaviour exposed today: the request omits
+   * `language` entirely and the backend picks the initial greeting.
+   *
+   * Kept as a hook for a future subtle globe/settings control labelled
+   * "Automatic" — deliberately not a prominent dropdown, and not rendered at
+   * all in this revision.
+   */
+  languageOverride: DemoLocale | null;
 
   /** Pinned to an exact immutable version — see the constant below. */
   livekitModuleUrl: string;
@@ -84,6 +95,7 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
   endpointPath: '/functions/v1/public-voice-demo',
   turnstileSiteKey: '',
   locale: null,
+  languageOverride: null,
   livekitModuleUrl: LIVEKIT_MODULE_URL,
   maxSessionSeconds: 120,
   reconnectTimeoutSeconds: 20,

@@ -19,7 +19,8 @@ one file changes.
    any response demanding recording is rejected, not accommodated.
 2. The frontend sends **no `amount` and no `balance_month`**. The backend
    supplies its own demo-invoice defaults.
-3. Request body is exactly `{ "language", "turnstile_token" }`.
+3. Request body is `{ "turnstile_token" }`. **`language` is omitted entirely**
+   in Automatic mode — see §1.1.
 4. `apikey` header with a Supabase anon/publishable key. **No Authorization
    header.**
 5. A successful response must carry `token`, `livekit_url`, `session_id`,
@@ -51,15 +52,33 @@ pass-through of caller-supplied keys:
 
 | Field | Type | When |
 |---|---|---|
-| `language` | `"en" \| "he" \| "ar"` | always — the website's current locale |
 | `turnstile_token` | string | always, once a site key is configured |
+| `language` | `"en" \| "he" \| "ar"` | **omitted in Automatic mode** — see §1.1 |
 
 ```jsonc
 {
-  "language": "he",
   "turnstile_token": "0.abc123..."
 }
 ```
+
+### 1.1 Automatic language
+
+The frontend sends **no `language` property at all** — not `"auto"`, not
+`null`, not `""`, and never `navigator.language` or the page's `<html lang>`.
+Absence is the signal.
+
+The backend is expected to choose the **initial greeting** from the visitor's
+approximate network country. That is an opening choice, not a lock: the agent
+detects and switches language once it hears the visitor.
+
+A `language` key, when present, is an explicit override with exactly the values
+`he`, `en` or `ar`. There is no UI for it yet; the request builder supports it
+so a future subtle "Automatic" control has somewhere to write to. Anything
+outside that exact set is dropped and the request falls back to Automatic.
+
+The response's `language` is still **required**, and is read as the initial
+session language only. The widget records it and keeps rendering in the page's
+own locale, so the UI never implies the conversation is pinned to it.
 
 **Turnstile is mandatory.** The token is fresh and single-use: obtained
 immediately before each POST and discarded afterwards, on success and failure

@@ -40,7 +40,7 @@ function makeClient(fetchImpl: typeof fetch, requireTurnstileToken = false) {
 }
 
 /** Every call in this suite carries a token, as the widget always does. */
-const INPUT = { locale: 'en' as const, turnstileToken: 'ts-token-1' };
+const INPUT = { turnstileToken: 'ts-token-1' };
 
 const SESSION_BODY = {
   token: 'jwt',
@@ -69,20 +69,19 @@ describe('request shape', () => {
     expect(headers['authorization']).toBeUndefined();
   });
 
-  it('sends the website locale', async () => {
-    for (const locale of ['en', 'he', 'ar'] as const) {
-      const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-      await makeClient(impl).createSession({ locale, turnstileToken: 'ts-token-1' });
-      expect(JSON.parse(calls[0]!.init.body as string).language).toBe(locale);
-    }
+  it('sends NO language — automatic is the default and only behaviour', async () => {
+    const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
+    await makeClient(impl).createSession(INPUT);
+    const body = JSON.parse(calls[0]!.init.body as string);
+    expect(Object.prototype.hasOwnProperty.call(body, 'language')).toBe(false);
   });
 
-  it('sends exactly the frozen body: language + turnstile_token', async () => {
+  it('sends exactly turnstile_token in automatic mode', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await makeClient(impl).createSession(INPUT);
 
     const body = JSON.parse(calls[0]!.init.body as string);
-    expect(Object.keys(body).sort()).toEqual(['language', 'turnstile_token']);
+    expect(Object.keys(body).sort()).toEqual(['turnstile_token']);
     expect(body.turnstile_token).toBe('ts-token-1');
   });
 
@@ -99,7 +98,7 @@ describe('request shape', () => {
   it('includes consent only once accepted, in snake_case', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await makeClient(impl).createSession({
-      locale: 'he',
+      turnstileToken: 'ts-token-1',
       consent: { policyVersion: 'rec-1', locale: 'he', acceptedAt: '2026-08-01T10:00:00.000Z' },
     });
 
@@ -112,7 +111,7 @@ describe('request shape', () => {
 
   it('omits turnstile_token entirely when there is none', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-    await makeClient(impl).createSession({ locale: 'en' });
+    await makeClient(impl).createSession({});
     expect(JSON.parse(calls[0]!.init.body as string)).not.toHaveProperty('turnstile_token');
   });
 
@@ -120,7 +119,7 @@ describe('request shape', () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
 
     await expect(
-      makeClient(impl, true).createSession({ locale: 'en' }),
+      makeClient(impl, true).createSession({}),
     ).rejects.toMatchObject({ code: 'verification_failed' });
 
     // The point: nothing went out. Not a request without a token — no request.
@@ -130,7 +129,7 @@ describe('request shape', () => {
   it('treats a blank token as absent', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await expect(
-      makeClient(impl, true).createSession({ locale: 'en', turnstileToken: '   ' }),
+      makeClient(impl, true).createSession({ turnstileToken: '   ' }),
     ).rejects.toMatchObject({ code: 'verification_failed' });
     expect(calls).toHaveLength(0);
   });
