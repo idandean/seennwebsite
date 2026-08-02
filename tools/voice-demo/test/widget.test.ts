@@ -1296,7 +1296,7 @@ describe('locale and direction', () => {
 
     expect(root.getAttribute('dir')).toBe('rtl');
     expect(root.getAttribute('lang')).toBe('he');
-    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/דברו/);
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/התנסו/);
   });
 
   it('renders Arabic RTL', () => {
@@ -1306,7 +1306,7 @@ describe('locale and direction', () => {
 
     expect(root.getAttribute('dir')).toBe('rtl');
     expect(root.getAttribute('lang')).toBe('ar');
-    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/تحدّث/);
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/جرّب/);
   });
 
   it('renders English LTR', () => {
@@ -1328,7 +1328,7 @@ describe('locale and direction', () => {
 
     widget.setLocale('he');
     expect(mount.querySelector('.svd')!.getAttribute('dir')).toBe('rtl');
-    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/דברו/);
+    expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/התנסו/);
   });
 
   it('sends NO language to the endpoint, whatever the page locale', async () => {

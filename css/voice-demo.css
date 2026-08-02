@@ -22,6 +22,90 @@
    Pure CSS gradients + keyframes — no animation library.
    =========================================================================== */
 
+/* ---------------------------------------------------------------------------
+   HERO INTEGRATION
+   The first fold becomes a balanced split: the existing headline, copy and
+   business CTA on one side, a live-demo card on the other. Nothing about the
+   site's type scale, palette, radii or shadows is invented here — the card
+   borrows the gold rim and deep-navy glass already used by the orb, and the
+   button reuses the hero CTA's own gold.
+   --------------------------------------------------------------------------- */
+
+.hero-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  max-width: 72rem;
+  margin: 0 auto;
+  /* Grid items default to min-width:auto, so a wide child pushes the track
+     past the viewport and the whole hero scrolls sideways on a phone. */
+  min-width: 0;
+}
+
+.hero-split > * {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .hero-split {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 3.5rem;
+  }
+}
+
+/* Alignment is expressed with Tailwind's own responsive utilities in the
+   markup (text-center lg:text-start, justify-center lg:justify-start), not
+   here: Tailwind's CDN styles are injected after this file, so competing
+   declarations would lose and leave the copy centred above a left-aligned
+   button — which is exactly what happened first time. */
+
+/* The card. Deliberately quiet: it sits *in* the aurora hero rather than on
+   top of it, so the orb reads as part of the artwork. */
+.hero-demo {
+  width: 100%;
+  /* min() rather than a bare max-width: on a 390px phone, 28rem is wider than
+     the viewport and the card overflows. */
+  max-width: min(28rem, 100%);
+  margin-inline: auto;
+  padding: 1.5rem 1.25rem 1.75rem;
+  border: 1px solid rgba(240, 193, 75, 0.28);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(9, 11, 26, 0.42) 0%, rgba(9, 11, 26, 0.62) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 18px 48px rgba(9, 11, 26, 0.38);
+}
+
+@media (min-width: 1024px) {
+  .hero-demo {
+    padding: 1.75rem 1.5rem 2rem;
+  }
+}
+
+/* Compact on a phone. The orb's size is an inline style set by JS, so this
+   needs !important — the alternative is a second source of truth for the
+   size. Keeping the card short is what lets the start button sit at or near
+   the fold instead of the orb swallowing the screen. */
+@media (max-width: 640px) {
+  .hero-demo {
+    padding: 1.1rem 1rem 1.3rem;
+  }
+
+  .hero-demo .preview-orb {
+    width: 146px !important;
+    height: 146px !important;
+  }
+
+  .hero-demo .svd__stage {
+    padding-bottom: 24px;
+  }
+
+  .hero-demo .svd__start {
+    margin-top: 0.75rem;
+  }
+}
+
 /* Reserve the widget's height before JS runs, so a page that *will* show the
    widget never reflows on load.
 
@@ -36,7 +120,25 @@
 
 @media (max-width: 640px) {
   .svd-mount:not([hidden]) {
-    min-height: 320px;
+    min-height: 300px;
+  }
+}
+
+/* Every state must occupy the same space, or the hero jumps as the call moves
+   from connecting to listening to an error. The copy block is the only part
+   whose length varies, so it — not the card — carries the reservation. */
+.svd__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 7.5rem;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .svd__copy {
+    min-height: 6.5rem;
   }
 }
 
@@ -500,7 +602,7 @@
   align-items: center;
   gap: 0.25rem;
   width: 100%;
-  max-width: 34rem;
+  max-width: min(34rem, 100%);
   margin: 0 auto;
   padding-top: 0.5rem;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -541,6 +643,55 @@
   font-size: 0.8125rem;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* Small label above the orb. */
+.svd__eyebrow {
+  margin: 0 0 0.75rem;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f0c14b;
+}
+
+/* The labelled primary control. Reuses the hero CTA's gold so the two read as
+   the same family, at a lower weight so the sales CTA still leads. */
+.svd__start {
+  margin-top: 1rem;
+  padding: 0.7rem 1.6rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #c9b555;
+  color: #000;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.svd__start:hover {
+  background: #bfa34a;
+  transform: translateY(-1px);
+}
+
+.svd__start:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.svd__meta {
+  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svd__start:hover {
+    transform: none;
+  }
 }
 
 /* Reassurance that the assistant is multilingual. Deliberately quiet: it

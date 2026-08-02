@@ -44,6 +44,13 @@ export function isSupported(value: string): value is DemoLocale {
 }
 
 export interface Strings {
+  /** Small label above the orb in the hero card. */
+  heroEyebrow: string;
+  /** The labelled primary control. */
+  startButton: string;
+  /** Expectation-setting line under the button. */
+  sessionMeta: string;
+
   unavailableTitle: string;
   unavailableBody: string;
 
@@ -120,11 +127,15 @@ export interface Strings {
 }
 
 const en: Strings = {
+  heroEyebrow: 'Talk to Jess live',
+  startButton: 'Start voice demo',
+  sessionMeta: 'About 2 minutes · Microphone required',
+
   unavailableTitle: 'The voice demo is not available right now',
   unavailableBody: 'It will be back shortly.',
 
-  readyTitle: 'Talk to our secretary',
-  readyBody: 'One click, no signup. She is chasing you over an overdue invoice — you play the customer.',
+  readyTitle: 'Experience the agent yourself',
+  readyBody: 'She is chasing you over an overdue invoice — you play the customer.',
   startLabel: 'Start the voice demo',
 
   micTitle: 'Allow your microphone',
@@ -160,7 +171,7 @@ const en: Strings = {
   disconnect: 'End the call',
   timeRemaining: 'left',
 
-  adaptiveHint: 'Speak naturally — she can adapt to your language.',
+  adaptiveHint: 'Speak naturally — she adapts to your language.',
 
   supportIdLabel: 'Support ID',
   supportCopy: 'Copy',
@@ -177,11 +188,11 @@ const en: Strings = {
   err_browser_unsupported: 'This browser can’t run the voice demo. Try Chrome, Edge or Safari.',
   err_network_error: 'We couldn’t reach the demo. Check your connection and try again.',
   err_contract_violation: 'The demo replied with something we couldn’t use. Our team has been notified.',
-  err_agent_unavailable: 'The secretary didn’t pick up. Nothing was recorded — please try again.',
+  err_agent_unavailable: 'The secretary didn’t pick up. Please try again.',
   err_agent_lost: 'The secretary dropped off the call. Please try again.',
   err_transport_failed: 'We couldn’t join the call.',
   err_reconnect_failed: 'We lost the connection and couldn’t get it back.',
-  err_consent_declined: 'No problem — nothing was recorded.',
+  err_consent_declined: 'No problem — the demo did not start.',
   err_session_expired_before_start: 'That demo session expired before it started. Try again.',
   err_demo_disabled: 'The live demo is switched off at the moment.',
   err_demo_unavailable: 'The demo is temporarily unavailable.',
@@ -194,11 +205,15 @@ const en: Strings = {
 };
 
 const he: Strings = {
+  heroEyebrow: 'דברו עם ג׳ס בשידור חי',
+  startButton: 'התחילו את הדמו הקולי',
+  sessionMeta: 'כשתי דקות · נדרש מיקרופון',
+
   unavailableTitle: 'הדמו הקולי אינו זמין כרגע',
   unavailableBody: 'הוא יחזור בקרוב.',
 
-  readyTitle: 'דברו עם המזכירה שלנו',
-  readyBody: 'לחיצה אחת, בלי הרשמה. היא רודפת אחריכם על חשבונית באיחור — אתם הלקוח.',
+  readyTitle: 'התנסו בסוכנת בעצמכם',
+  readyBody: 'היא רודפת אחריכם על חשבונית באיחור — אתם הלקוח.',
   startLabel: 'התחילו את הדמו הקולי',
 
   micTitle: 'אשרו גישה למיקרופון',
@@ -234,7 +249,7 @@ const he: Strings = {
   disconnect: 'סיום השיחה',
   timeRemaining: 'נותרו',
 
-  adaptiveHint: 'דברו טבעי — היא יודעת להתאים את עצמה לשפה שלכם.',
+  adaptiveHint: 'דברו טבעי — היא מתאימה את עצמה לשפה שלכם.',
 
   supportIdLabel: 'מזהה תמיכה',
   supportCopy: 'העתקה',
@@ -251,11 +266,11 @@ const he: Strings = {
   err_browser_unsupported: 'הדפדפן הזה לא תומך בדמו הקולי. נסו כרום, אדג׳ או ספארי.',
   err_network_error: 'לא הצלחנו להגיע לדמו. בדקו את החיבור ונסו שוב.',
   err_contract_violation: 'הדמו החזיר תשובה שלא הצלחנו לקרוא. הצוות שלנו עודכן.',
-  err_agent_unavailable: 'המזכירה לא ענתה. שום דבר לא הוקלט — נסו שוב.',
+  err_agent_unavailable: 'המזכירה לא ענתה. נסו שוב.',
   err_agent_lost: 'המזכירה התנתקה מהשיחה. נסו שוב.',
   err_transport_failed: 'לא הצלחנו להצטרף לשיחה.',
   err_reconnect_failed: 'החיבור נותק ולא הצלחנו לשחזר אותו.',
-  err_consent_declined: 'אין בעיה — שום דבר לא הוקלט.',
+  err_consent_declined: 'אין בעיה — הדמו לא התחיל.',
   err_session_expired_before_start: 'תוקף הדמו פג לפני שהתחיל. נסו שוב.',
   err_demo_disabled: 'הדמו החי כבוי כרגע.',
   err_demo_unavailable: 'הדמו אינו זמין זמנית.',
@@ -268,11 +283,15 @@ const he: Strings = {
 };
 
 const ar: Strings = {
+  heroEyebrow: 'تحدّث مع جيس مباشرة',
+  startButton: 'ابدأ العرض الصوتي',
+  sessionMeta: 'نحو دقيقتين · يلزم ميكروفون',
+
   unavailableTitle: 'العرض الصوتي غير متاح حاليًا',
   unavailableBody: 'سيعود قريبًا.',
 
-  readyTitle: 'تحدّث إلى سكرتيرتنا',
-  readyBody: 'نقرة واحدة، دون تسجيل. هي تطاردك بشأن فاتورة متأخرة — وأنت العميل.',
+  readyTitle: 'جرّب الوكيلة بنفسك',
+  readyBody: 'هي تطاردك بشأن فاتورة متأخرة — وأنت العميل.',
   startLabel: 'ابدأ العرض الصوتي',
 
   micTitle: 'اسمح باستخدام الميكروفون',
@@ -308,7 +327,7 @@ const ar: Strings = {
   disconnect: 'إنهاء المكالمة',
   timeRemaining: 'متبقٍ',
 
-  adaptiveHint: 'تحدّث بشكل طبيعي — يمكنها التأقلم مع لغتك.',
+  adaptiveHint: 'تحدّث بشكل طبيعي — تتأقلم مع لغتك.',
 
   supportIdLabel: 'معرّف الدعم',
   supportCopy: 'نسخ',
@@ -325,11 +344,11 @@ const ar: Strings = {
   err_browser_unsupported: 'هذا المتصفح لا يدعم العرض الصوتي. جرّب Chrome أو Edge أو Safari.',
   err_network_error: 'تعذّر الوصول إلى العرض. تحقق من اتصالك وحاول مجددًا.',
   err_contract_violation: 'ردّ العرض بشيء تعذّر علينا قراءته. تم إبلاغ فريقنا.',
-  err_agent_unavailable: 'لم تردّ السكرتيرة. لم يُسجَّل أي شيء — حاول مرة أخرى.',
+  err_agent_unavailable: 'لم تردّ السكرتيرة. حاول مرة أخرى.',
   err_agent_lost: 'انقطعت السكرتيرة عن المكالمة. حاول مرة أخرى.',
   err_transport_failed: 'تعذّر الانضمام إلى المكالمة.',
   err_reconnect_failed: 'فقدنا الاتصال ولم نتمكن من استعادته.',
-  err_consent_declined: 'لا مشكلة — لم يُسجَّل أي شيء.',
+  err_consent_declined: 'لا مشكلة — لم يبدأ العرض.',
   err_session_expired_before_start: 'انتهت صلاحية جلسة العرض قبل أن تبدأ. حاول مجددًا.',
   err_demo_disabled: 'العرض المباشر متوقف حاليًا.',
   err_demo_unavailable: 'العرض غير متاح مؤقتًا.',

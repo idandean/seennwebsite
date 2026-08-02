@@ -121,6 +121,9 @@ export class VoiceDemoWidget {
   private body!: HTMLElement;
   private hint!: HTMLElement;
   private adaptiveHint!: HTMLElement;
+  private eyebrow!: HTMLElement;
+  private startButton!: HTMLButtonElement;
+  private sessionMeta!: HTMLElement;
   private consentPanel!: HTMLElement;
   private consentText!: HTMLElement;
   private consentLink!: HTMLAnchorElement;
@@ -202,6 +205,7 @@ export class VoiceDemoWidget {
 
     const size = this.config.orbSize;
     root.innerHTML = `
+      <p class="svd__eyebrow"></p>
       <div class="svd__stage">
         <div class="preview-orb" style="width:${size}px;height:${size}px">
           <span class="preview-orb__glow" aria-hidden="true"></span>
@@ -215,10 +219,14 @@ export class VoiceDemoWidget {
           <button type="button" class="preview-orb__call"></button>
         </div>
       </div>
-      <p class="svd__headline"></p>
-      <p class="svd__sub"></p>
-      <p class="svd__hint"></p>
-      <p class="svd__adaptive"></p>
+      <div class="svd__copy">
+        <p class="svd__headline"></p>
+        <p class="svd__sub"></p>
+        <p class="svd__hint"></p>
+        <p class="svd__adaptive"></p>
+      </div>
+      <button type="button" class="svd__start"></button>
+      <p class="svd__meta"></p>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
         <p class="svd__consent-text"></p>
@@ -255,6 +263,9 @@ export class VoiceDemoWidget {
     this.body = q('.svd__sub');
     this.hint = q('.svd__hint');
     this.adaptiveHint = q('.svd__adaptive');
+    this.eyebrow = q('.svd__eyebrow');
+    this.startButton = q<HTMLButtonElement>('.svd__start');
+    this.sessionMeta = q('.svd__meta');
     this.consentPanel = q('.svd__consent');
     this.consentText = q('.svd__consent-text');
     this.consentLink = q<HTMLAnchorElement>('.svd__consent-link');
@@ -271,6 +282,11 @@ export class VoiceDemoWidget {
 
     this.audioElement.autoplay = true;
 
+    this.startButton.addEventListener('click', () => {
+      // The labelled control. Same single gesture as the orb, so iOS audio
+      // unlocking and the no-auto-microphone rule are identical.
+      void this.onPrimaryAction();
+    });
     this.primaryButton.addEventListener('click', () => {
       // The ONLY path that reaches getUserMedia. Nothing on load, nothing on
       // scroll, nothing on hover.
@@ -344,6 +360,19 @@ export class VoiceDemoWidget {
     this.adaptiveHint.textContent = s.adaptiveHint;
     this.adaptiveHint.hidden = !showAdaptive;
 
+    // Eyebrow and the labelled start control belong to the invitation, before
+    // anything is running.
+    this.eyebrow.textContent = s.heroEyebrow;
+    this.eyebrow.hidden = state !== 'ready';
+
+    const offerStart = state === 'ready' || state === 'finished' || state === 'error' ||
+      state === 'rateLimited';
+    this.startButton.textContent = state === 'ready' ? s.startButton : s.retry;
+    this.startButton.hidden = !offerStart;
+
+    this.sessionMeta.textContent = s.sessionMeta;
+    this.sessionMeta.hidden = state !== 'ready';
+
     // Primary button
     const busy = state === 'requestingMicrophone' || state === 'connecting' || state === 'reconnecting';
     this.primaryButton.disabled = busy || state === 'unavailable' || pendingConsent !== null;
@@ -392,6 +421,7 @@ export class VoiceDemoWidget {
 
     // Support ID — shown when a readiness failure leaves something to quote.
     const agentFailure =
+      this.config.showSupportId &&
       state === 'error' &&
       (this.context.errorCode === 'agent_unavailable' || this.context.errorCode === 'agent_lost');
     const supportId = this.context.lastSessionId;

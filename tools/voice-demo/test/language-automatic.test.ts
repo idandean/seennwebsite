@@ -298,14 +298,14 @@ describe('reassuring copy', () => {
     const { mount } = await startWidget('en');
     const text = mount.textContent ?? '';
 
-    expect(text).toMatch(/adapt to your language/i);
+    expect(text).toMatch(/adapts to your language/i);
     expect(mount.querySelector('select')).toBeNull();
   });
 
   it('is present in all three locales', async () => {
     for (const [lang, pattern] of [
-      ['en', /adapt to your language/i],
-      ['he', /להתאים/],
+      ['en', /adapts to your language/i],
+      ['he', /מתאימה/],
       ['ar', /لغتك/],
     ] as const) {
       document.body.innerHTML = '';

@@ -41,6 +41,8 @@ function enabledConfig(overrides: Partial<VoiceDemoConfig> = {}): VoiceDemoConfi
     // language lookup, so the request stays automatic and no global fetch is
     // needed. The lookup has its own coverage in language-automatic.test.ts.
     languageLookupUrl: '',
+    // The staging surface shows it; the homepages do not.
+    showSupportId: true,
     ...overrides,
   };
 }

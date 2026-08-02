@@ -130,30 +130,26 @@ describe('staging page — controlled activation resolves the exact staging targ
   });
 });
 
-describe('homepages stay hidden and unconfigured', () => {
-  it('contain no SEENN_VOICE_DEMO configuration at all', () => {
-    for (const page of HOMEPAGES) {
-      expect(read(page), page).not.toContain('SEENN_VOICE_DEMO');
-    }
-  });
-
-  it('contain none of the staging values', () => {
+describe('homepages now run the same configuration', () => {
+  // The demo has been promoted to the first fold, so the homepages carry the
+  // same public values the staging page proved. Detailed hero coverage lives
+  // in hero-integration.test.ts.
+  it('use identical values to the staging page', () => {
     for (const page of HOMEPAGES) {
       const html = read(page);
-      expect(html, page).not.toContain(EXPECTED.endpointBaseUrl);
-      expect(html, page).not.toContain(EXPECTED.anonKey);
-      expect(html, page).not.toContain(EXPECTED.turnstileSiteKey);
-      expect(html, page).not.toContain('supabase.co');
+      expect(html, page).toContain(EXPECTED.endpointBaseUrl);
+      expect(html, page).toContain(EXPECTED.anonKey);
+      expect(html, page).toContain(EXPECTED.turnstileSiteKey);
     }
   });
 
-  it('keep their mounts hidden', () => {
+  it('no longer hide their mounts', () => {
     for (const page of HOMEPAGES) {
-      expect(read(page), page).toMatch(/data-seenn-voice-demo\s+hidden/);
+      expect(read(page), page).not.toMatch(/data-seenn-voice-demo\s+hidden/);
     }
   });
 
-  it('resolve to disabled with no inline config present', () => {
+  it('a page with no inline config still resolves to disabled', () => {
     // What a homepage visit actually produces: nothing on window, nothing set.
     expect(resolveConfig({ inline: undefined }).publicDemoMode).toBe('disabled');
     expect(unavailableReason(resolveConfig({ inline: undefined }))).toBe('flag_disabled');
@@ -178,9 +174,9 @@ describe('same-origin language lookup', () => {
     expect(DEFAULT_CONFIG.languageLookupUrl).not.toMatch(/^https?:/);
   });
 
-  it('neither homepage references the lookup endpoint', () => {
-    for (const page of HOMEPAGES) {
-      expect(read(page), page).not.toContain('voice-demo-language');
+  it('no page hardcodes the lookup URL — all use the same-origin default', () => {
+    for (const page of [...HOMEPAGES, 'voice-demo-staging.html']) {
+      expect(read(page), page).not.toContain('languageLookupUrl');
     }
   });
 

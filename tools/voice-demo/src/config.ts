@@ -89,6 +89,14 @@ export interface VoiceDemoConfig {
 
   /** When blocked, render nothing rather than an "unavailable" panel. */
   renderWhenUnavailable: boolean;
+
+  /**
+   * Show the backend session id on a readiness failure.
+   *
+   * Off for the public homepages: a raw identifier is a support affordance,
+   * not homepage copy. The controlled staging page turns it on.
+   */
+  showSupportId: boolean;
 }
 
 /**
@@ -118,6 +126,7 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
   signupUrl: 'https://app.seenn.ai/auth/signup',
   orbSize: 200,
   renderWhenUnavailable: false,
+  showSupportId: false,
 };
 
 function metaContent(name: string): string | undefined {
