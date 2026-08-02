@@ -159,7 +159,7 @@ const en: Strings = {
 
   finishedTitle: 'That was our AI secretary.',
   finishedBody: 'She does this for real invoices, on real phone calls, every day — following your rules.',
-  signupCta: 'Start free',
+  signupCta: 'Request a Demo',
   restart: 'Talk to her again',
 
   rateLimitedVisitorTitle: 'You have had a few goes already',
@@ -237,7 +237,7 @@ const he: Strings = {
 
   finishedTitle: 'זו הייתה המזכירה החכמה שלנו.',
   finishedBody: 'היא עושה את זה על חשבוניות אמיתיות, בשיחות אמיתיות, כל יום — לפי הכללים שלכם.',
-  signupCta: 'התחילו בחינם',
+  signupCta: 'בקשו הדגמה',
   restart: 'דברו איתה שוב',
 
   rateLimitedVisitorTitle: 'כבר ניסיתם כמה פעמים',
@@ -315,7 +315,7 @@ const ar: Strings = {
 
   finishedTitle: 'تلك كانت سكرتيرتنا الذكية.',
   finishedBody: 'تفعل ذلك مع فواتير حقيقية، في مكالمات حقيقية، كل يوم — وفق قواعدك.',
-  signupCta: 'ابدأ مجانًا',
+  signupCta: 'اطلب عرضًا توضيحيًا',
   restart: 'تحدّث إليها مرة أخرى',
 
   rateLimitedVisitorTitle: 'لقد جرّبت عدة مرات بالفعل',

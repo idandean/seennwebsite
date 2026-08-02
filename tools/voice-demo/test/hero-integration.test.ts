@@ -184,6 +184,60 @@ describe('card copy — an invitation, not a test surface', () => {
   });
 });
 
+describe('the signup CTA matches the site own Request a Demo', () => {
+  it('uses the same wording as the homepage buttons, per locale', () => {
+    expect(stringsFor('en').signupCta).toBe('Request a Demo');
+    expect(read('index.html')).toContain(stringsFor('en').signupCta);
+
+    expect(stringsFor('he').signupCta).toBe('בקשו הדגמה');
+    expect(read('he/index.html')).toContain(stringsFor('he').signupCta);
+  });
+
+  it('never says "Start free" in any locale', () => {
+    for (const locale of ['en', 'he', 'ar'] as const) {
+      const all = Object.values(stringsFor(locale) as unknown as Record<string, string>).join(' ');
+      expect(/start free/i.test(all), locale).toBe(false);
+    }
+    expect(stringsFor('he').signupCta).not.toMatch(/בחינם/);
+  });
+
+  it('opens the same demo modal the rest of the site uses', () => {
+    const openDemoModal = vi.fn();
+    (window as { openDemoModal?: () => void }).openDemoModal = openDemoModal;
+
+    const mount = document.createElement('div');
+    mount.setAttribute('data-seenn-voice-demo', '');
+    document.body.appendChild(mount);
+    const widget = new VoiceDemoWidget(
+      mount,
+      { ...DEFAULT_CONFIG, publicDemoMode: 'enabled', ...LIVE, languageLookupUrl: '' },
+      {},
+    );
+    void widget;
+
+    mount.querySelector<HTMLAnchorElement>('.svd__cta-button')!.click();
+    expect(openDemoModal).toHaveBeenCalledTimes(1);
+
+    delete (window as { openDemoModal?: () => void }).openDemoModal;
+  });
+
+  it('still falls back to a real link where no modal exists', () => {
+    delete (window as { openDemoModal?: () => void }).openDemoModal;
+    const mount = document.createElement('div');
+    mount.setAttribute('data-seenn-voice-demo', '');
+    document.body.appendChild(mount);
+    new VoiceDemoWidget(
+      mount,
+      { ...DEFAULT_CONFIG, publicDemoMode: 'enabled', ...LIVE, languageLookupUrl: '' },
+      {},
+    );
+
+    const cta = mount.querySelector<HTMLAnchorElement>('.svd__cta-button')!;
+    expect(cta.tagName).toBe('A');
+    expect(cta.href).toContain('utm_medium=voice_demo');
+  });
+});
+
 describe('rendered card', () => {
   function mountWidget(lang: string, overrides: Partial<VoiceDemoConfig> = {}) {
     document.documentElement.setAttribute('lang', lang);

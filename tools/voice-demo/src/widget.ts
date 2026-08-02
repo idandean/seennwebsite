@@ -320,8 +320,18 @@ export class VoiceDemoWidget {
     });
     this.consentAccept.addEventListener('click', () => this.consentDecision?.(true));
     this.consentDecline.addEventListener('click', () => this.consentDecision?.(false));
-    this.ctaLink.addEventListener('click', () => {
+    this.ctaLink.addEventListener('click', (event) => {
       track('voice_demo_cta_click', { voice_demo_state: this.context.state });
+
+      // Behave like every other "Request a Demo" on the site: open the same
+      // modal rather than sending the visitor somewhere else. The href stays
+      // a real link so it still works without JS and on pages that do not
+      // define the modal (the staging surface, for one).
+      const openDemoModal = (window as { openDemoModal?: () => void }).openDemoModal;
+      if (typeof openDemoModal === 'function') {
+        event.preventDefault();
+        openDemoModal();
+      }
     });
 
     this.mount.appendChild(root);

@@ -369,7 +369,7 @@
     reconnectingBody: "The connection dropped. Trying to pick the call back up.",
     finishedTitle: "That was our AI secretary.",
     finishedBody: "She does this for real invoices, on real phone calls, every day \u2014 following your rules.",
-    signupCta: "Start free",
+    signupCta: "Request a Demo",
     restart: "Talk to her again",
     rateLimitedVisitorTitle: "You have had a few goes already",
     rateLimitedVisitorBody: "Give it a few minutes before trying the demo again.",
@@ -431,7 +431,7 @@
     reconnectingBody: "\u05D4\u05D7\u05D9\u05D1\u05D5\u05E8 \u05E0\u05D5\u05EA\u05E7. \u05DE\u05E0\u05E1\u05D9\u05DD \u05DC\u05D4\u05DE\u05E9\u05D9\u05DA \u05D0\u05EA \u05D4\u05E9\u05D9\u05D7\u05D4.",
     finishedTitle: "\u05D6\u05D5 \u05D4\u05D9\u05D9\u05EA\u05D4 \u05D4\u05DE\u05D6\u05DB\u05D9\u05E8\u05D4 \u05D4\u05D7\u05DB\u05DE\u05D4 \u05E9\u05DC\u05E0\u05D5.",
     finishedBody: "\u05D4\u05D9\u05D0 \u05E2\u05D5\u05E9\u05D4 \u05D0\u05EA \u05D6\u05D4 \u05E2\u05DC \u05D7\u05E9\u05D1\u05D5\u05E0\u05D9\u05D5\u05EA \u05D0\u05DE\u05D9\u05EA\u05D9\u05D5\u05EA, \u05D1\u05E9\u05D9\u05D7\u05D5\u05EA \u05D0\u05DE\u05D9\u05EA\u05D9\u05D5\u05EA, \u05DB\u05DC \u05D9\u05D5\u05DD \u2014 \u05DC\u05E4\u05D9 \u05D4\u05DB\u05DC\u05DC\u05D9\u05DD \u05E9\u05DC\u05DB\u05DD.",
-    signupCta: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD",
+    signupCta: "\u05D1\u05E7\u05E9\u05D5 \u05D4\u05D3\u05D2\u05DE\u05D4",
     restart: "\u05D3\u05D1\u05E8\u05D5 \u05D0\u05D9\u05EA\u05D4 \u05E9\u05D5\u05D1",
     rateLimitedVisitorTitle: "\u05DB\u05D1\u05E8 \u05E0\u05D9\u05E1\u05D9\u05EA\u05DD \u05DB\u05DE\u05D4 \u05E4\u05E2\u05DE\u05D9\u05DD",
     rateLimitedVisitorBody: "\u05D4\u05DE\u05EA\u05D9\u05E0\u05D5 \u05DB\u05DE\u05D4 \u05D3\u05E7\u05D5\u05EA \u05DC\u05E4\u05E0\u05D9 \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF \u05E0\u05D5\u05E1\u05E3.",
@@ -493,7 +493,7 @@
     reconnectingBody: "\u0627\u0646\u0642\u0637\u0639 \u0627\u0644\u0627\u062A\u0635\u0627\u0644. \u0646\u062D\u0627\u0648\u0644 \u0627\u0633\u062A\u0626\u0646\u0627\u0641 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629.",
     finishedTitle: "\u062A\u0644\u0643 \u0643\u0627\u0646\u062A \u0633\u0643\u0631\u062A\u064A\u0631\u062A\u0646\u0627 \u0627\u0644\u0630\u0643\u064A\u0629.",
     finishedBody: "\u062A\u0641\u0639\u0644 \u0630\u0644\u0643 \u0645\u0639 \u0641\u0648\u0627\u062A\u064A\u0631 \u062D\u0642\u064A\u0642\u064A\u0629\u060C \u0641\u064A \u0645\u0643\u0627\u0644\u0645\u0627\u062A \u062D\u0642\u064A\u0642\u064A\u0629\u060C \u0643\u0644 \u064A\u0648\u0645 \u2014 \u0648\u0641\u0642 \u0642\u0648\u0627\u0639\u062F\u0643.",
-    signupCta: "\u0627\u0628\u062F\u0623 \u0645\u062C\u0627\u0646\u064B\u0627",
+    signupCta: "\u0627\u0637\u0644\u0628 \u0639\u0631\u0636\u064B\u0627 \u062A\u0648\u0636\u064A\u062D\u064A\u064B\u0627",
     restart: "\u062A\u062D\u062F\u0651\u062B \u0625\u0644\u064A\u0647\u0627 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649",
     rateLimitedVisitorTitle: "\u0644\u0642\u062F \u062C\u0631\u0651\u0628\u062A \u0639\u062F\u0629 \u0645\u0631\u0627\u062A \u0628\u0627\u0644\u0641\u0639\u0644",
     rateLimitedVisitorBody: "\u0627\u0646\u062A\u0638\u0631 \u0628\u0636\u0639 \u062F\u0642\u0627\u0626\u0642 \u0642\u0628\u0644 \u062A\u062C\u0631\u0628\u0629 \u0627\u0644\u0639\u0631\u0636 \u0645\u062C\u062F\u062F\u064B\u0627.",
@@ -1395,8 +1395,13 @@
         var _a;
         return (_a = this.consentDecision) == null ? void 0 : _a.call(this, false);
       });
-      this.ctaLink.addEventListener("click", () => {
+      this.ctaLink.addEventListener("click", (event) => {
         track("voice_demo_cta_click", { voice_demo_state: this.context.state });
+        const openDemoModal = window.openDemoModal;
+        if (typeof openDemoModal === "function") {
+          event.preventDefault();
+          openDemoModal();
+        }
       });
       this.mount.appendChild(root);
     }
