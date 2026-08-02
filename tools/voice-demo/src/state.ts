@@ -13,7 +13,12 @@ import type { DemoErrorCode, DemoSession, RecordingConsent } from './contract';
 /**
  * The ten UI states.
  *
- * Microphone denial is deliberately NOT an eleventh state: it is `error` with
+ * `assistantThinking` was added when readiness moved to the remote agent: the
+ * documented `lk.agent.state` vocabulary distinguishes thinking from speaking,
+ * and collapsing them would throw away information the agent is already
+ * publishing.
+ *
+ * Microphone denial is deliberately NOT a separate state: it is `error` with
  * `errorCode: 'microphone_denied'`, which still renders its own copy and
  * re-enable instructions. Keeping the state set closed makes the transition
  * table checkable; the distinct UI comes from the error code.
@@ -24,6 +29,7 @@ export type DemoState =
   | 'requestingMicrophone'
   | 'connecting'
   | 'listening'
+  | 'assistantThinking'
   | 'assistantSpeaking'
   | 'reconnecting'
   | 'finished'
@@ -32,6 +38,8 @@ export type DemoState =
 
 /** Client-side failures, alongside the server's `DemoErrorCode`. */
 export type ClientErrorCode =
+  | 'agent_unavailable'
+  | 'agent_lost'
   | 'microphone_denied'
   | 'microphone_unavailable'
   | 'browser_unsupported'
@@ -73,6 +81,10 @@ export interface DemoContext {
   connectionInFlight: boolean;
   /** Bumped on every start; lets late async work detect it is stale. */
   attempt: number;
+  /** True once the browser joined the room. Diagnostic only — not readiness. */
+  roomConnected: boolean;
+  /** Survives teardown so a failure can show a Support ID. */
+  lastSessionId: string | null;
   /**
    * Epoch ms before which START is refused, from a 429's `Retry-After`.
    * Honouring this is the difference between telling a visitor to wait and
@@ -93,9 +105,13 @@ export type DemoEvent =
   | { type: 'CONSENT_ACCEPTED'; acceptedAt: string }
   | { type: 'CONSENT_DECLINED' }
   | { type: 'SESSION_GRANTED'; session: DemoSession }
-  | { type: 'CONNECTED' }
-  | { type: 'ASSISTANT_SPEAKING_START' }
-  | { type: 'ASSISTANT_SPEAKING_END' }
+  /** Browser joined the room and published its microphone. NOT readiness. */
+  | { type: 'ROOM_CONNECTED' }
+  /** The remote agent is present but cannot hear anyone yet. */
+  | { type: 'AGENT_PENDING' }
+  | { type: 'AGENT_READY' }
+  | { type: 'AGENT_THINKING' }
+  | { type: 'AGENT_SPEAKING' }
   | { type: 'RECONNECTING' }
   | { type: 'RECONNECTED' }
   | { type: 'DISCONNECT'; reason: FinishReason }
@@ -115,8 +131,16 @@ export const ACTIVE_STATES: readonly DemoState[] = [
   'requestingMicrophone',
   'connecting',
   'listening',
+  'assistantThinking',
   'assistantSpeaking',
   'reconnecting',
+];
+
+/** States in which the remote agent has confirmed it can hear the visitor. */
+export const AGENT_READY_STATES: readonly DemoState[] = [
+  'listening',
+  'assistantThinking',
+  'assistantSpeaking',
 ];
 
 /** States from which the visitor may start a session. */
@@ -134,8 +158,14 @@ export function initialContext(unavailable: string | null): DemoContext {
     session: null,
     connectionInFlight: false,
     attempt: 0,
+    roomConnected: false,
+    lastSessionId: null,
     retryAfterUntil: null,
   };
+}
+
+export function agentIsReady(state: DemoState): boolean {
+  return AGENT_READY_STATES.includes(state);
 }
 
 export function isActive(state: DemoState): boolean {
@@ -232,22 +262,42 @@ export function reduce(context: DemoContext, event: DemoEvent): DemoContext {
 
     case 'SESSION_GRANTED':
       if (state !== 'connecting') return context;
-      return { ...context, session: event.session };
+      return {
+        ...context,
+        session: event.session,
+        // Kept past teardown so a failure can show a Support ID.
+        lastSessionId: event.session.sessionId,
+      };
 
-    case 'CONNECTED':
+    case 'ROOM_CONNECTED':
+      // Joining the room and publishing our own microphone is NOT readiness.
+      // Only the remote agent can move this forward. Showing "listening" here
+      // is the bug this event was renamed to prevent.
       if (state !== 'connecting') return context;
+      return { ...context, roomConnected: true };
+
+    case 'AGENT_PENDING':
+      // The agent exists but cannot hear anyone. Stay on connecting.
+      if (state !== 'connecting') return context;
+      return context;
+
+    case 'AGENT_READY':
+      if (state !== 'connecting' && !AGENT_READY_STATES.includes(state)) return context;
+      if (state === 'listening') return context;
       return { ...context, state: 'listening' };
 
-    case 'ASSISTANT_SPEAKING_START':
-      if (state !== 'listening') return context;
+    case 'AGENT_THINKING':
+      if (state !== 'connecting' && !AGENT_READY_STATES.includes(state)) return context;
+      if (state === 'assistantThinking') return context;
+      return { ...context, state: 'assistantThinking' };
+
+    case 'AGENT_SPEAKING':
+      if (state !== 'connecting' && !AGENT_READY_STATES.includes(state)) return context;
+      if (state === 'assistantSpeaking') return context;
       return { ...context, state: 'assistantSpeaking' };
 
-    case 'ASSISTANT_SPEAKING_END':
-      if (state !== 'assistantSpeaking') return context;
-      return { ...context, state: 'listening' };
-
     case 'RECONNECTING':
-      if (state !== 'listening' && state !== 'assistantSpeaking') return context;
+      if (!AGENT_READY_STATES.includes(state)) return context;
       return { ...context, state: 'reconnecting' };
 
     case 'RECONNECTED':
@@ -291,6 +341,8 @@ export function reduce(context: DemoContext, event: DemoEvent): DemoContext {
         state: 'error',
         errorCode: event.code,
         pendingConsent: null,
+        // The live session goes; its identifier stays, so support can be given
+        // something to quote.
         session: null,
         connectionInFlight: false,
       };

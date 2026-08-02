@@ -6,6 +6,7 @@
  * ~200KB SDK out of the page until a visitor actually clicks.
  */
 
+import { AGENT_STATE_ATTRIBUTE } from './agent';
 import { logger, safeUrl } from './logging';
 
 export interface TransportEvents {
@@ -13,8 +14,12 @@ export interface TransportEvents {
   onDisconnected(): void;
   onReconnecting(): void;
   onReconnected(): void;
-  /** Drives the listening ⇄ assistantSpeaking split. */
-  onAssistantSpeaking(speaking: boolean): void;
+  /**
+   * The remote agent's `lk.agent.state`, or null when no agent participant is
+   * present. This — not our own microphone publication — is what decides
+   * whether the visitor is actually being listened to.
+   */
+  onAgentState(state: string | null): void;
   /** 0..1, for the orb. */
   onLevel(level: number): void;
   onError(error: Error): void;
@@ -86,15 +91,29 @@ interface LiveKitRoom {
 }
 
 interface RemoteParticipant {
+  identity?: string;
   isLocal?: boolean;
+  /** livekit-client 2.21.0 exposes this; the documented way to spot an agent. */
+  isAgent?: boolean;
   audioLevel?: number;
   isSpeaking?: boolean;
+  attributes?: Readonly<Record<string, string>> | undefined;
 }
 
 export interface LiveKitTransportOptions {
   moduleUrl: string;
   /** Injected in tests instead of hitting a CDN. */
   loadModule?: (url: string) => Promise<LiveKitModule>;
+}
+
+/**
+ * An agent is a participant the SDK flags as one, or — belt and braces — any
+ * remote participant carrying the documented agent-state attribute.
+ */
+function isAgentParticipant(participant: RemoteParticipant): boolean {
+  if (participant.isLocal) return false;
+  if (participant.isAgent === true) return true;
+  return typeof participant.attributes?.[AGENT_STATE_ATTRIBUTE] === 'string';
 }
 
 /** Speech is bursty; a bare level flickers. Rise fast, fall slow. */
@@ -109,8 +128,9 @@ export function createLiveKitTransport(
   let room: LiveKitRoom | null = null;
   let rafId = 0;
   let level = 0;
-  let speaking = false;
   let disposed = false;
+  /** Last value reported upward, so identical attribute churn stays quiet. */
+  let lastAgentState: string | null | undefined;
 
   const load =
     options.loadModule ??
@@ -139,15 +159,10 @@ export function createLiveKitTransport(
       });
 
       level = smooth(level, peak);
+      // Drives the orb's reactivity ONLY. Audio level says nothing about
+      // whether the agent is ready — inferring that from it is the bug this
+      // module was rewritten to remove.
       events.onLevel(level);
-
-      // Hysteresis: without a gap between the on and off thresholds the state
-      // flips on every inter-word pause.
-      const nowSpeaking = speaking ? level > 0.06 : level > 0.14;
-      if (nowSpeaking !== speaking) {
-        speaking = nowSpeaking;
-        events.onAssistantSpeaking(speaking);
-      }
 
       rafId = requestAnimationFrame(tick);
     };
@@ -174,6 +189,34 @@ export function createLiveKitTransport(
         track.attach?.(audioElement);
         void audioElement.play().catch(() => undefined);
       });
+
+      // --- Remote agent readiness -------------------------------------------
+      // Event names verified against the pinned SDK's dist/src/room/events.d.ts.
+      const findAgent = (): RemoteParticipant | undefined => {
+        const remotes = instance.remoteParticipants ?? instance.participants;
+        let found: RemoteParticipant | undefined;
+        remotes?.forEach((participant) => {
+          if (!found && isAgentParticipant(participant)) found = participant;
+        });
+        return found;
+      };
+
+      const reportAgent = (): void => {
+        if (disposed) return;
+        const agent = findAgent();
+        const next = agent ? (agent.attributes?.[AGENT_STATE_ATTRIBUTE] ?? null) : null;
+        // Only on change: attributesChanged fires for unrelated keys too.
+        if (next === lastAgentState) return;
+        lastAgentState = next;
+        events.onAgentState(next);
+      };
+
+      instance.on(lk.RoomEvent['ParticipantConnected'] ?? 'participantConnected', reportAgent);
+      instance.on(lk.RoomEvent['ParticipantDisconnected'] ?? 'participantDisconnected', reportAgent);
+      instance.on(
+        lk.RoomEvent['ParticipantAttributesChanged'] ?? 'participantAttributesChanged',
+        reportAgent,
+      );
 
       instance.on(lk.RoomEvent['Reconnecting'] ?? 'reconnecting', () => events.onReconnecting());
       instance.on(lk.RoomEvent['Reconnected'] ?? 'reconnected', () => events.onReconnected());
@@ -217,6 +260,9 @@ export function createLiveKitTransport(
 
       startMetering(lk);
       events.onConnected();
+
+      // The agent may already be in the room, in which case no event will fire.
+      reportAgent();
     },
 
     async disconnect(): Promise<void> {

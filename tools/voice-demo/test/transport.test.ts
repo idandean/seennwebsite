@@ -79,7 +79,7 @@ function noopEvents(): TransportEvents {
     onDisconnected: vi.fn(),
     onReconnecting: vi.fn(),
     onReconnected: vi.fn(),
-    onAssistantSpeaking: vi.fn(),
+    onAgentState: vi.fn(),
     onLevel: vi.fn(),
     onError: vi.fn(),
   };

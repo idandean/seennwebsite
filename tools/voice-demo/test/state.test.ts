@@ -25,14 +25,16 @@ function at(state: DemoState): DemoContext {
     { type: 'START', at: 0 },
     { type: 'MIC_GRANTED' },
     { type: 'SESSION_GRANTED', session: SESSION },
-    { type: 'CONNECTED' },
+    { type: 'ROOM_CONNECTED' },
+    { type: 'AGENT_READY' },
   ];
   if (state === 'ready') return ctx;
   for (const event of path) {
     ctx = reduce(ctx, event);
     if (ctx.state === state) return ctx;
   }
-  if (state === 'assistantSpeaking') return reduce(ctx, { type: 'ASSISTANT_SPEAKING_START' });
+  if (state === 'assistantThinking') return reduce(ctx, { type: 'AGENT_THINKING' });
+  if (state === 'assistantSpeaking') return reduce(ctx, { type: 'AGENT_SPEAKING' });
   if (state === 'reconnecting') return reduce(ctx, { type: 'RECONNECTING' });
   if (state === 'finished') return reduce(ctx, { type: 'DISCONNECT', reason: 'user_disconnected' });
   if (state === 'error') return reduce(ctx, { type: 'ERROR', code: 'server_error' });
@@ -50,7 +52,7 @@ describe('initial state', () => {
 });
 
 describe('happy path', () => {
-  it('walks ready → requestingMicrophone → connecting → listening', () => {
+  it('walks ready → requestingMicrophone → connecting, and stops there until the agent is ready', () => {
     let ctx = initialContext(null);
     expect(ctx.state).toBe('ready');
 
@@ -63,21 +65,42 @@ describe('happy path', () => {
 
     ctx = reduce(ctx, { type: 'SESSION_GRANTED', session: SESSION });
     expect(ctx.session).toEqual(SESSION);
+    expect(ctx.lastSessionId).toBe(SESSION.sessionId);
 
-    ctx = reduce(ctx, { type: 'CONNECTED' });
+    // The browser joining is NOT readiness — this is the regression.
+    ctx = reduce(ctx, { type: 'ROOM_CONNECTED' });
+    expect(ctx.roomConnected).toBe(true);
+    expect(ctx.state).toBe('connecting');
+
+    // Only the remote agent can unlock listening.
+    ctx = reduce(ctx, { type: 'AGENT_READY' });
     expect(ctx.state).toBe('listening');
   });
 
-  it('toggles listening ⇄ assistantSpeaking', () => {
+  it('AGENT_PENDING never leaves connecting', () => {
+    let ctx = at('connecting');
+    ctx = reduce(ctx, { type: 'ROOM_CONNECTED' });
+    expect(reduce(ctx, { type: 'AGENT_PENDING' }).state).toBe('connecting');
+  });
+
+  it('keeps the session id after an error so support can quote it', () => {
+    const ctx = reduce(at('listening'), { type: 'ERROR', code: 'agent_lost' });
+    expect(ctx.session).toBeNull();
+    expect(ctx.lastSessionId).toBe(SESSION.sessionId);
+  });
+
+  it('cycles listening ⇄ thinking ⇄ speaking from agent state alone', () => {
     let ctx = at('listening');
-    ctx = reduce(ctx, { type: 'ASSISTANT_SPEAKING_START' });
+    ctx = reduce(ctx, { type: 'AGENT_THINKING' });
+    expect(ctx.state).toBe('assistantThinking');
+    ctx = reduce(ctx, { type: 'AGENT_SPEAKING' });
     expect(ctx.state).toBe('assistantSpeaking');
-    ctx = reduce(ctx, { type: 'ASSISTANT_SPEAKING_END' });
+    ctx = reduce(ctx, { type: 'AGENT_READY' });
     expect(ctx.state).toBe('listening');
   });
 
   it('reconnects from either live state and returns to listening', () => {
-    for (const from of ['listening', 'assistantSpeaking'] as const) {
+    for (const from of ['listening', 'assistantThinking', 'assistantSpeaking'] as const) {
       let ctx = at(from);
       ctx = reduce(ctx, { type: 'RECONNECTING' });
       expect(ctx.state).toBe('reconnecting');
@@ -285,13 +308,14 @@ describe('feature flag transitions', () => {
 describe('rejected transitions', () => {
   it('returns the identical context for every illegal pairing', () => {
     const illegal: Array<[DemoState, DemoEvent]> = [
-      ['ready', { type: 'CONNECTED' }],
+      ['ready', { type: 'ROOM_CONNECTED' }],
+      ['ready', { type: 'AGENT_READY' }],
       ['ready', { type: 'MIC_GRANTED' }],
       ['ready', { type: 'RECONNECTING' }],
-      ['connecting', { type: 'ASSISTANT_SPEAKING_START' }],
-      ['listening', { type: 'ASSISTANT_SPEAKING_END' }],
-      ['assistantSpeaking', { type: 'ASSISTANT_SPEAKING_START' }],
-      ['reconnecting', { type: 'CONNECTED' }],
+      ['listening', { type: 'AGENT_READY' }],
+      ['assistantSpeaking', { type: 'AGENT_SPEAKING' }],
+      ['reconnecting', { type: 'AGENT_READY' }],
+      ['finished', { type: 'AGENT_READY' }],
       ['finished', { type: 'DISCONNECT', reason: 'user_disconnected' }],
       ['finished', { type: 'RECONNECTED' }],
     ];
@@ -311,6 +335,7 @@ describe('isActive', () => {
       'requestingMicrophone',
       'connecting',
       'listening',
+      'assistantThinking',
       'assistantSpeaking',
       'reconnecting',
     ];

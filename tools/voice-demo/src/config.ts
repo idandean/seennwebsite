@@ -53,6 +53,12 @@ export interface VoiceDemoConfig {
 
   maxSessionSeconds: number;
   reconnectTimeoutSeconds: number;
+  /**
+   * How long the remote agent has to appear and report readiness after the
+   * browser joins the room. Without this a visitor waits forever when only the
+   * browser ever joins.
+   */
+  agentReadinessTimeoutSeconds: number;
 
   signupUrl: string;
   orbSize: number;
@@ -81,6 +87,7 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
   livekitModuleUrl: LIVEKIT_MODULE_URL,
   maxSessionSeconds: 120,
   reconnectTimeoutSeconds: 20,
+  agentReadinessTimeoutSeconds: 20,
   signupUrl: 'https://app.seenn.ai/auth/signup',
   orbSize: 200,
   renderWhenUnavailable: false,

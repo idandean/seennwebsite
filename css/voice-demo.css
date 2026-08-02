@@ -660,6 +660,58 @@
   outline-offset: 2px;
 }
 
+/* --- Support ID ----------------------------------------------------------
+   Shown only when the remote agent never became ready. Carries the backend
+   session id and nothing else — no token, no room URL, no credentials. */
+
+.svd__support {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  background: rgba(9, 11, 26, 0.45);
+}
+
+.svd__support-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.svd__support-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  color: #f0c14b;
+  user-select: all;
+  word-break: break-all;
+}
+
+.svd__support-copy {
+  padding: 0.25rem 0.6rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.svd__support-copy:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.svd__support-copy:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 /* --- Conversion moment ---------------------------------------------------- */
 
 .svd__cta {

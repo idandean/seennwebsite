@@ -60,6 +60,9 @@ export interface Strings {
   listeningTitle: string;
   listeningBody: string;
 
+  thinkingTitle: string;
+  thinkingBody: string;
+
   speakingTitle: string;
   speakingBody: string;
 
@@ -81,6 +84,10 @@ export interface Strings {
   disconnect: string;
   timeRemaining: string;
 
+  supportIdLabel: string;
+  supportCopy: string;
+  supportCopied: string;
+
   /** Consent panel chrome only — the notice itself comes from the server. */
   consentHeading: string;
   consentAccept: string;
@@ -93,6 +100,8 @@ export interface Strings {
   err_browser_unsupported: string;
   err_network_error: string;
   err_contract_violation: string;
+  err_agent_unavailable: string;
+  err_agent_lost: string;
   err_transport_failed: string;
   err_reconnect_failed: string;
   err_consent_declined: string;
@@ -118,11 +127,14 @@ const en: Strings = {
   micTitle: 'Allow your microphone',
   micBody: 'Your browser is asking for permission. The demo cannot hear you until you allow it.',
 
-  connectingTitle: 'Connecting…',
-  connectingBody: 'Setting up your demo call.',
+  connectingTitle: 'Connecting you to the secretary…',
+  connectingBody: 'Waiting for her to pick up.',
 
   listeningTitle: 'She is listening',
   listeningBody: 'Talk normally — she will answer you.',
+
+  thinkingTitle: 'She is thinking',
+  thinkingBody: 'Working out what to say next.',
 
   speakingTitle: 'She is speaking',
   speakingBody: 'Interrupt her whenever you like.',
@@ -145,6 +157,10 @@ const en: Strings = {
   disconnect: 'End the call',
   timeRemaining: 'left',
 
+  supportIdLabel: 'Support ID',
+  supportCopy: 'Copy',
+  supportCopied: 'Copied',
+
   consentHeading: 'Before we begin',
   consentAccept: 'I agree — start the call',
   consentDecline: 'No thanks',
@@ -156,6 +172,8 @@ const en: Strings = {
   err_browser_unsupported: 'This browser can’t run the voice demo. Try Chrome, Edge or Safari.',
   err_network_error: 'We couldn’t reach the demo. Check your connection and try again.',
   err_contract_violation: 'The demo replied with something we couldn’t use. Our team has been notified.',
+  err_agent_unavailable: 'The secretary didn’t pick up. Nothing was recorded — please try again.',
+  err_agent_lost: 'The secretary dropped off the call. Please try again.',
   err_transport_failed: 'We couldn’t join the call.',
   err_reconnect_failed: 'We lost the connection and couldn’t get it back.',
   err_consent_declined: 'No problem — nothing was recorded.',
@@ -181,11 +199,14 @@ const he: Strings = {
   micTitle: 'אשרו גישה למיקרופון',
   micBody: 'הדפדפן מבקש הרשאה. בלי אישור הדמו לא יוכל לשמוע אתכם.',
 
-  connectingTitle: 'מתחברים…',
-  connectingBody: 'מכינים את שיחת הדמו שלכם.',
+  connectingTitle: 'מחברים אתכם למזכירה…',
+  connectingBody: 'ממתינים שהיא תענה.',
 
   listeningTitle: 'היא מקשיבה',
   listeningBody: 'דברו רגיל — היא תענה לכם.',
+
+  thinkingTitle: 'היא חושבת',
+  thinkingBody: 'מנסחת את התשובה.',
 
   speakingTitle: 'היא מדברת',
   speakingBody: 'אפשר להפריע לה בכל רגע.',
@@ -208,6 +229,10 @@ const he: Strings = {
   disconnect: 'סיום השיחה',
   timeRemaining: 'נותרו',
 
+  supportIdLabel: 'מזהה תמיכה',
+  supportCopy: 'העתקה',
+  supportCopied: 'הועתק',
+
   consentHeading: 'לפני שמתחילים',
   consentAccept: 'אני מסכים — התחילו את השיחה',
   consentDecline: 'לא, תודה',
@@ -219,6 +244,8 @@ const he: Strings = {
   err_browser_unsupported: 'הדפדפן הזה לא תומך בדמו הקולי. נסו כרום, אדג׳ או ספארי.',
   err_network_error: 'לא הצלחנו להגיע לדמו. בדקו את החיבור ונסו שוב.',
   err_contract_violation: 'הדמו החזיר תשובה שלא הצלחנו לקרוא. הצוות שלנו עודכן.',
+  err_agent_unavailable: 'המזכירה לא ענתה. שום דבר לא הוקלט — נסו שוב.',
+  err_agent_lost: 'המזכירה התנתקה מהשיחה. נסו שוב.',
   err_transport_failed: 'לא הצלחנו להצטרף לשיחה.',
   err_reconnect_failed: 'החיבור נותק ולא הצלחנו לשחזר אותו.',
   err_consent_declined: 'אין בעיה — שום דבר לא הוקלט.',
@@ -244,11 +271,14 @@ const ar: Strings = {
   micTitle: 'اسمح باستخدام الميكروفون',
   micBody: 'يطلب المتصفح الإذن. لن يتمكن العرض من سماعك قبل الموافقة.',
 
-  connectingTitle: 'جارٍ الاتصال…',
-  connectingBody: 'نُجهّز مكالمة العرض الخاصة بك.',
+  connectingTitle: 'جارٍ توصيلك بالسكرتيرة…',
+  connectingBody: 'في انتظار أن تردّ.',
 
   listeningTitle: 'هي تستمع',
   listeningBody: 'تحدّث بشكل طبيعي — ستردّ عليك.',
+
+  thinkingTitle: 'هي تفكّر',
+  thinkingBody: 'تُعدّ ردّها الآن.',
 
   speakingTitle: 'هي تتحدث',
   speakingBody: 'يمكنك مقاطعتها في أي وقت.',
@@ -271,6 +301,10 @@ const ar: Strings = {
   disconnect: 'إنهاء المكالمة',
   timeRemaining: 'متبقٍ',
 
+  supportIdLabel: 'معرّف الدعم',
+  supportCopy: 'نسخ',
+  supportCopied: 'تم النسخ',
+
   consentHeading: 'قبل أن نبدأ',
   consentAccept: 'أوافق — ابدأ المكالمة',
   consentDecline: 'لا، شكرًا',
@@ -282,6 +316,8 @@ const ar: Strings = {
   err_browser_unsupported: 'هذا المتصفح لا يدعم العرض الصوتي. جرّب Chrome أو Edge أو Safari.',
   err_network_error: 'تعذّر الوصول إلى العرض. تحقق من اتصالك وحاول مجددًا.',
   err_contract_violation: 'ردّ العرض بشيء تعذّر علينا قراءته. تم إبلاغ فريقنا.',
+  err_agent_unavailable: 'لم تردّ السكرتيرة. لم يُسجَّل أي شيء — حاول مرة أخرى.',
+  err_agent_lost: 'انقطعت السكرتيرة عن المكالمة. حاول مرة أخرى.',
   err_transport_failed: 'تعذّر الانضمام إلى المكالمة.',
   err_reconnect_failed: 'فقدنا الاتصال ولم نتمكن من استعادته.',
   err_consent_declined: 'لا مشكلة — لم يُسجَّل أي شيء.',

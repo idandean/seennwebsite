@@ -9,8 +9,9 @@
 import { PublicVoiceDemoClient, DemoRequestError, rateLimitScopeFor } from './client';
 import { createTurnstileProvider } from './turnstile';
 import { TransportError, createLiveKitTransport } from './transport';
+import { readinessFor } from './agent';
 import { directionFor, resolveLocale, stringsFor } from './i18n';
-import { initialContext, isActive, reduce } from './state';
+import { agentIsReady, initialContext, isActive, reduce } from './state';
 import { logger } from './logging';
 import { unavailableReason } from './config';
 import type { VoiceDemoConfig } from './config';
@@ -37,6 +38,7 @@ const ORB_MODIFIER: Record<DemoState, string> = {
   requestingMicrophone: 'prompting',
   connecting: 'submitting',
   listening: 'dialing',
+  assistantThinking: 'submitting',
   assistantSpeaking: 'dialing',
   reconnecting: 'submitting',
   finished: 'onTheWay',
@@ -100,7 +102,10 @@ export class VoiceDemoWidget {
    * and the console so a future failure is diagnosable without a repro; never
    * shown to the visitor, and never carries a token or device detail.
    */
-  private lastTransportPhase: TransportPhase | 'unknown' | null = null;
+  private lastTransportPhase: TransportPhase | 'agent_readiness' | 'unknown' | null = null;
+
+  /** The agent no-show timer, held separately so readiness can cancel it. */
+  private agentTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private timers: ReturnType<typeof setTimeout>[] = [];
   private tickTimer: ReturnType<typeof setInterval> | null = null;
@@ -119,6 +124,10 @@ export class VoiceDemoWidget {
   private consentLink!: HTMLAnchorElement;
   private consentAccept!: HTMLButtonElement;
   private consentDecline!: HTMLButtonElement;
+  private supportPanel!: HTMLElement;
+  private supportLabel!: HTMLElement;
+  private supportValue!: HTMLElement;
+  private supportCopy!: HTMLButtonElement;
   private ctaWrap!: HTMLElement;
   private ctaLink!: HTMLAnchorElement;
   private audioElement!: HTMLAudioElement;
@@ -171,6 +180,16 @@ export class VoiceDemoWidget {
     return this.context;
   }
 
+  /** Browser joined the room. Diagnostic only — never treat as readiness. */
+  get transportConnected(): boolean {
+    return this.context.roomConnected;
+  }
+
+  /** The backend session id, surviving teardown so support can quote it. */
+  get supportId(): string | null {
+    return this.context.lastSessionId;
+  }
+
   // --- DOM ----------------------------------------------------------------
 
   private build(): void {
@@ -206,6 +225,11 @@ export class VoiceDemoWidget {
           <button type="button" class="svd__consent-decline"></button>
         </div>
       </div>
+      <div class="svd__support" hidden>
+        <span class="svd__support-label"></span>
+        <code class="svd__support-id"></code>
+        <button type="button" class="svd__support-copy"></button>
+      </div>
       <button type="button" class="svd__disconnect" hidden></button>
       <div class="svd__cta" hidden>
         <a class="svd__cta-button" href="#"></a>
@@ -232,6 +256,10 @@ export class VoiceDemoWidget {
     this.consentLink = q<HTMLAnchorElement>('.svd__consent-link');
     this.consentAccept = q<HTMLButtonElement>('.svd__consent-accept');
     this.consentDecline = q<HTMLButtonElement>('.svd__consent-decline');
+    this.supportPanel = q('.svd__support');
+    this.supportLabel = q('.svd__support-label');
+    this.supportValue = q('.svd__support-id');
+    this.supportCopy = q<HTMLButtonElement>('.svd__support-copy');
     this.ctaWrap = q('.svd__cta');
     this.ctaLink = q<HTMLAnchorElement>('.svd__cta-button');
     this.audioElement = q<HTMLAudioElement>('.svd__audio');
@@ -246,6 +274,13 @@ export class VoiceDemoWidget {
     });
     this.disconnectButton.addEventListener('click', () => {
       void this.disconnect('user_disconnected');
+    });
+    this.supportCopy.addEventListener('click', () => {
+      const id = this.context.lastSessionId;
+      if (!id) return;
+      // Only the session id ever reaches the clipboard.
+      void navigator.clipboard?.writeText?.(id).catch(() => undefined);
+      this.supportCopy.textContent = this.strings.supportCopied;
     });
     this.consentAccept.addEventListener('click', () => this.consentDecision?.(true));
     this.consentDecline.addEventListener('click', () => this.consentDecision?.(false));
@@ -339,6 +374,18 @@ export class VoiceDemoWidget {
       }
     }
 
+    // Support ID — shown when a readiness failure leaves something to quote.
+    const agentFailure =
+      state === 'error' &&
+      (this.context.errorCode === 'agent_unavailable' || this.context.errorCode === 'agent_lost');
+    const supportId = this.context.lastSessionId;
+    this.supportPanel.hidden = !(agentFailure && supportId);
+    if (agentFailure && supportId) {
+      this.supportLabel.textContent = s.supportIdLabel;
+      this.supportValue.textContent = supportId;
+      this.supportCopy.textContent = s.supportCopy;
+    }
+
     // Conversion moment
     const showCta = state === 'finished' || state === 'rateLimited';
     this.ctaWrap.hidden = !showCta;
@@ -363,6 +410,8 @@ export class VoiceDemoWidget {
         return { title: s.connectingTitle, body: s.connectingBody };
       case 'listening':
         return { title: s.listeningTitle, body: `${s.listeningBody} ${this.remainingLabel()}` };
+      case 'assistantThinking':
+        return { title: s.thinkingTitle, body: `${s.thinkingBody} ${this.remainingLabel()}` };
       case 'assistantSpeaking':
         return { title: s.speakingTitle, body: `${s.speakingBody} ${this.remainingLabel()}` };
       case 'reconnecting':
@@ -501,8 +550,10 @@ export class VoiceDemoWidget {
     }
 
     this.beginCountdown(session.expiresAt);
-    this.dispatch({ type: 'CONNECTED' });
-    track('voice_demo_connected', { voice_demo_session: session.sessionId });
+    // NOTE: no state change here. Our own connection is not readiness — the
+    // transport's onConnected records it, and only the remote agent's
+    // lk.agent.state can move the UI to "listening".
+    track('voice_demo_room_connected', { voice_demo_session: session.sessionId });
   }
 
   /**
@@ -619,7 +670,12 @@ export class VoiceDemoWidget {
     };
 
     return {
-      onConnected: guard(() => undefined),
+      onConnected: guard(() => {
+        // Room joined and microphone published. Deliberately NOT readiness:
+        // this only records that our half succeeded.
+        this.dispatch({ type: 'ROOM_CONNECTED' });
+        this.startAgentReadinessTimeout(attempt);
+      }),
       onDisconnected: guard(() => {
         if (isActive(this.context.state)) void this.disconnect('remote_disconnected');
       }),
@@ -631,18 +687,87 @@ export class VoiceDemoWidget {
         });
       }),
       onReconnected: guard(() => this.dispatch({ type: 'RECONNECTED' })),
-      onAssistantSpeaking: (speaking: boolean) =>
-        guard(() =>
-          this.dispatch({
-            type: speaking ? 'ASSISTANT_SPEAKING_START' : 'ASSISTANT_SPEAKING_END',
-          }),
-        )(),
+      onAgentState: (raw: string | null) => guard(() => this.applyAgentState(raw))(),
       onLevel: (level: number) => {
         if (this.destroyed) return;
         this.orb.style.setProperty('--orb-level', level.toFixed(3));
       },
       onError: guard(() => this.fail('transport_failed')),
     };
+  }
+
+  /**
+   * Translates the remote agent's `lk.agent.state` into UI state.
+   *
+   * The whole point: nothing here reads our own microphone or connection. An
+   * unrecognised or absent value is `pending`, never ready — so a future SDK
+   * value cannot make the page claim the secretary is listening.
+   */
+  private applyAgentState(raw: string | null): void {
+    const readiness = readinessFor(raw);
+
+    switch (readiness) {
+      case 'ready':
+        this.clearAgentReadinessTimeout();
+        this.dispatch({ type: 'AGENT_READY' });
+        return;
+      case 'thinking':
+        this.clearAgentReadinessTimeout();
+        this.dispatch({ type: 'AGENT_THINKING' });
+        return;
+      case 'speaking':
+        this.clearAgentReadinessTimeout();
+        this.dispatch({ type: 'AGENT_SPEAKING' });
+        return;
+      case 'lost':
+        // Reported failure, or the agent left after having been ready.
+        this.failAgent(this.context.roomConnected && agentIsReady(this.context.state)
+          ? 'agent_lost'
+          : 'agent_unavailable');
+        return;
+      case 'pending':
+        if (raw === null && agentIsReady(this.context.state)) {
+          // It was ready and is now gone from the room entirely.
+          this.failAgent('agent_lost');
+          return;
+        }
+        this.dispatch({ type: 'AGENT_PENDING' });
+        return;
+    }
+  }
+
+  /**
+   * The agent has this long to appear and report readiness. Without it a
+   * visitor sits on "connecting" forever when only the browser joins — which
+   * is precisely what happened on the failed staging call.
+   */
+  private startAgentReadinessTimeout(attempt: number): void {
+    this.clearAgentReadinessTimeout();
+    const ms = this.config.agentReadinessTimeoutSeconds * 1000;
+    this.agentTimeout = setTimeout(() => {
+      if (this.destroyed || this.context.attempt !== attempt) return;
+      if (agentIsReady(this.context.state)) return;
+      this.failAgent('agent_unavailable');
+    }, ms);
+  }
+
+  private clearAgentReadinessTimeout(): void {
+    if (this.agentTimeout !== null) {
+      clearTimeout(this.agentTimeout);
+      this.agentTimeout = null;
+    }
+  }
+
+  /** Terminal agent failure: error plus a full teardown of everything held. */
+  private failAgent(code: 'agent_unavailable' | 'agent_lost'): void {
+    if (!isActive(this.context.state)) return;
+    this.lastTransportPhase = 'agent_readiness';
+    logger.error('agent readiness failed', {
+      phase: 'agent_readiness',
+      code,
+      session: this.context.lastSessionId,
+    });
+    this.fail(code);
   }
 
   private async requestMicrophone(): Promise<MediaStream> {
@@ -691,6 +816,7 @@ export class VoiceDemoWidget {
   }
 
   private fail(code: AnyErrorCode): void {
+    const sessionId = this.context.lastSessionId;
     this.releaseMicrophone();
     void this.teardownTransport();
     this.clearTimers();
@@ -698,11 +824,14 @@ export class VoiceDemoWidget {
     track('voice_demo_error', {
       voice_demo_code: code,
       ...(this.lastTransportPhase ? { voice_demo_phase: this.lastTransportPhase } : {}),
+      // The backend session id is the one identifier support can act on. It is
+      // not a credential and carries nothing about the token or the room.
+      ...(sessionId ? { voice_demo_session: sessionId } : {}),
     });
   }
 
   /** Exposed for QA and tests; not rendered anywhere. */
-  get transportPhase(): TransportPhase | 'unknown' | null {
+  get transportPhase(): TransportPhase | 'agent_readiness' | 'unknown' | null {
     return this.lastTransportPhase;
   }
 
@@ -775,6 +904,7 @@ export class VoiceDemoWidget {
   }
 
   private clearTimers(): void {
+    this.clearAgentReadinessTimeout();
     this.timers.forEach(clearTimeout);
     this.timers = [];
     if (this.tickTimer !== null) {

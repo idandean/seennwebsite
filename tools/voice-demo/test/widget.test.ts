@@ -48,9 +48,19 @@ function fakeMicrophone() {
   return { stream: stream as unknown as MediaStream, track };
 }
 
-function fakeTransport() {
+/**
+ * The default fake is a call where everything works, agent included: it
+ * announces the room connection and then a ready agent, because readiness now
+ * comes from the agent rather than from our own publication. Pass
+ * `{ autoReady: false }` to stop at room-connected.
+ */
+function fakeTransport(options: { autoReady?: boolean } = {}) {
+  const autoReady = options.autoReady !== false;
   let captured: TransportEvents | null = null;
-  const connect = vi.fn(async (_options: ConnectOptions) => undefined);
+  const connect = vi.fn(async (_options: ConnectOptions) => {
+    captured?.onConnected();
+    if (autoReady) captured?.onAgentState('listening');
+  });
   const disconnect = vi.fn(async () => undefined);
 
   const factory = (events: TransportEvents): VoiceTransport => {
@@ -395,7 +405,7 @@ describe('happy path', () => {
     expect(transport.connect.mock.calls[0]![0].token).toBe('jwt');
   });
 
-  it('splits listening and assistantSpeaking from transport events', async () => {
+  it('splits listening / thinking / speaking from the remote agent state', async () => {
     const mic = fakeMicrophone();
     const client = stubClient({ status: 200, body: SESSION_BODY });
     const transport = fakeTransport();
@@ -409,9 +419,13 @@ describe('happy path', () => {
     await widget.start();
     await flush();
 
-    transport.events.onAssistantSpeaking(true);
+    transport.events.onAgentState('listening');
+    expect(widget.state).toBe('listening');
+    transport.events.onAgentState('thinking');
+    expect(widget.state).toBe('assistantThinking');
+    transport.events.onAgentState('speaking');
     expect(widget.state).toBe('assistantSpeaking');
-    transport.events.onAssistantSpeaking(false);
+    transport.events.onAgentState('listening');
     expect(widget.state).toBe('listening');
   });
 
@@ -844,12 +858,14 @@ describe('transport failure diagnostics', () => {
     const { widget } = build(enabledConfig(), {
       requestMicrophone: async () => mic.stream,
       createClient: client.create,
-      createTransport: () => ({
+      createTransport: (bus) => ({
         connect: async () => {
           if (failFirst) {
             failFirst = false;
             throw new TransportError('room_connect');
           }
+          bus.onConnected();
+          bus.onAgentState('listening');
         },
         disconnect: async () => undefined,
       }),

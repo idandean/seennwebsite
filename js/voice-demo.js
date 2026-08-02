@@ -267,6 +267,7 @@
     livekitModuleUrl: LIVEKIT_MODULE_URL,
     maxSessionSeconds: 120,
     reconnectTimeoutSeconds: 20,
+    agentReadinessTimeoutSeconds: 20,
     signupUrl: "https://app.seenn.ai/auth/signup",
     orbSize: 200,
     renderWhenUnavailable: false
@@ -347,10 +348,12 @@
     startLabel: "Start the voice demo",
     micTitle: "Allow your microphone",
     micBody: "Your browser is asking for permission. The demo cannot hear you until you allow it.",
-    connectingTitle: "Connecting\u2026",
-    connectingBody: "Setting up your demo call.",
+    connectingTitle: "Connecting you to the secretary\u2026",
+    connectingBody: "Waiting for her to pick up.",
     listeningTitle: "She is listening",
     listeningBody: "Talk normally \u2014 she will answer you.",
+    thinkingTitle: "She is thinking",
+    thinkingBody: "Working out what to say next.",
     speakingTitle: "She is speaking",
     speakingBody: "Interrupt her whenever you like.",
     reconnectingTitle: "Reconnecting\u2026",
@@ -367,6 +370,9 @@
     retry: "Try again",
     disconnect: "End the call",
     timeRemaining: "left",
+    supportIdLabel: "Support ID",
+    supportCopy: "Copy",
+    supportCopied: "Copied",
     consentHeading: "Before we begin",
     consentAccept: "I agree \u2014 start the call",
     consentDecline: "No thanks",
@@ -377,6 +383,8 @@
     err_browser_unsupported: "This browser can\u2019t run the voice demo. Try Chrome, Edge or Safari.",
     err_network_error: "We couldn\u2019t reach the demo. Check your connection and try again.",
     err_contract_violation: "The demo replied with something we couldn\u2019t use. Our team has been notified.",
+    err_agent_unavailable: "The secretary didn\u2019t pick up. Nothing was recorded \u2014 please try again.",
+    err_agent_lost: "The secretary dropped off the call. Please try again.",
     err_transport_failed: "We couldn\u2019t join the call.",
     err_reconnect_failed: "We lost the connection and couldn\u2019t get it back.",
     err_consent_declined: "No problem \u2014 nothing was recorded.",
@@ -398,10 +406,12 @@
     startLabel: "\u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D0\u05EA \u05D4\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9",
     micTitle: "\u05D0\u05E9\u05E8\u05D5 \u05D2\u05D9\u05E9\u05D4 \u05DC\u05DE\u05D9\u05E7\u05E8\u05D5\u05E4\u05D5\u05DF",
     micBody: "\u05D4\u05D3\u05E4\u05D3\u05E4\u05DF \u05DE\u05D1\u05E7\u05E9 \u05D4\u05E8\u05E9\u05D0\u05D4. \u05D1\u05DC\u05D9 \u05D0\u05D9\u05E9\u05D5\u05E8 \u05D4\u05D3\u05DE\u05D5 \u05DC\u05D0 \u05D9\u05D5\u05DB\u05DC \u05DC\u05E9\u05DE\u05D5\u05E2 \u05D0\u05EA\u05DB\u05DD.",
-    connectingTitle: "\u05DE\u05EA\u05D7\u05D1\u05E8\u05D9\u05DD\u2026",
-    connectingBody: "\u05DE\u05DB\u05D9\u05E0\u05D9\u05DD \u05D0\u05EA \u05E9\u05D9\u05D7\u05EA \u05D4\u05D3\u05DE\u05D5 \u05E9\u05DC\u05DB\u05DD.",
+    connectingTitle: "\u05DE\u05D7\u05D1\u05E8\u05D9\u05DD \u05D0\u05EA\u05DB\u05DD \u05DC\u05DE\u05D6\u05DB\u05D9\u05E8\u05D4\u2026",
+    connectingBody: "\u05DE\u05DE\u05EA\u05D9\u05E0\u05D9\u05DD \u05E9\u05D4\u05D9\u05D0 \u05EA\u05E2\u05E0\u05D4.",
     listeningTitle: "\u05D4\u05D9\u05D0 \u05DE\u05E7\u05E9\u05D9\u05D1\u05D4",
     listeningBody: "\u05D3\u05D1\u05E8\u05D5 \u05E8\u05D2\u05D9\u05DC \u2014 \u05D4\u05D9\u05D0 \u05EA\u05E2\u05E0\u05D4 \u05DC\u05DB\u05DD.",
+    thinkingTitle: "\u05D4\u05D9\u05D0 \u05D7\u05D5\u05E9\u05D1\u05EA",
+    thinkingBody: "\u05DE\u05E0\u05E1\u05D7\u05EA \u05D0\u05EA \u05D4\u05EA\u05E9\u05D5\u05D1\u05D4.",
     speakingTitle: "\u05D4\u05D9\u05D0 \u05DE\u05D3\u05D1\u05E8\u05EA",
     speakingBody: "\u05D0\u05E4\u05E9\u05E8 \u05DC\u05D4\u05E4\u05E8\u05D9\u05E2 \u05DC\u05D4 \u05D1\u05DB\u05DC \u05E8\u05D2\u05E2.",
     reconnectingTitle: "\u05DE\u05EA\u05D7\u05D1\u05E8\u05D9\u05DD \u05DE\u05D7\u05D3\u05E9\u2026",
@@ -418,6 +428,9 @@
     retry: "\u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1",
     disconnect: "\u05E1\u05D9\u05D5\u05DD \u05D4\u05E9\u05D9\u05D7\u05D4",
     timeRemaining: "\u05E0\u05D5\u05EA\u05E8\u05D5",
+    supportIdLabel: "\u05DE\u05D6\u05D4\u05D4 \u05EA\u05DE\u05D9\u05DB\u05D4",
+    supportCopy: "\u05D4\u05E2\u05EA\u05E7\u05D4",
+    supportCopied: "\u05D4\u05D5\u05E2\u05EA\u05E7",
     consentHeading: "\u05DC\u05E4\u05E0\u05D9 \u05E9\u05DE\u05EA\u05D7\u05D9\u05DC\u05D9\u05DD",
     consentAccept: "\u05D0\u05E0\u05D9 \u05DE\u05E1\u05DB\u05D9\u05DD \u2014 \u05D4\u05EA\u05D7\u05D9\u05DC\u05D5 \u05D0\u05EA \u05D4\u05E9\u05D9\u05D7\u05D4",
     consentDecline: "\u05DC\u05D0, \u05EA\u05D5\u05D3\u05D4",
@@ -428,6 +441,8 @@
     err_browser_unsupported: "\u05D4\u05D3\u05E4\u05D3\u05E4\u05DF \u05D4\u05D6\u05D4 \u05DC\u05D0 \u05EA\u05D5\u05DE\u05DA \u05D1\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9. \u05E0\u05E1\u05D5 \u05DB\u05E8\u05D5\u05DD, \u05D0\u05D3\u05D2\u05F3 \u05D0\u05D5 \u05E1\u05E4\u05D0\u05E8\u05D9.",
     err_network_error: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D4\u05D2\u05D9\u05E2 \u05DC\u05D3\u05DE\u05D5. \u05D1\u05D3\u05E7\u05D5 \u05D0\u05EA \u05D4\u05D7\u05D9\u05D1\u05D5\u05E8 \u05D5\u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_contract_violation: "\u05D4\u05D3\u05DE\u05D5 \u05D4\u05D7\u05D6\u05D9\u05E8 \u05EA\u05E9\u05D5\u05D1\u05D4 \u05E9\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05E7\u05E8\u05D5\u05D0. \u05D4\u05E6\u05D5\u05D5\u05EA \u05E9\u05DC\u05E0\u05D5 \u05E2\u05D5\u05D3\u05DB\u05DF.",
+    err_agent_unavailable: "\u05D4\u05DE\u05D6\u05DB\u05D9\u05E8\u05D4 \u05DC\u05D0 \u05E2\u05E0\u05EA\u05D4. \u05E9\u05D5\u05DD \u05D3\u05D1\u05E8 \u05DC\u05D0 \u05D4\u05D5\u05E7\u05DC\u05D8 \u2014 \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
+    err_agent_lost: "\u05D4\u05DE\u05D6\u05DB\u05D9\u05E8\u05D4 \u05D4\u05EA\u05E0\u05EA\u05E7\u05D4 \u05DE\u05D4\u05E9\u05D9\u05D7\u05D4. \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_transport_failed: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D4\u05E6\u05D8\u05E8\u05E3 \u05DC\u05E9\u05D9\u05D7\u05D4.",
     err_reconnect_failed: "\u05D4\u05D7\u05D9\u05D1\u05D5\u05E8 \u05E0\u05D5\u05EA\u05E7 \u05D5\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05E9\u05D7\u05D6\u05E8 \u05D0\u05D5\u05EA\u05D5.",
     err_consent_declined: "\u05D0\u05D9\u05DF \u05D1\u05E2\u05D9\u05D4 \u2014 \u05E9\u05D5\u05DD \u05D3\u05D1\u05E8 \u05DC\u05D0 \u05D4\u05D5\u05E7\u05DC\u05D8.",
@@ -449,10 +464,12 @@
     startLabel: "\u0627\u0628\u062F\u0623 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A",
     micTitle: "\u0627\u0633\u0645\u062D \u0628\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0627\u0644\u0645\u064A\u0643\u0631\u0648\u0641\u0648\u0646",
     micBody: "\u064A\u0637\u0644\u0628 \u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0627\u0644\u0625\u0630\u0646. \u0644\u0646 \u064A\u062A\u0645\u0643\u0646 \u0627\u0644\u0639\u0631\u0636 \u0645\u0646 \u0633\u0645\u0627\u0639\u0643 \u0642\u0628\u0644 \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629.",
-    connectingTitle: "\u062C\u0627\u0631\u064D \u0627\u0644\u0627\u062A\u0635\u0627\u0644\u2026",
-    connectingBody: "\u0646\u064F\u062C\u0647\u0651\u0632 \u0645\u0643\u0627\u0644\u0645\u0629 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062E\u0627\u0635\u0629 \u0628\u0643.",
+    connectingTitle: "\u062C\u0627\u0631\u064D \u062A\u0648\u0635\u064A\u0644\u0643 \u0628\u0627\u0644\u0633\u0643\u0631\u062A\u064A\u0631\u0629\u2026",
+    connectingBody: "\u0641\u064A \u0627\u0646\u062A\u0638\u0627\u0631 \u0623\u0646 \u062A\u0631\u062F\u0651.",
     listeningTitle: "\u0647\u064A \u062A\u0633\u062A\u0645\u0639",
     listeningBody: "\u062A\u062D\u062F\u0651\u062B \u0628\u0634\u0643\u0644 \u0637\u0628\u064A\u0639\u064A \u2014 \u0633\u062A\u0631\u062F\u0651 \u0639\u0644\u064A\u0643.",
+    thinkingTitle: "\u0647\u064A \u062A\u0641\u0643\u0651\u0631",
+    thinkingBody: "\u062A\u064F\u0639\u062F\u0651 \u0631\u062F\u0651\u0647\u0627 \u0627\u0644\u0622\u0646.",
     speakingTitle: "\u0647\u064A \u062A\u062A\u062D\u062F\u062B",
     speakingBody: "\u064A\u0645\u0643\u0646\u0643 \u0645\u0642\u0627\u0637\u0639\u062A\u0647\u0627 \u0641\u064A \u0623\u064A \u0648\u0642\u062A.",
     reconnectingTitle: "\u062C\u0627\u0631\u064D \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u0627\u062A\u0635\u0627\u0644\u2026",
@@ -469,6 +486,9 @@
     retry: "\u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649",
     disconnect: "\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629",
     timeRemaining: "\u0645\u062A\u0628\u0642\u064D",
+    supportIdLabel: "\u0645\u0639\u0631\u0651\u0641 \u0627\u0644\u062F\u0639\u0645",
+    supportCopy: "\u0646\u0633\u062E",
+    supportCopied: "\u062A\u0645 \u0627\u0644\u0646\u0633\u062E",
     consentHeading: "\u0642\u0628\u0644 \u0623\u0646 \u0646\u0628\u062F\u0623",
     consentAccept: "\u0623\u0648\u0627\u0641\u0642 \u2014 \u0627\u0628\u062F\u0623 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629",
     consentDecline: "\u0644\u0627\u060C \u0634\u0643\u0631\u064B\u0627",
@@ -479,6 +499,8 @@
     err_browser_unsupported: "\u0647\u0630\u0627 \u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0644\u0627 \u064A\u062F\u0639\u0645 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A. \u062C\u0631\u0651\u0628 Chrome \u0623\u0648 Edge \u0623\u0648 Safari.",
     err_network_error: "\u062A\u0639\u0630\u0651\u0631 \u0627\u0644\u0648\u0635\u0648\u0644 \u0625\u0644\u0649 \u0627\u0644\u0639\u0631\u0636. \u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u062A\u0635\u0627\u0644\u0643 \u0648\u062D\u0627\u0648\u0644 \u0645\u062C\u062F\u062F\u064B\u0627.",
     err_contract_violation: "\u0631\u062F\u0651 \u0627\u0644\u0639\u0631\u0636 \u0628\u0634\u064A\u0621 \u062A\u0639\u0630\u0651\u0631 \u0639\u0644\u064A\u0646\u0627 \u0642\u0631\u0627\u0621\u062A\u0647. \u062A\u0645 \u0625\u0628\u0644\u0627\u063A \u0641\u0631\u064A\u0642\u0646\u0627.",
+    err_agent_unavailable: "\u0644\u0645 \u062A\u0631\u062F\u0651 \u0627\u0644\u0633\u0643\u0631\u062A\u064A\u0631\u0629. \u0644\u0645 \u064A\u064F\u0633\u062C\u064E\u0651\u0644 \u0623\u064A \u0634\u064A\u0621 \u2014 \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
+    err_agent_lost: "\u0627\u0646\u0642\u0637\u0639\u062A \u0627\u0644\u0633\u0643\u0631\u062A\u064A\u0631\u0629 \u0639\u0646 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629. \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
     err_transport_failed: "\u062A\u0639\u0630\u0651\u0631 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645 \u0625\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629.",
     err_reconnect_failed: "\u0641\u0642\u062F\u0646\u0627 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0648\u0644\u0645 \u0646\u062A\u0645\u0643\u0646 \u0645\u0646 \u0627\u0633\u062A\u0639\u0627\u062F\u062A\u0647.",
     err_consent_declined: "\u0644\u0627 \u0645\u0634\u0643\u0644\u0629 \u2014 \u0644\u0645 \u064A\u064F\u0633\u062C\u064E\u0651\u0644 \u0623\u064A \u0634\u064A\u0621.",
@@ -763,6 +785,43 @@
     };
   }
 
+  // src/agent.ts
+  var AGENT_STATE_ATTRIBUTE = "lk.agent.state";
+  var DOCUMENTED_AGENT_STATES = [
+    "connecting",
+    "pre-connect-buffering",
+    "initializing",
+    "idle",
+    "listening",
+    "thinking",
+    "speaking",
+    "disconnected",
+    "failed"
+  ];
+  var READINESS = {
+    // Not ready yet. The agent is present but cannot hear anyone.
+    connecting: "pending",
+    "pre-connect-buffering": "pending",
+    initializing: "pending",
+    idle: "pending",
+    // Ready.
+    listening: "ready",
+    thinking: "thinking",
+    speaking: "speaking",
+    // Terminal.
+    disconnected: "lost",
+    failed: "lost"
+  };
+  function isDocumentedAgentState(value) {
+    return DOCUMENTED_AGENT_STATES.includes(value);
+  }
+  function readinessFor(raw) {
+    if (raw === null || raw === void 0) return "pending";
+    const value = raw.trim();
+    if (!isDocumentedAgentState(value)) return "pending";
+    return READINESS[value];
+  }
+
   // src/transport.ts
   var TransportError = class extends Error {
     constructor(phase, cause) {
@@ -774,6 +833,12 @@
       this.causeName = causeName;
     }
   };
+  function isAgentParticipant(participant) {
+    var _a;
+    if (participant.isLocal) return false;
+    if (participant.isAgent === true) return true;
+    return typeof ((_a = participant.attributes) == null ? void 0 : _a[AGENT_STATE_ATTRIBUTE]) === "string";
+  }
   function smooth(previous, next) {
     return next > previous ? next : previous + (next - previous) * 0.25;
   }
@@ -782,8 +847,8 @@
     let room = null;
     let rafId = 0;
     let level = 0;
-    let speaking = false;
     let disposed = false;
+    let lastAgentState;
     const load = (_a = options.loadModule) != null ? _a : (url) => import(
       /* @vite-ignore */
       url
@@ -809,18 +874,13 @@
         });
         level = smooth(level, peak);
         events.onLevel(level);
-        const nowSpeaking = speaking ? level > 0.06 : level > 0.14;
-        if (nowSpeaking !== speaking) {
-          speaking = nowSpeaking;
-          events.onAssistantSpeaking(speaking);
-        }
         rafId = requestAnimationFrame(tick);
       };
       rafId = requestAnimationFrame(tick);
     }
     return {
       async connect({ url, token, microphone, audioElement }) {
-        var _a2, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e, _f, _g, _h;
         const lk = await load(options.moduleUrl).catch((cause) => {
           logger.error("failed to load the audio engine", { module: safeUrl(options.moduleUrl) });
           throw new TransportError("module_load", cause);
@@ -834,9 +894,33 @@
           (_a3 = track2.attach) == null ? void 0 : _a3.call(track2, audioElement);
           void audioElement.play().catch(() => void 0);
         });
-        instance.on((_b = lk.RoomEvent["Reconnecting"]) != null ? _b : "reconnecting", () => events.onReconnecting());
-        instance.on((_c = lk.RoomEvent["Reconnected"]) != null ? _c : "reconnected", () => events.onReconnected());
-        instance.on((_d = lk.RoomEvent["Disconnected"]) != null ? _d : "disconnected", () => events.onDisconnected());
+        const findAgent = () => {
+          var _a3;
+          const remotes = (_a3 = instance.remoteParticipants) != null ? _a3 : instance.participants;
+          let found;
+          remotes == null ? void 0 : remotes.forEach((participant) => {
+            if (!found && isAgentParticipant(participant)) found = participant;
+          });
+          return found;
+        };
+        const reportAgent = () => {
+          var _a3, _b2;
+          if (disposed) return;
+          const agent = findAgent();
+          const next = agent ? (_b2 = (_a3 = agent.attributes) == null ? void 0 : _a3[AGENT_STATE_ATTRIBUTE]) != null ? _b2 : null : null;
+          if (next === lastAgentState) return;
+          lastAgentState = next;
+          events.onAgentState(next);
+        };
+        instance.on((_b = lk.RoomEvent["ParticipantConnected"]) != null ? _b : "participantConnected", reportAgent);
+        instance.on((_c = lk.RoomEvent["ParticipantDisconnected"]) != null ? _c : "participantDisconnected", reportAgent);
+        instance.on(
+          (_d = lk.RoomEvent["ParticipantAttributesChanged"]) != null ? _d : "participantAttributesChanged",
+          reportAgent
+        );
+        instance.on((_e = lk.RoomEvent["Reconnecting"]) != null ? _e : "reconnecting", () => events.onReconnecting());
+        instance.on((_f = lk.RoomEvent["Reconnected"]) != null ? _f : "reconnected", () => events.onReconnected());
+        instance.on((_g = lk.RoomEvent["Disconnected"]) != null ? _g : "disconnected", () => events.onDisconnected());
         try {
           await instance.connect(url, token);
         } catch (cause) {
@@ -854,9 +938,10 @@
         } catch (cause) {
           throw new TransportError("microphone_publish", cause);
         }
-        await ((_e = instance.startAudio) == null ? void 0 : _e.call(instance).catch(() => void 0));
+        await ((_h = instance.startAudio) == null ? void 0 : _h.call(instance).catch(() => void 0));
         startMetering(lk);
         events.onConnected();
+        reportAgent();
       },
       async disconnect() {
         disposed = true;
@@ -877,8 +962,14 @@
     "requestingMicrophone",
     "connecting",
     "listening",
+    "assistantThinking",
     "assistantSpeaking",
     "reconnecting"
+  ];
+  var AGENT_READY_STATES = [
+    "listening",
+    "assistantThinking",
+    "assistantSpeaking"
   ];
   var STARTABLE = ["ready", "finished", "error", "rateLimited"];
   function initialContext(unavailable) {
@@ -893,8 +984,13 @@
       session: null,
       connectionInFlight: false,
       attempt: 0,
+      roomConnected: false,
+      lastSessionId: null,
       retryAfterUntil: null
     };
+  }
+  function agentIsReady(state) {
+    return AGENT_READY_STATES.includes(state);
   }
   function isActive(state) {
     return ACTIVE_STATES.includes(state);
@@ -970,18 +1066,32 @@
         };
       case "SESSION_GRANTED":
         if (state !== "connecting") return context;
-        return { ...context, session: event.session };
-      case "CONNECTED":
+        return {
+          ...context,
+          session: event.session,
+          // Kept past teardown so a failure can show a Support ID.
+          lastSessionId: event.session.sessionId
+        };
+      case "ROOM_CONNECTED":
         if (state !== "connecting") return context;
+        return { ...context, roomConnected: true };
+      case "AGENT_PENDING":
+        if (state !== "connecting") return context;
+        return context;
+      case "AGENT_READY":
+        if (state !== "connecting" && !AGENT_READY_STATES.includes(state)) return context;
+        if (state === "listening") return context;
         return { ...context, state: "listening" };
-      case "ASSISTANT_SPEAKING_START":
-        if (state !== "listening") return context;
+      case "AGENT_THINKING":
+        if (state !== "connecting" && !AGENT_READY_STATES.includes(state)) return context;
+        if (state === "assistantThinking") return context;
+        return { ...context, state: "assistantThinking" };
+      case "AGENT_SPEAKING":
+        if (state !== "connecting" && !AGENT_READY_STATES.includes(state)) return context;
+        if (state === "assistantSpeaking") return context;
         return { ...context, state: "assistantSpeaking" };
-      case "ASSISTANT_SPEAKING_END":
-        if (state !== "assistantSpeaking") return context;
-        return { ...context, state: "listening" };
       case "RECONNECTING":
-        if (state !== "listening" && state !== "assistantSpeaking") return context;
+        if (!AGENT_READY_STATES.includes(state)) return context;
         return { ...context, state: "reconnecting" };
       case "RECONNECTED":
         if (state !== "reconnecting") return context;
@@ -1020,6 +1130,8 @@
           state: "error",
           errorCode: event.code,
           pendingConsent: null,
+          // The live session goes; its identifier stays, so support can be given
+          // something to quote.
           session: null,
           connectionInFlight: false
         };
@@ -1046,6 +1158,7 @@
     requestingMicrophone: "prompting",
     connecting: "submitting",
     listening: "dialing",
+    assistantThinking: "submitting",
     assistantSpeaking: "dialing",
     reconnecting: "submitting",
     finished: "onTheWay",
@@ -1086,6 +1199,8 @@
        * shown to the visitor, and never carries a token or device detail.
        */
       this.lastTransportPhase = null;
+      /** The agent no-show timer, held separately so readiness can cancel it. */
+      this.agentTimeout = null;
       this.timers = [];
       this.tickTimer = null;
       this.deadline = 0;
@@ -1122,6 +1237,14 @@
     get snapshot() {
       return this.context;
     }
+    /** Browser joined the room. Diagnostic only — never treat as readiness. */
+    get transportConnected() {
+      return this.context.roomConnected;
+    }
+    /** The backend session id, surviving teardown so support can quote it. */
+    get supportId() {
+      return this.context.lastSessionId;
+    }
     // --- DOM ----------------------------------------------------------------
     build() {
       const root = document.createElement("div");
@@ -1155,6 +1278,11 @@
           <button type="button" class="svd__consent-decline"></button>
         </div>
       </div>
+      <div class="svd__support" hidden>
+        <span class="svd__support-label"></span>
+        <code class="svd__support-id"></code>
+        <button type="button" class="svd__support-copy"></button>
+      </div>
       <button type="button" class="svd__disconnect" hidden></button>
       <div class="svd__cta" hidden>
         <a class="svd__cta-button" href="#"></a>
@@ -1179,6 +1307,10 @@
       this.consentLink = q(".svd__consent-link");
       this.consentAccept = q(".svd__consent-accept");
       this.consentDecline = q(".svd__consent-decline");
+      this.supportPanel = q(".svd__support");
+      this.supportLabel = q(".svd__support-label");
+      this.supportValue = q(".svd__support-id");
+      this.supportCopy = q(".svd__support-copy");
       this.ctaWrap = q(".svd__cta");
       this.ctaLink = q(".svd__cta-button");
       this.audioElement = q(".svd__audio");
@@ -1189,6 +1321,13 @@
       });
       this.disconnectButton.addEventListener("click", () => {
         void this.disconnect("user_disconnected");
+      });
+      this.supportCopy.addEventListener("click", () => {
+        var _a, _b;
+        const id = this.context.lastSessionId;
+        if (!id) return;
+        void ((_b = (_a = navigator.clipboard) == null ? void 0 : _a.writeText) == null ? void 0 : _b.call(_a, id).catch(() => void 0));
+        this.supportCopy.textContent = this.strings.supportCopied;
       });
       this.consentAccept.addEventListener("click", () => {
         var _a;
@@ -1253,6 +1392,14 @@
           this.consentLink.hidden = true;
         }
       }
+      const agentFailure = state === "error" && (this.context.errorCode === "agent_unavailable" || this.context.errorCode === "agent_lost");
+      const supportId = this.context.lastSessionId;
+      this.supportPanel.hidden = !(agentFailure && supportId);
+      if (agentFailure && supportId) {
+        this.supportLabel.textContent = s.supportIdLabel;
+        this.supportValue.textContent = supportId;
+        this.supportCopy.textContent = s.supportCopy;
+      }
       const showCta = state === "finished" || state === "rateLimited";
       this.ctaWrap.hidden = !showCta;
       this.ctaLink.textContent = s.signupCta;
@@ -1274,6 +1421,8 @@
           return { title: s.connectingTitle, body: s.connectingBody };
         case "listening":
           return { title: s.listeningTitle, body: `${s.listeningBody} ${this.remainingLabel()}` };
+        case "assistantThinking":
+          return { title: s.thinkingTitle, body: `${s.thinkingBody} ${this.remainingLabel()}` };
         case "assistantSpeaking":
           return { title: s.speakingTitle, body: `${s.speakingBody} ${this.remainingLabel()}` };
         case "reconnecting":
@@ -1375,8 +1524,7 @@
         return;
       }
       this.beginCountdown(session.expiresAt);
-      this.dispatch({ type: "CONNECTED" });
-      track("voice_demo_connected", { voice_demo_session: session.sessionId });
+      track("voice_demo_room_connected", { voice_demo_session: session.sessionId });
     }
     /**
      * Requests a session, satisfying a consent demand if one comes back. At most
@@ -1471,7 +1619,10 @@
         fn();
       };
       return {
-        onConnected: guard(() => void 0),
+        onConnected: guard(() => {
+          this.dispatch({ type: "ROOM_CONNECTED" });
+          this.startAgentReadinessTimeout(attempt);
+        }),
         onDisconnected: guard(() => {
           if (isActive(this.context.state)) void this.disconnect("remote_disconnected");
         }),
@@ -1482,17 +1633,78 @@
           });
         }),
         onReconnected: guard(() => this.dispatch({ type: "RECONNECTED" })),
-        onAssistantSpeaking: (speaking) => guard(
-          () => this.dispatch({
-            type: speaking ? "ASSISTANT_SPEAKING_START" : "ASSISTANT_SPEAKING_END"
-          })
-        )(),
+        onAgentState: (raw) => guard(() => this.applyAgentState(raw))(),
         onLevel: (level) => {
           if (this.destroyed) return;
           this.orb.style.setProperty("--orb-level", level.toFixed(3));
         },
         onError: guard(() => this.fail("transport_failed"))
       };
+    }
+    /**
+     * Translates the remote agent's `lk.agent.state` into UI state.
+     *
+     * The whole point: nothing here reads our own microphone or connection. An
+     * unrecognised or absent value is `pending`, never ready — so a future SDK
+     * value cannot make the page claim the secretary is listening.
+     */
+    applyAgentState(raw) {
+      const readiness = readinessFor(raw);
+      switch (readiness) {
+        case "ready":
+          this.clearAgentReadinessTimeout();
+          this.dispatch({ type: "AGENT_READY" });
+          return;
+        case "thinking":
+          this.clearAgentReadinessTimeout();
+          this.dispatch({ type: "AGENT_THINKING" });
+          return;
+        case "speaking":
+          this.clearAgentReadinessTimeout();
+          this.dispatch({ type: "AGENT_SPEAKING" });
+          return;
+        case "lost":
+          this.failAgent(this.context.roomConnected && agentIsReady(this.context.state) ? "agent_lost" : "agent_unavailable");
+          return;
+        case "pending":
+          if (raw === null && agentIsReady(this.context.state)) {
+            this.failAgent("agent_lost");
+            return;
+          }
+          this.dispatch({ type: "AGENT_PENDING" });
+          return;
+      }
+    }
+    /**
+     * The agent has this long to appear and report readiness. Without it a
+     * visitor sits on "connecting" forever when only the browser joins — which
+     * is precisely what happened on the failed staging call.
+     */
+    startAgentReadinessTimeout(attempt) {
+      this.clearAgentReadinessTimeout();
+      const ms = this.config.agentReadinessTimeoutSeconds * 1e3;
+      this.agentTimeout = setTimeout(() => {
+        if (this.destroyed || this.context.attempt !== attempt) return;
+        if (agentIsReady(this.context.state)) return;
+        this.failAgent("agent_unavailable");
+      }, ms);
+    }
+    clearAgentReadinessTimeout() {
+      if (this.agentTimeout !== null) {
+        clearTimeout(this.agentTimeout);
+        this.agentTimeout = null;
+      }
+    }
+    /** Terminal agent failure: error plus a full teardown of everything held. */
+    failAgent(code) {
+      if (!isActive(this.context.state)) return;
+      this.lastTransportPhase = "agent_readiness";
+      logger.error("agent readiness failed", {
+        phase: "agent_readiness",
+        code,
+        session: this.context.lastSessionId
+      });
+      this.fail(code);
     }
     async requestMicrophone() {
       if (this.deps.requestMicrophone) return this.deps.requestMicrophone();
@@ -1535,13 +1747,17 @@
       this.fail("server_error");
     }
     fail(code) {
+      const sessionId = this.context.lastSessionId;
       this.releaseMicrophone();
       void this.teardownTransport();
       this.clearTimers();
       this.dispatch({ type: "ERROR", code });
       track("voice_demo_error", {
         voice_demo_code: code,
-        ...this.lastTransportPhase ? { voice_demo_phase: this.lastTransportPhase } : {}
+        ...this.lastTransportPhase ? { voice_demo_phase: this.lastTransportPhase } : {},
+        // The backend session id is the one identifier support can act on. It is
+        // not a credential and carries nothing about the token or the room.
+        ...sessionId ? { voice_demo_session: sessionId } : {}
       });
     }
     /** Exposed for QA and tests; not rendered anywhere. */
@@ -1607,6 +1823,7 @@
       this.timers.push(setTimeout(fn, ms));
     }
     clearTimers() {
+      this.clearAgentReadinessTimeout();
       this.timers.forEach(clearTimeout);
       this.timers = [];
       if (this.tickTimer !== null) {
