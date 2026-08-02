@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+<!-- ===========================================================================
+     CONTROLLED STAGING TEST PAGE — NOT PART OF THE PUBLIC SITE
+     ---------------------------------------------------------------------------
+     Reachable only at https://www.seenn.ai/voice-demo-staging.html and linked
+     from nowhere: not in the navigation, not in sitemap.xml, not in llms.txt.
+
+     This is the ONLY page on the site that switches the voice demo on. Both
+     homepages ship with the flag off and their mounts hidden, and are covered
+     by tests and a headless net-log assertion that they stay that way.
+
+     Deliberately NOT disallowed in robots.txt: a crawler has to be able to
+     fetch the page to read the noindex below. Blocking it in robots.txt would
+     prevent the noindex from ever being seen.
+
+     Everything configured here is public by design — a Supabase publishable
+     key and a Cloudflare Turnstile SITE key both ship to every browser that
+     loads the widget. No secret belongs on this page: not the Turnstile secret
+     key, not a Supabase service-role or secret key, not database or LiveKit
+     credentials. A test scans this file for all of those, so keep it that way.
+     =========================================================================== -->
+<meta name="robots" content="noindex, nofollow"/>
+<meta name="googlebot" content="noindex, nofollow"/>
+
+<title>Voice demo — staging test (unlisted)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="/css/voice-demo.css" rel="stylesheet"/>
+
+<!-- Runtime configuration, per tools/voice-demo/CONFIGURATION.md §2.
+     Must come BEFORE the widget bundle: the bundle reads window.SEENN_VOICE_DEMO
+     at mount time, and `publicDemoMode: 'enabled'` here is the single mechanism
+     that can switch the demo on anywhere on this site. -->
+<script>
+  window.SEENN_VOICE_DEMO = {
+    publicDemoMode: 'enabled',
+
+    // Staging Supabase project. Resolves to
+    // https://oonqpttzpamtxiifitvf.supabase.co/functions/v1/public-voice-demo
+    endpointBaseUrl: 'https://oonqpttzpamtxiifitvf.supabase.co',
+
+    // Supabase PUBLISHABLE key — browser-safe by design, sent as the `apikey`
+    // header. Never a service-role or secret key; the widget refuses those.
+    anonKey: 'sb_publishable_NvlifnKa0ZVG6p4mMZBJHQ_kNDpWup4',
+
+    // Cloudflare Turnstile SITE key — public. Its matching secret key lives in
+    // the Supabase Edge Function's environment and must never appear here.
+    turnstileSiteKey: '0x4AAAAAAEEN9zjBnCHDnqNy'
+  };
+</script>
+<script defer src="/js/voice-demo.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0f3d3e 0%, #0b2036 60%, #0d1b2a 100%);
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    color: #e6edf5;
+  }
+  header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  h1 {
+    margin: 0 0 6px;
+    font: 600 16px/1.3 Montserrat, sans-serif;
+    color: #f0c14b;
+  }
+  header p { margin: 0; max-width: 62ch; font-size: 13px; line-height: 1.6; color: rgba(230, 237, 245, 0.72); }
+  main { padding: 40px 16px 64px; }
+  code { background: rgba(255, 255, 255, 0.1); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Voice demo — staging test</h1>
+  <p>
+    Unlisted page for one controlled test against the staging backend. Not linked
+    from the site and marked <code>noindex, nofollow</code>. Clicking the orb
+    requests your microphone, solves an invisible Cloudflare Turnstile challenge,
+    and POSTs to the staging <code>public-voice-demo</code> function. Expect
+    <code>503 demo_disabled</code> until <code>PUBLIC_DEMO_MODE</code> is enabled
+    server-side — that response is correct, not a fault.
+  </p>
+</header>
+
+<main>
+  <!-- Ships `hidden`; the widget removes it only once it has actually mounted,
+       so a misconfiguration leaves an empty page rather than a broken orb. -->
+  <div class="svd-mount" data-seenn-voice-demo hidden></div>
+</main>
+
+</body>
+</html>
