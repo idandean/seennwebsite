@@ -69,6 +69,12 @@ is live and someone has decided which Supabase project the site points at.
 | `orbSize` | `200` | Diameter in px. |
 | `renderWhenUnavailable` | `false` | Show a greyed "unavailable" panel instead of nothing. |
 | `livekitModuleUrl` | pinned | See §5. Change only with a deliberate version bump. |
+| `languageLookupUrl` | `/api/voice-demo-language` | Same-origin resolver. If it fails twice, no session is requested. |
+| `languageLookupTimeoutMs` | `1500` | Per-attempt deadline; the lookup is attempted at most twice. |
+
+The session Edge Function also requires an explicit canonical `language`.
+There is no server-side default, so a broken or bypassed website path cannot
+silently open in English.
 
 ## 3. Enabling is asymmetric — on purpose
 

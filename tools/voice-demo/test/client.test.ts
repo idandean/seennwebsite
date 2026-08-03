@@ -40,7 +40,7 @@ function makeClient(fetchImpl: typeof fetch, requireTurnstileToken = false) {
 }
 
 /** Every call in this suite carries a token, as the widget always does. */
-const INPUT = { turnstileToken: 'ts-token-1' };
+const INPUT = { language: 'en' as const, turnstileToken: 'ts-token-1' };
 
 const SESSION_BODY = {
   token: 'jwt',
@@ -69,19 +69,19 @@ describe('request shape', () => {
     expect(headers['authorization']).toBeUndefined();
   });
 
-  it('sends NO language — automatic is the default and only behaviour', async () => {
+  it('always sends the required canonical language', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await makeClient(impl).createSession(INPUT);
     const body = JSON.parse(calls[0]!.init.body as string);
-    expect(Object.prototype.hasOwnProperty.call(body, 'language')).toBe(false);
+    expect(body.language).toBe('en');
   });
 
-  it('sends exactly turnstile_token in automatic mode', async () => {
+  it('sends exactly language and turnstile_token', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await makeClient(impl).createSession(INPUT);
 
     const body = JSON.parse(calls[0]!.init.body as string);
-    expect(Object.keys(body).sort()).toEqual(['turnstile_token']);
+    expect(Object.keys(body).sort()).toEqual(['language', 'turnstile_token']);
     expect(body.turnstile_token).toBe('ts-token-1');
   });
 
@@ -98,6 +98,7 @@ describe('request shape', () => {
   it('includes consent only once accepted, in snake_case', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await makeClient(impl).createSession({
+      language: 'en',
       turnstileToken: 'ts-token-1',
       consent: { policyVersion: 'rec-1', locale: 'he', acceptedAt: '2026-08-01T10:00:00.000Z' },
     });
@@ -111,7 +112,7 @@ describe('request shape', () => {
 
   it('omits turnstile_token entirely when there is none', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
-    await makeClient(impl).createSession({});
+    await makeClient(impl).createSession({ language: 'en' });
     expect(JSON.parse(calls[0]!.init.body as string)).not.toHaveProperty('turnstile_token');
   });
 
@@ -119,7 +120,7 @@ describe('request shape', () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
 
     await expect(
-      makeClient(impl, true).createSession({}),
+      makeClient(impl, true).createSession({ language: 'en' }),
     ).rejects.toMatchObject({ code: 'verification_failed' });
 
     // The point: nothing went out. Not a request without a token — no request.
@@ -129,7 +130,7 @@ describe('request shape', () => {
   it('treats a blank token as absent', async () => {
     const { impl, calls } = stubFetch({ status: 200, body: SESSION_BODY });
     await expect(
-      makeClient(impl, true).createSession({ turnstileToken: '   ' }),
+      makeClient(impl, true).createSession({ language: 'en', turnstileToken: '   ' }),
     ).rejects.toMatchObject({ code: 'verification_failed' });
     expect(calls).toHaveLength(0);
   });
@@ -141,6 +142,14 @@ describe('responses', () => {
     const result = await makeClient(impl).createSession(INPUT);
     expect(result.kind).toBe('session');
     if (result.kind === 'session') expect(result.session.sessionId).toBe('demo-1');
+  });
+
+  it('rejects a response in a different language than the request', async () => {
+    const { impl } = stubFetch({ status: 200, body: SESSION_BODY });
+
+    await expect(
+      makeClient(impl).createSession({ ...INPUT, language: 'he' }),
+    ).rejects.toMatchObject({ code: 'contract_violation' });
   });
 
   it('surfaces a consent demand returned as a 4xx', async () => {

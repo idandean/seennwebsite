@@ -16,6 +16,7 @@
     "demo_capacity_reached",
     "rate_limited",
     "verification_failed",
+    "invalid_language",
     "consent_required",
     "invalid_request",
     "server_error"
@@ -174,6 +175,11 @@
     } else if (!canonicalLanguage) {
       problems.push(`${PREFERRED_RESPONSE_FIELDS.language} "${language}" is not one of en, he, ar`);
     }
+    if (canonicalLanguage && options.expectedLanguage && canonicalLanguage !== options.expectedLanguage) {
+      problems.push(
+        `response language does not match requested language`
+      );
+    }
     const recording = parseRecording(pickRecord(raw, ALIASES.recording));
     if (recording.status === "malformed" && recording.required) {
       problems.push(recording.reason);
@@ -281,6 +287,15 @@
     var _a, _b;
     return (_b = (_a = document.querySelector(`meta[name="${name}"]`)) == null ? void 0 : _a.getAttribute("content")) != null ? _b : void 0;
   }
+  function isSafeLanguageLookupUrl(value) {
+    if (typeof value !== "string" || value.length === 0) return false;
+    try {
+      const parsed = new URL(value, window.location.href);
+      return (parsed.protocol === "http:" || parsed.protocol === "https:") && parsed.origin === window.location.origin && parsed.username === "" && parsed.password === "";
+    } catch {
+      return false;
+    }
+  }
   function urlParameter() {
     var _a;
     try {
@@ -315,6 +330,13 @@
         "refusing to start: the configured key looks like a server-side secret (service_role / sb_secret_ / API secret). Use the Supabase anon or publishable key."
       );
       config.anonKey = "";
+      config.publicDemoMode = "disabled";
+    }
+    if (config.languageLookupUrl !== "" && !isSafeLanguageLookupUrl(config.languageLookupUrl)) {
+      logger.error(
+        "refusing to start: the language lookup URL must be an HTTP(S) URL on this page origin"
+      );
+      config.languageLookupUrl = "";
       config.publicDemoMode = "disabled";
     }
     return config;
@@ -405,7 +427,8 @@
     err_verification_failed: "We couldn\u2019t verify your browser. Reload the page and try again.",
     err_consent_required: "The demo needs your agreement before it can start.",
     err_invalid_request: "The demo is misconfigured \u2014 our team has been notified.",
-    err_server_error: "Something went wrong on our side."
+    err_server_error: "Something went wrong on our side.",
+    err_language_unavailable: "We could not choose the opening language. Please try again."
   };
   var he = {
     heroEyebrow: "\u05D2\u05F3\u05E1 \u2014 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9",
@@ -467,7 +490,8 @@
     err_verification_failed: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D0\u05DE\u05EA \u05D0\u05EA \u05D4\u05D3\u05E4\u05D3\u05E4\u05DF. \u05E8\u05E2\u05E0\u05E0\u05D5 \u05D0\u05EA \u05D4\u05D3\u05E3 \u05D5\u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_consent_required: "\u05D4\u05D3\u05DE\u05D5 \u05D6\u05E7\u05D5\u05E7 \u05DC\u05D4\u05E1\u05DB\u05DE\u05EA\u05DB\u05DD \u05DC\u05E4\u05E0\u05D9 \u05E9\u05D9\u05D5\u05DB\u05DC \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC.",
     err_invalid_request: "\u05EA\u05E6\u05D5\u05E8\u05EA \u05D4\u05D3\u05DE\u05D5 \u05E9\u05D2\u05D5\u05D9\u05D4 \u2014 \u05D4\u05E6\u05D5\u05D5\u05EA \u05E9\u05DC\u05E0\u05D5 \u05E2\u05D5\u05D3\u05DB\u05DF.",
-    err_server_error: "\u05DE\u05E9\u05D4\u05D5 \u05D4\u05E9\u05EA\u05D1\u05E9 \u05D0\u05E6\u05DC\u05E0\u05D5."
+    err_server_error: "\u05DE\u05E9\u05D4\u05D5 \u05D4\u05E9\u05EA\u05D1\u05E9 \u05D0\u05E6\u05DC\u05E0\u05D5.",
+    err_language_unavailable: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D1\u05D7\u05D5\u05E8 \u05D0\u05EA \u05E9\u05E4\u05EA \u05D4\u05E4\u05EA\u05D9\u05D7\u05D4. \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1."
   };
   var ar = {
     heroEyebrow: "\u062C\u064A\u0633 \u2014 \u0645\u0628\u0627\u0634\u0631",
@@ -529,7 +553,8 @@
     err_verification_failed: "\u062A\u0639\u0630\u0651\u0631 \u0627\u0644\u062A\u062D\u0642\u0642 \u0645\u0646 \u0645\u062A\u0635\u0641\u062D\u0643. \u0623\u0639\u062F \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0635\u0641\u062D\u0629 \u0648\u062D\u0627\u0648\u0644 \u0645\u062C\u062F\u062F\u064B\u0627.",
     err_consent_required: "\u064A\u062D\u062A\u0627\u062C \u0627\u0644\u0639\u0631\u0636 \u0625\u0644\u0649 \u0645\u0648\u0627\u0641\u0642\u062A\u0643 \u0642\u0628\u0644 \u0623\u0646 \u064A\u0628\u062F\u0623.",
     err_invalid_request: "\u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0627\u0644\u0639\u0631\u0636 \u063A\u064A\u0631 \u0635\u062D\u064A\u062D\u0629 \u2014 \u062A\u0645 \u0625\u0628\u0644\u0627\u063A \u0641\u0631\u064A\u0642\u0646\u0627.",
-    err_server_error: "\u062D\u062F\u062B \u062E\u0637\u0623 \u0644\u062F\u064A\u0646\u0627."
+    err_server_error: "\u062D\u062F\u062B \u062E\u0637\u0623 \u0644\u062F\u064A\u0646\u0627.",
+    err_language_unavailable: "\u062A\u0639\u0630\u0631 \u062A\u062D\u062F\u064A\u062F \u0644\u063A\u0629 \u0627\u0644\u0628\u062F\u0627\u064A\u0629. \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649."
   };
   var PACKS = { en, he, ar };
   function stringsFor(locale) {
@@ -546,15 +571,6 @@
       this.retryAfterSeconds = retryAfterSeconds;
     }
   };
-  function normalizeLanguageOverride(value) {
-    if (value === "he" || value === "en" || value === "ar") return value;
-    if (value !== null && value !== void 0 && value !== "") {
-      logger.warn("ignoring an invalid language override; falling back to automatic", {
-        received: value
-      });
-    }
-    return null;
-  }
   function parseRetryAfter(headers) {
     var _a;
     const raw = (_a = headers == null ? void 0 : headers.get) == null ? void 0 : _a.call(headers, "retry-after");
@@ -580,6 +596,12 @@
     }
     async createSession(input) {
       var _a, _b;
+      if (input.language !== "he" && input.language !== "en" && input.language !== "ar") {
+        throw new DemoRequestError(
+          "contract_violation",
+          "refusing to send a session request without a canonical language"
+        );
+      }
       const turnstileToken = (_b = (_a = input.turnstileToken) == null ? void 0 : _a.trim()) != null ? _b : "";
       if (this.options.requireTurnstileToken && !turnstileToken) {
         throw new DemoRequestError(
@@ -587,9 +609,7 @@
           "refusing to send a session request without a Turnstile token"
         );
       }
-      const body = {};
-      const override = normalizeLanguageOverride(input.languageOverride);
-      if (override) body["language"] = override;
+      const body = { language: input.language };
       if (turnstileToken) body["turnstile_token"] = turnstileToken;
       if (input.consent) {
         body["consent"] = {
@@ -643,7 +663,13 @@
         }
       }
       try {
-        return { kind: "session", session: normalizeSession(payload, { now: this.now() }) };
+        return {
+          kind: "session",
+          session: normalizeSession(payload, {
+            now: this.now(),
+            expectedLanguage: input.language
+          })
+        };
       } catch (cause) {
         if (cause instanceof ContractViolation) {
           throw new DemoRequestError("contract_violation", cause.message, response.status);
@@ -1200,6 +1226,7 @@
     retry: '<path d="M3 10h6V4"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 10"/>',
     blocked: '<path d="M4.9 4.9 19.1 19.1"/><circle cx="12" cy="12" r="9"/>'
   };
+  var LANGUAGE_LOOKUP_ATTEMPTS = 2;
   function icon(paths, className = "") {
     return `<svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
   }
@@ -1589,7 +1616,7 @@
         case "rateLimited":
           return rateLimitScope === "global_capacity" ? { title: s.rateLimitedCapacityTitle, body: s.rateLimitedCapacityBody } : { title: s.rateLimitedVisitorTitle, body: s.rateLimitedVisitorBody };
         case "error": {
-          const key = `err_${errorCode != null ? errorCode : "server_error"}`;
+          const key = errorCode === "invalid_language" ? "err_language_unavailable" : `err_${errorCode != null ? errorCode : "server_error"}`;
           const body = (_a = s[key]) != null ? _a : s.err_server_error;
           const hint = errorCode === "microphone_denied" ? s.err_microphone_denied_hint : void 0;
           return hint ? { title: s.errorTitle, body, hint } : { title: s.errorTitle, body };
@@ -1645,7 +1672,13 @@
       this.abortController = new AbortController();
       let session;
       try {
-        session = await this.obtainSession(attempt, await initialLanguage);
+        const resolvedLanguage = await initialLanguage;
+        if (stale()) return;
+        if (!resolvedLanguage) {
+          this.fail("language_unavailable");
+          return;
+        }
+        session = await this.obtainSession(attempt, resolvedLanguage);
       } catch (cause) {
         if (stale()) return;
         this.handleRequestError(cause);
@@ -1691,34 +1724,33 @@
     /**
      * Asks the same-origin function which language to open in.
      *
-     * Returns null on ANY failure — non-200, malformed body, unknown country,
-     * timeout, network error. Null means the language property is omitted
-     * entirely, which is the pre-existing automatic behaviour, so this lookup
-     * can only ever improve on it and never break a call.
+     * Returns null after two failed attempts. The caller treats null as a
+     * blocking error: no session request is made without a canonical language.
      */
     async resolveInitialLanguage() {
       if (this.config.languageOverride) return this.config.languageOverride;
       const url = this.config.languageLookupUrl;
       if (!url) return null;
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), this.config.languageLookupTimeoutMs);
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "omit",
-          cache: "no-store",
-          signal: controller.signal
-        });
-        if (!response.ok) return null;
-        const payload = await response.json();
-        const value = payload == null ? void 0 : payload.language;
-        if (value !== "he" && value !== "en" && value !== "ar") return null;
-        return value;
-      } catch {
-        return null;
-      } finally {
-        clearTimeout(timer);
+      for (let attempt = 0; attempt < LANGUAGE_LOOKUP_ATTEMPTS; attempt += 1) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), this.config.languageLookupTimeoutMs);
+        try {
+          const response = await fetch(url, {
+            method: "GET",
+            credentials: "omit",
+            cache: "no-store",
+            signal: controller.signal
+          });
+          if (!response.ok) continue;
+          const payload = await response.json();
+          const value = payload == null ? void 0 : payload.language;
+          if (value === "he" || value === "en" || value === "ar") return value;
+        } catch {
+        } finally {
+          clearTimeout(timer);
+        }
       }
+      return null;
     }
     async obtainSession(attempt, initialLanguage) {
       var _a, _b, _c;
@@ -1729,9 +1761,9 @@
         try {
           result = await this.client.createSession({
             // Automatic: `this.locale` drives RENDERING only and is never sent.
-            // What may be sent is the country-resolved starting language, or
-            // nothing at all when it could not be resolved.
-            languageOverride: initialLanguage != null ? initialLanguage : void 0,
+            // The country-resolved starting language is mandatory. Rendering
+            // locale and browser locale remain separate and are never sent.
+            language: initialLanguage,
             consent: (_a = this.context.acceptedConsent) != null ? _a : void 0,
             turnstileToken,
             signal: (_b = this.abortController) == null ? void 0 : _b.signal

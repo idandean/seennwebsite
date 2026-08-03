@@ -1,10 +1,10 @@
 /**
  * Country → initial demo language.
  *
- * Production evidence: the website correctly omitted `language`, but the
- * session still stored `language=en`, because Supabase does not reliably
- * forward `cf-ipcountry` into Edge Function headers. A same-origin Vercel
- * Function reads `x-vercel-ip-country` instead and answers this one question.
+ * Production evidence: an omitted `language` produced a stored
+ * `language=en`, because Supabase does not reliably forward `cf-ipcountry`
+ * into Edge Function headers. A same-origin Vercel Function reads
+ * `x-vercel-ip-country` and returns the canonical value the browser must send.
  *
  * This module is the whole decision, kept pure so the mapping is testable
  * without a request. It maps a country to a STARTING language — the agent
@@ -64,7 +64,7 @@ describe('unknown or unusable → null, never a guess', () => {
   });
 
   it('null is distinct from en — an unknown country must not default to English', () => {
-    // Omitting the property lets the backend decide; sending "en" would pin it.
+    // Null blocks session creation; it is never rewritten to an English guess.
     expect(languageForCountry('XX')).not.toBe('en');
   });
 });

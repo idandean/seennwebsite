@@ -1,16 +1,11 @@
 /**
  * Automatic language is the only behaviour the visitor sees.
  *
- * The request must carry NO `language` property at all — not "auto", not null,
- * not "", and above all not `navigator.language` or the page's `<html lang>`.
- * The backend picks the initial greeting from the visitor's approximate
- * network country, and the agent adapts once it hears them. Sending a language
- * from the browser would quietly override that and lock the conversation to
- * whatever the page happened to be in.
- *
- * The property must be ABSENT, which is stricter than being undefined:
- * `JSON.stringify` drops an explicit `undefined`, but an explicit `null` or
- * `""` would survive and be read as a real instruction by the backend.
+ * The same-origin lookup resolves one canonical starting language from the
+ * visitor's approximate network country. Every session request must carry that
+ * `he`, `en` or `ar` value. If resolution still fails after retry, the
+ * widget must not create a session. The agent may still adapt after hearing
+ * the visitor.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -120,7 +115,7 @@ function stubLookup(language: 'he' | 'en' | 'ar' | null | 'reject' | 'http-500')
 async function startWidget(
   pageLang: string,
   config: Partial<VoiceDemoConfig> = {},
-  lookup: ReturnType<typeof stubLookup> = stubLookup(null),
+  lookup: ReturnType<typeof stubLookup> = stubLookup('he'),
 ) {
   document.documentElement.setAttribute('lang', pageLang);
   const mount = document.createElement('div');
@@ -156,7 +151,7 @@ async function startWidget(
   await flush();
 
   globalThis.fetch = realFetch;
-  return { widget, mount, calls, lookup };
+  return { widget, mount, calls, lookup, mic };
 }
 
 beforeEach(() => {
@@ -168,50 +163,44 @@ beforeEach(() => {
   });
 });
 
-describe('automatic mode omits the language property entirely', () => {
-  it('the property is ABSENT from the request body', async () => {
-    const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts' });
-
-    const body = sentBody(calls);
-    expect(Object.prototype.hasOwnProperty.call(body, 'language')).toBe(false);
-  });
-
-  it('the raw JSON contains no language key at all', async () => {
-    const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts' });
-
-    expect(calls[0]!.init.body as string).not.toContain('language');
-  });
-
-  it('sends none of the forbidden stand-ins', async () => {
-    const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts' });
-
-    const body = sentBody(calls);
-    for (const forbidden of ['auto', null, '']) {
-      expect(body['language']).not.toBe(forbidden);
+describe('the session client requires a canonical language', () => {
+  it('serializes exactly he, en or ar', async () => {
+    for (const language of ['he', 'en', 'ar'] as const) {
+      const { impl, calls } = stubFetch({ ...SESSION_BODY, language });
+      await makeClient(impl).createSession({ language, turnstileToken: 'ts' });
+      expect(sentBody(calls)['language']).toBe(language);
     }
-    expect(body['language']).toBeUndefined();
   });
 
-  it('automatic leaves only the turnstile token on the wire', async () => {
-    const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts' });
-
-    expect(Object.keys(sentBody(calls))).toEqual(['turnstile_token']);
+  it('refuses missing or non-canonical values without posting', async () => {
+    for (const language of [undefined, null, '', 'auto', 'EN', 'he-IL']) {
+      const { impl, calls } = stubFetch();
+      await expect(
+        makeClient(impl).createSession({
+          language: language as 'he',
+          turnstileToken: 'ts',
+        }),
+      ).rejects.toMatchObject({ code: 'contract_violation' });
+      expect(calls, String(language)).toHaveLength(0);
+    }
   });
 });
 
 describe('no browser or page language is silently serialized', () => {
   it('the page language never reaches the request, in any locale', async () => {
-    for (const pageLang of ['en', 'he', 'ar', 'he-IL', 'fr']) {
+    const cases = [
+      ['en', 'he'],
+      ['he', 'ar'],
+      ['ar', 'en'],
+      ['he-IL', 'ar'],
+      ['fr', 'he'],
+    ] as const;
+    for (const [pageLang, resolved] of cases) {
       document.body.innerHTML = '';
-      const { calls } = await startWidget(pageLang);
+      const { calls } = await startWidget(pageLang, {}, stubLookup(resolved));
       const body = sentBody(calls);
 
-      expect(Object.prototype.hasOwnProperty.call(body, 'language'), pageLang).toBe(false);
-      expect(calls[0]!.init.body as string, pageLang).not.toContain('language');
+      expect(body['language'], pageLang).toBe(resolved);
     }
   });
 
@@ -223,14 +212,14 @@ describe('no browser or page language is silently serialized', () => {
     const raw = calls[0]!.init.body as string;
 
     expect(raw).not.toContain('de');
-    expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language')).toBe(false);
+    expect(sentBody(calls)['language']).toBe('he');
 
     if (original) Object.defineProperty(navigator, 'language', original);
   });
 
   it('the widget still RENDERS in the page language — display is not the request', async () => {
     const { mount } = await startWidget('he');
-    // Rendering follows the page; the request stays automatic.
+    // Rendering follows the page; the request uses the country-resolved value.
     expect(mount.querySelector('.svd')!.getAttribute('lang')).toBe('he');
   });
 });
@@ -238,24 +227,12 @@ describe('no browser or page language is silently serialized', () => {
 describe('future explicit override (not exposed in the UI)', () => {
   it('serializes exactly he, en or ar when set internally', async () => {
     for (const value of ['he', 'en', 'ar'] as const) {
-      const { impl, calls } = stubFetch();
-      await makeClient(impl).createSession({ turnstileToken: 'ts', languageOverride: value });
+      const { impl, calls } = stubFetch({ ...SESSION_BODY, language: value });
+      await makeClient(impl).createSession({ turnstileToken: 'ts', language: value });
 
       const body = sentBody(calls);
       expect(Object.prototype.hasOwnProperty.call(body, 'language'), value).toBe(true);
       expect(body['language'], value).toBe(value);
-    }
-  });
-
-  it('falls back to automatic for anything outside the exact set', async () => {
-    for (const bad of ['auto', 'AUTO', 'EN', 'he-IL', 'fr', '', ' he']) {
-      const { impl, calls } = stubFetch();
-      await makeClient(impl).createSession({
-        turnstileToken: 'ts',
-        languageOverride: bad as 'he',
-      });
-
-      expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language'), bad).toBe(false);
     }
   });
 
@@ -273,9 +250,9 @@ describe('future explicit override (not exposed in the UI)', () => {
 
 describe('canonical response language', () => {
   it('accepts he, en and ar as the initial session language', async () => {
-    for (const language of ['he', 'en', 'ar']) {
+    for (const language of ['he', 'en', 'ar'] as const) {
       const { impl } = stubFetch({ ...SESSION_BODY, language });
-      const result = await makeClient(impl).createSession({ turnstileToken: 'ts' });
+      const result = await makeClient(impl).createSession({ language, turnstileToken: 'ts' });
 
       expect(result.kind).toBe('session');
       if (result.kind === 'session') expect(result.session.language).toBe(language);
@@ -305,13 +282,13 @@ describe('no language control is offered', () => {
 describe('unrelated contracts are untouched', () => {
   it('still sends the turnstile token', async () => {
     const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts-token-1' });
+    await makeClient(impl).createSession({ language: 'he', turnstileToken: 'ts-token-1' });
     expect(sentBody(calls)['turnstile_token']).toBe('ts-token-1');
   });
 
   it('still refuses to post without a required turnstile token', async () => {
     const { impl, calls } = stubFetch();
-    await expect(makeClient(impl).createSession({})).rejects.toMatchObject({
+    await expect(makeClient(impl).createSession({ language: 'he' })).rejects.toMatchObject({
       code: 'verification_failed',
     });
     expect(calls).toHaveLength(0);
@@ -319,7 +296,7 @@ describe('unrelated contracts are untouched', () => {
 
   it('still sends the anon key and no Authorization header', async () => {
     const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts' });
+    await makeClient(impl).createSession({ language: 'he', turnstileToken: 'ts' });
 
     const headers = calls[0]!.init.headers as Record<string, string>;
     expect(headers['apikey']).toBe('anon-key');
@@ -328,7 +305,7 @@ describe('unrelated contracts are untouched', () => {
 
   it('still never sends phone, tenant, amount or balance_month', async () => {
     const { impl, calls } = stubFetch();
-    await makeClient(impl).createSession({ turnstileToken: 'ts' });
+    await makeClient(impl).createSession({ language: 'he', turnstileToken: 'ts' });
 
     const body = sentBody(calls);
     for (const forbidden of ['destination_phone', 'tenant_id', 'amount', 'balance_month']) {
@@ -338,7 +315,9 @@ describe('unrelated contracts are untouched', () => {
 
   it('still requires the full LiveKit session contract', async () => {
     const { impl } = stubFetch({ token: 'only-a-token' });
-    await expect(makeClient(impl).createSession({ turnstileToken: 'ts' })).rejects.toMatchObject({
+    await expect(
+      makeClient(impl).createSession({ language: 'he', turnstileToken: 'ts' }),
+    ).rejects.toMatchObject({
       code: 'contract_violation',
     });
   });
@@ -357,17 +336,74 @@ describe('country-resolved initial language', () => {
     }
   });
 
-  it('omits language entirely when the lookup returns null', async () => {
-    const { calls } = await startWidget('en', {}, stubLookup(null));
-    expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language')).toBe(false);
+  it('fails closed without creating a session when the lookup returns null', async () => {
+    const { widget, calls, lookup, mic } = await startWidget('en', {}, stubLookup(null));
+
+    expect(lookup).toHaveBeenCalledTimes(2);
+    expect(calls).toHaveLength(0);
+    expect(widget.snapshot.state).toBe('error');
+    expect(widget.snapshot.errorCode).toBe('language_unavailable');
+    expect(mic.track.stop).toHaveBeenCalledTimes(1);
   });
 
-  it('omits language when the lookup fails outright', async () => {
+  it('fails closed without creating a session when the lookup fails outright', async () => {
     for (const failure of ['reject', 'http-500'] as const) {
       document.body.innerHTML = '';
-      const { calls } = await startWidget('en', {}, stubLookup(failure));
-      expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language'), failure).toBe(false);
+      const { widget, calls, lookup } = await startWidget('en', {}, stubLookup(failure));
+      expect(lookup, failure).toHaveBeenCalledTimes(2);
+      expect(calls, failure).toHaveLength(0);
+      expect(widget.snapshot.errorCode, failure).toBe('language_unavailable');
     }
+  });
+
+  it('retries a transient lookup failure and sends the recovered language', async () => {
+    const lookup = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError('temporary failure'))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ language: 'he' }),
+      } as Response);
+
+    const { widget, calls } = await startWidget('en', {}, lookup);
+
+    expect(lookup).toHaveBeenCalledTimes(2);
+    expect(calls).toHaveLength(1);
+    expect(sentBody(calls)).toHaveProperty('language', 'he');
+    expect(widget.snapshot.state).toBe('listening');
+  });
+
+  it('aborts two hung lookup attempts, posts no session, and cleans up the microphone', async () => {
+    const aborted: AbortSignal[] = [];
+    const lookup = vi.fn(
+      async (_url: string | URL | Request, init?: RequestInit): Promise<Response> =>
+        await new Promise((_resolve, reject) => {
+          const signal = init?.signal;
+          if (!signal) throw new Error('lookup did not receive an AbortSignal');
+          signal.addEventListener(
+            'abort',
+            () => {
+              aborted.push(signal);
+              reject(new DOMException('timed out', 'AbortError'));
+            },
+            { once: true },
+          );
+        }),
+    );
+
+    const { widget, calls, mic } = await startWidget(
+      'en',
+      { languageLookupTimeoutMs: 10 },
+      lookup as ReturnType<typeof stubLookup>,
+    );
+
+    expect(lookup).toHaveBeenCalledTimes(2);
+    expect(aborted).toHaveLength(2);
+    expect(aborted.every((signal) => signal.aborted)).toBe(true);
+    expect(calls).toHaveLength(0);
+    expect(widget.snapshot.errorCode).toBe('language_unavailable');
+    expect(mic.track.stop).toHaveBeenCalledTimes(1);
   });
 
   it('calls the SAME-ORIGIN path, never Supabase', async () => {
@@ -384,24 +420,27 @@ describe('country-resolved initial language', () => {
     expect(calls[0]!.url).toBe('https://stub.supabase.co/functions/v1/public-voice-demo');
   });
 
-  it('ignores a lookup answer outside he/en/ar', async () => {
+  it('fails closed on a lookup answer outside he/en/ar', async () => {
     for (const bogus of ['auto', 'fr', '', 'EN']) {
       document.body.innerHTML = '';
-      const { calls } = await startWidget(
+      const { widget, calls, lookup } = await startWidget(
         'en',
         {},
         stubLookup(bogus as unknown as 'he'),
       );
-      expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language'), bogus).toBe(false);
+      expect(lookup, bogus).toHaveBeenCalledTimes(2);
+      expect(calls, bogus).toHaveLength(0);
+      expect(widget.snapshot.errorCode, bogus).toBe('language_unavailable');
     }
   });
 
-  it('an empty lookup URL disables the lookup and stays automatic', async () => {
+  it('an empty lookup URL fails closed unless an explicit language is configured', async () => {
     const lookup = stubLookup('he');
-    const { calls } = await startWidget('en', { languageLookupUrl: '' }, lookup);
+    const { widget, calls } = await startWidget('en', { languageLookupUrl: '' }, lookup);
 
     expect(lookup).not.toHaveBeenCalled();
-    expect(Object.prototype.hasOwnProperty.call(sentBody(calls), 'language')).toBe(false);
+    expect(calls).toHaveLength(0);
+    expect(widget.snapshot.errorCode).toBe('language_unavailable');
   });
 
   it('never sends a country code, only a language', async () => {

@@ -143,6 +143,38 @@ describe('credential safety', () => {
   });
 });
 
+describe('language lookup URL safety', () => {
+  const resolveWithLookup = (languageLookupUrl: string) =>
+    resolveConfig({ inline: { ...ENABLED_INLINE, languageLookupUrl } });
+
+  it('accepts relative and absolute same-origin HTTP(S) lookup URLs', () => {
+    expect(resolveWithLookup('/api/voice-demo-language').languageLookupUrl).toBe(
+      '/api/voice-demo-language',
+    );
+    expect(resolveWithLookup('./api/voice-demo-language').languageLookupUrl).toBe(
+      './api/voice-demo-language',
+    );
+
+    const absolute = `${window.location.origin}/api/voice-demo-language`;
+    expect(resolveWithLookup(absolute).languageLookupUrl).toBe(absolute);
+  });
+
+  it.each([
+    'https://attacker.example/collect',
+    '//attacker.example/collect',
+    'javascript:alert(document.domain)',
+    'data:application/json,%7B%22language%22%3A%22en%22%7D',
+  ])('fails closed on an unsafe lookup URL: %s', (languageLookupUrl) => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const config = resolveWithLookup(languageLookupUrl);
+
+    expect(config.languageLookupUrl).toBe('');
+    expect(config.publicDemoMode).toBe('disabled');
+    expect(error).toHaveBeenCalled();
+    expect(JSON.stringify(error.mock.calls)).not.toContain(languageLookupUrl);
+  });
+});
+
 describe('unavailableReason — fail closed', () => {
   const base = { ...DEFAULT_CONFIG, ...ENABLED_INLINE };
 

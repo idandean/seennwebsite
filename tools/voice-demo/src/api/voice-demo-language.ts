@@ -83,8 +83,8 @@ export default function handler(
 
     const language = languageForCountry(request.headers.get(COUNTRY_HEADER));
 
-    // The entire response. `null` tells the browser to omit `language` from
-    // its Supabase POST so the backend decides, rather than pinning English.
+    // The entire response. `null` tells the browser it cannot safely create a
+    // session; the browser retries once and then fails closed without a POST.
     return new Response(JSON.stringify({ language }), { status: 200, headers: HEADERS });
   }
 

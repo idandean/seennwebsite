@@ -4,11 +4,11 @@
  * ---------------------------------------------------------------------------
  * Why this exists
  * ---------------------------------------------------------------------------
- * The browser correctly sends no `language`, but sessions were still being
- * stored as `en`: Supabase does not reliably forward `cf-ipcountry` into Edge
- * Function request headers, so the backend had nothing to resolve from and
- * fell back. Vercel's own `x-vercel-ip-country` IS reliable on our edge, so a
- * tiny same-origin function reads it and answers this one question.
+ * Sessions were being stored as `en` when the browser omitted `language`:
+ * Supabase does not reliably forward `cf-ipcountry` into Edge Function request
+ * headers, so the backend had nothing to resolve from and fell back. Vercel's
+ * own `x-vercel-ip-country` IS reliable on our edge, so a tiny same-origin
+ * function reads it and returns the canonical value the browser must send.
  *
  * This picks a STARTING language, not a lock. The agent detects and switches
  * once it hears the visitor.
@@ -58,10 +58,9 @@ const UNKNOWN = new Set(['XX', 'T1']);
 /**
  * Resolves a country code to the demo's initial language.
  *
- * Returns `null` for anything missing, malformed or explicitly unknown. That
- * matters: `null` makes the caller OMIT the language so the backend decides,
- * whereas defaulting to `'en'` would pin an unknown visitor to English — the
- * exact failure this change is fixing.
+ * Returns `null` for anything missing, malformed or explicitly unknown. The
+ * widget treats `null` as a blocking result and creates no session; it never
+ * converts uncertainty into an English greeting.
  */
 export function languageForCountry(raw: string | null | undefined): DemoLanguage | null {
   if (typeof raw !== 'string') return null;

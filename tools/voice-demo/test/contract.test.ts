@@ -137,6 +137,24 @@ describe('language must canonicalize to en/he/ar', () => {
   it('normalizes the stored value', () => {
     expect(normalizeSession({ ...COMPLETE, language: 'he-IL' }, at).language).toBe('he');
   });
+
+  it('accepts a regional response matching the requested language', () => {
+    expect(
+      normalizeSession(
+        { ...COMPLETE, language: 'he-IL' },
+        { ...at, expectedLanguage: 'he' },
+      ).language,
+    ).toBe('he');
+  });
+
+  it('rejects a supported response language that differs from the request', () => {
+    expect(() =>
+      normalizeSession(
+        { ...COMPLETE, language: 'en' },
+        { ...at, expectedLanguage: 'he' },
+      ),
+    ).toThrow(ContractViolation);
+  });
 });
 
 describe('token and session id must be non-empty', () => {
@@ -237,6 +255,7 @@ describe('readErrorCode', () => {
     expect(readErrorCode({ error: 'rate_limited' }, 429)).toBe('rate_limited');
     expect(readErrorCode({ code: 'demo_disabled' }, 503)).toBe('demo_disabled');
     expect(readErrorCode({ error_code: 'verification_failed' }, 403)).toBe('verification_failed');
+    expect(readErrorCode({ error: 'invalid_language' }, 400)).toBe('invalid_language');
   });
 
   it('reads an RFC 7807 type URI', () => {

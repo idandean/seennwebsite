@@ -55,6 +55,8 @@ const ICONS = {
   blocked: '<path d="M4.9 4.9 19.1 19.1"/><circle cx="12" cy="12" r="9"/>',
 };
 
+const LANGUAGE_LOOKUP_ATTEMPTS = 2;
+
 function icon(paths: string, className = ''): string {
   return (
     `<svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" ` +
@@ -550,7 +552,13 @@ export class VoiceDemoWidget {
           ? { title: s.rateLimitedCapacityTitle, body: s.rateLimitedCapacityBody }
           : { title: s.rateLimitedVisitorTitle, body: s.rateLimitedVisitorBody };
       case 'error': {
-        const key = `err_${errorCode ?? 'server_error'}` as keyof Strings;
+        // Preserve the backend's exact code in state/analytics, but use the
+        // same actionable copy as a local language-resolution failure.
+        const key = (
+          errorCode === 'invalid_language'
+            ? 'err_language_unavailable'
+            : `err_${errorCode ?? 'server_error'}`
+        ) as keyof Strings;
         const body = (s[key] as string | undefined) ?? s.err_server_error;
         const hint =
           errorCode === 'microphone_denied' ? s.err_microphone_denied_hint : undefined;
@@ -635,7 +643,13 @@ export class VoiceDemoWidget {
     this.abortController = new AbortController();
     let session;
     try {
-      session = await this.obtainSession(attempt, await initialLanguage);
+      const resolvedLanguage = await initialLanguage;
+      if (stale()) return;
+      if (!resolvedLanguage) {
+        this.fail('language_unavailable');
+        return;
+      }
+      session = await this.obtainSession(attempt, resolvedLanguage);
     } catch (cause) {
       if (stale()) return;
       this.handleRequestError(cause);
@@ -695,10 +709,8 @@ export class VoiceDemoWidget {
   /**
    * Asks the same-origin function which language to open in.
    *
-   * Returns null on ANY failure — non-200, malformed body, unknown country,
-   * timeout, network error. Null means the language property is omitted
-   * entirely, which is the pre-existing automatic behaviour, so this lookup
-   * can only ever improve on it and never break a call.
+   * Returns null after two failed attempts. The caller treats null as a
+   * blocking error: no session request is made without a canonical language.
    */
   private async resolveInitialLanguage(): Promise<DemoLanguage | null> {
     // An explicit override, if one is ever wired up, wins over geography.
@@ -707,34 +719,35 @@ export class VoiceDemoWidget {
     const url = this.config.languageLookupUrl;
     if (!url) return null;
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), this.config.languageLookupTimeoutMs);
+    for (let attempt = 0; attempt < LANGUAGE_LOOKUP_ATTEMPTS; attempt += 1) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), this.config.languageLookupTimeoutMs);
 
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        credentials: 'omit',
-        cache: 'no-store',
-        signal: controller.signal,
-      });
-      if (!response.ok) return null;
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          credentials: 'omit',
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        if (!response.ok) continue;
 
-      const payload: unknown = await response.json();
-      const value = (payload as { language?: unknown } | null)?.language;
-      if (value !== 'he' && value !== 'en' && value !== 'ar') return null;
-      return value;
-    } catch {
-      // Deliberately silent: a failed lookup is not a visitor-facing problem,
-      // and the cause could quote a URL we would rather not log.
-      return null;
-    } finally {
-      clearTimeout(timer);
+        const payload: unknown = await response.json();
+        const value = (payload as { language?: unknown } | null)?.language;
+        if (value === 'he' || value === 'en' || value === 'ar') return value;
+      } catch {
+        // Deliberately silent: the cause could contain private network detail.
+      } finally {
+        clearTimeout(timer);
+      }
     }
+
+    return null;
   }
 
   private async obtainSession(
     attempt: number,
-    initialLanguage: DemoLanguage | null,
+    initialLanguage: DemoLanguage,
   ): Promise<import('./contract').DemoSession | null> {
     for (let round = 0; round < 2; round += 1) {
       // A fresh, single-use token immediately before *every* POST, including
@@ -747,9 +760,9 @@ export class VoiceDemoWidget {
       try {
         result = await this.client.createSession({
           // Automatic: `this.locale` drives RENDERING only and is never sent.
-          // What may be sent is the country-resolved starting language, or
-          // nothing at all when it could not be resolved.
-          languageOverride: initialLanguage ?? undefined,
+          // The country-resolved starting language is mandatory. Rendering
+          // locale and browser locale remain separate and are never sent.
+          language: initialLanguage,
           consent: this.context.acceptedConsent ?? undefined,
           turnstileToken,
           signal: this.abortController?.signal,

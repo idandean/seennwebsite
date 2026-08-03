@@ -1,10 +1,10 @@
 # `public-voice-demo` — what the frontend needs
 
-Status: **request side frozen, response side proposed.**
+Status: **implemented contract; deployment is tracked separately.**
 
-Six product decisions are now frozen and implemented (§0). The response shape
-is still the backend's call; where a choice is open this document says so and
-lists what the client already handles.
+Six product decisions are now frozen and implemented (§0). The deployed
+request/response fields are documented below; retained aliases are compatibility
+only, not an invitation for the two sides to drift independently.
 
 The frontend is built and tested against this. `src/contract.ts` is the single
 place the wire format is read, so if the backend lands on different names, that
@@ -19,8 +19,8 @@ one file changes.
    any response demanding recording is rejected, not accommodated.
 2. The frontend sends **no `amount` and no `balance_month`**. The backend
    supplies its own demo-invoice defaults.
-3. Request body is `{ "turnstile_token" }`. **`language` is omitted entirely**
-   in Automatic mode — see §1.1.
+3. Request body always includes `turnstile_token` and one canonical
+   `language` (`he`, `en` or `ar`) — see §1.1.
 4. `apikey` header with a Supabase anon/publishable key. **No Authorization
    header.**
 5. A successful response must carry `token`, `livekit_url`, `session_id`,
@@ -53,32 +53,34 @@ pass-through of caller-supplied keys:
 | Field | Type | When |
 |---|---|---|
 | `turnstile_token` | string | always, once a site key is configured |
-| `language` | `"en" \| "he" \| "ar"` | **omitted in Automatic mode** — see §1.1 |
+| `language` | `"en" \| "he" \| "ar"` | always; resolved before the POST — see §1.1 |
 
 ```jsonc
 {
-  "turnstile_token": "0.abc123..."
+  "turnstile_token": "0.abc123...",
+  "language": "he"
 }
 ```
 
 ### 1.1 Automatic language
 
-The frontend sends **no `language` property at all** — not `"auto"`, not
-`null`, not `""`, and never `navigator.language` or the page's `<html lang>`.
-Absence is the signal.
+Before requesting a session, the frontend calls the same-origin
+`/api/voice-demo-language` endpoint. It accepts only `he`, `en` or `ar`,
+retries once after a failure or timeout, and then fails closed: **no Supabase
+session POST is sent when the language remains unknown**.
 
-The backend is expected to choose the **initial greeting** from the visitor's
-approximate network country. That is an opening choice, not a lock: the agent
-detects and switches language once it hears the visitor.
+The canonical value is always sent. It is never `"auto"`, `null`, `""`,
+`navigator.language`, the page's `<html lang>`, a country code or an IP
+address. The Edge Function must reject a missing or invalid value with
+`invalid_language`; it must not substitute English or any configured default.
 
-A `language` key, when present, is an explicit override with exactly the values
-`he`, `en` or `ar`. There is no UI for it yet; the request builder supports it
-so a future subtle "Automatic" control has somewhere to write to. Anything
-outside that exact set is dropped and the request falls back to Automatic.
+This determines the **initial greeting**, not a permanent lock. The agent may
+detect and switch language after hearing the visitor.
 
-The response's `language` is still **required**, and is read as the initial
-session language only. The widget records it and keeps rendering in the page's
-own locale, so the UI never implies the conversation is pinned to it.
+The response's `language` is also **required** and must canonicalise to the same
+language the request sent. A mismatch is a `contract_violation`. The widget
+keeps rendering in the page's own locale, so the UI never implies that the
+conversation is pinned to the initial language.
 
 **Turnstile is mandatory.** The token is fresh and single-use: obtained
 immediately before each POST and discarded afterwards, on success and failure
@@ -125,7 +127,7 @@ All five are **required**. The widget refuses the session and reports
 | `livekit_url` | string | `wss://…` server URL to connect to. |
 | `session_id` | string | Room/session identifier, for support correlation and logs. |
 | `expires_at` | string | ISO-8601 absolute expiry. Drives the countdown and the hard client-side cut-off. |
-| `language` | string | The locale the backend actually **resolved** for the agent, which may differ from the requested one. |
+| `language` | string | The canonical initial language; it must match the request. |
 
 ### Values are validated, not just presence
 
@@ -248,6 +250,7 @@ than a blank panel.
 | `demo_capacity_reached` | 429 | → `rateLimited`, framed as popularity, with the signup CTA |
 | `rate_limited` | 429 | → `rateLimited`, framed as "you've had a few goes" |
 | `verification_failed` | 403 | → `error`, asks the visitor to reload |
+| `invalid_language` | 400 | → `error`; no session was created |
 | `consent_required` | 4xx | → consent panel (see §3) |
 | `invalid_request` | 4xx | → `error`, worded as our misconfiguration |
 | `server_error` | 5xx | → `error`, generic |

@@ -50,8 +50,8 @@ export interface VoiceDemoConfig {
 
   /**
    * Explicit conversation-language override for the API request. null means
-   * automatic, which is the only behaviour exposed today: the request omits
-   * `language` entirely and the backend picks the initial greeting.
+   * automatic, which is the only behaviour exposed today: the same-origin
+   * lookup resolves a canonical language before a session can be requested.
    *
    * Kept as a hook for a future subtle globe/settings control labelled
    * "Automatic" — deliberately not a prominent dropdown, and not rendered at
@@ -71,8 +71,8 @@ export interface VoiceDemoConfig {
 
   /**
    * Same-origin endpoint that resolves the demo's initial language from the
-   * visitor's approximate country. Empty string disables the lookup entirely,
-   * which simply means automatic (no `language` sent).
+   * visitor's approximate country. Empty string disables automatic resolution
+   * and therefore prevents a session unless an explicit override is present.
    *
    * Must stay same-origin: it is only reachable where the widget runs, and it
    * is NOT a proxy for the Supabase POST — the browser still calls Supabase
@@ -139,6 +139,27 @@ export const DEFAULT_CONFIG: VoiceDemoConfig = {
 
 function metaContent(name: string): string | undefined {
   return document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? undefined;
+}
+
+/**
+ * The resolver sees the visitor's network request, so it must remain on the
+ * current HTTP(S) origin. `credentials: 'omit'` is not enough protection
+ * against leaking that request to a misconfigured cross-origin URL.
+ */
+function isSafeLanguageLookupUrl(value: unknown): value is string {
+  if (typeof value !== 'string' || value.length === 0) return false;
+
+  try {
+    const parsed = new URL(value, window.location.href);
+    return (
+      (parsed.protocol === 'http:' || parsed.protocol === 'https:') &&
+      parsed.origin === window.location.origin &&
+      parsed.username === '' &&
+      parsed.password === ''
+    );
+  } catch {
+    return false;
+  }
 }
 
 function urlParameter(): string | undefined {
@@ -209,6 +230,15 @@ export function resolveConfig(sources: ConfigSources = {}): VoiceDemoConfig {
         '(service_role / sb_secret_ / API secret). Use the Supabase anon or publishable key.',
     );
     config.anonKey = '';
+    config.publicDemoMode = 'disabled';
+  }
+
+  if (config.languageLookupUrl !== '' && !isSafeLanguageLookupUrl(config.languageLookupUrl)) {
+    logger.error(
+      'refusing to start: the language lookup URL must be an HTTP(S) URL on this page origin',
+    );
+    // Never log the configured value: it could itself contain sensitive text.
+    config.languageLookupUrl = '';
     config.publicDemoMode = 'disabled';
   }
 

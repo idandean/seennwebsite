@@ -4,6 +4,7 @@ import { DEFAULT_CONFIG } from '../src/config';
 import { PublicVoiceDemoClient } from '../src/client';
 import { createTurnstileProvider } from '../src/turnstile';
 import { TransportError } from '../src/transport';
+import { stringsFor } from '../src/i18n';
 import type { VoiceDemoConfig } from '../src/config';
 import type { WidgetDeps } from '../src/widget';
 import type { ConnectOptions, TransportEvents, VoiceTransport } from '../src/transport';
@@ -24,10 +25,10 @@ function enabledConfig(overrides: Partial<VoiceDemoConfig> = {}): VoiceDemoConfi
     endpointBaseUrl: 'https://stub.supabase.co',
     anonKey: 'anon-key',
     turnstileSiteKey: 'site-key',
-    // Not the subject of these suites: an empty URL disables the same-origin
-    // language lookup, so the request stays automatic and no global fetch is
-    // needed. The lookup has its own coverage in language-automatic.test.ts.
+    // Not the subject of these suites: use an explicit canonical language so
+    // no global lookup is needed. Lookup failure is covered separately.
     languageLookupUrl: '',
+    languageOverride: 'en',
     ...overrides,
   };
 }
@@ -258,6 +259,24 @@ describe('turnstile', () => {
 
     expect(widget.state).toBe('error');
     expect(ts.reset).toHaveBeenCalled();
+  });
+
+  it('preserves invalid_language for diagnostics but renders language-unavailable copy', async () => {
+    const mic = fakeMicrophone();
+    const client = stubClient({ status: 400, body: { error: 'invalid_language' } });
+    const { widget, mount } = build(enabledConfig(), {
+      requestMicrophone: async () => mic.stream,
+      createClient: client.create,
+    });
+
+    await widget.start();
+    await flush();
+
+    expect(widget.snapshot.errorCode).toBe('invalid_language');
+    expect(mount.querySelector('.svd__sub')?.textContent).toBe(
+      stringsFor('en').err_language_unavailable,
+    );
+    expect(mic.track.stop).toHaveBeenCalledTimes(1);
   });
 
   it('uses a different token on a retry — never replays the first', async () => {
@@ -1331,7 +1350,7 @@ describe('locale and direction', () => {
     expect(mount.querySelector('.svd__headline')!.textContent).toMatch(/נסו/);
   });
 
-  it('sends NO language to the endpoint, whatever the page locale', async () => {
+  it('keeps page locale separate from the required conversation language', async () => {
     document.documentElement.setAttribute('lang', 'ar');
     const mic = fakeMicrophone();
     const client = stubClient({ status: 200, body: SESSION_BODY });
@@ -1347,8 +1366,8 @@ describe('locale and direction', () => {
     await flush();
 
     const body = JSON.parse(client.fetchImpl.mock.calls[0]![1]!.body as string);
-    // Automatic: the page renders in Arabic, the request stays language-free.
-    expect(Object.prototype.hasOwnProperty.call(body, 'language')).toBe(false);
+    // The page renders in Arabic; this test fixture explicitly starts in English.
+    expect(body.language).toBe('en');
   });
 });
 

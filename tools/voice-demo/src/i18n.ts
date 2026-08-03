@@ -107,6 +107,7 @@ export interface Strings {
   err_microphone_denied: string;
   err_microphone_denied_hint: string;
   err_microphone_unavailable: string;
+  err_language_unavailable: string;
   err_browser_unsupported: string;
   err_network_error: string;
   err_contract_violation: string;
@@ -202,6 +203,7 @@ const en: Strings = {
   err_consent_required: 'The demo needs your agreement before it can start.',
   err_invalid_request: 'The demo is misconfigured — our team has been notified.',
   err_server_error: 'Something went wrong on our side.',
+  err_language_unavailable: 'We could not choose the opening language. Please try again.',
 };
 
 const he: Strings = {
@@ -280,6 +282,7 @@ const he: Strings = {
   err_consent_required: 'הדמו זקוק להסכמתכם לפני שיוכל להתחיל.',
   err_invalid_request: 'תצורת הדמו שגויה — הצוות שלנו עודכן.',
   err_server_error: 'משהו השתבש אצלנו.',
+  err_language_unavailable: '\u05dc\u05d0 \u05d4\u05e6\u05dc\u05d7\u05e0\u05d5 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05d0\u05ea \u05e9\u05e4\u05ea \u05d4\u05e4\u05ea\u05d9\u05d7\u05d4. \u05e0\u05e1\u05d5 \u05e9\u05d5\u05d1.',
 };
 
 const ar: Strings = {
@@ -358,6 +361,7 @@ const ar: Strings = {
   err_consent_required: 'يحتاج العرض إلى موافقتك قبل أن يبدأ.',
   err_invalid_request: 'إعدادات العرض غير صحيحة — تم إبلاغ فريقنا.',
   err_server_error: 'حدث خطأ لدينا.',
+  err_language_unavailable: '\u062a\u0639\u0630\u0631 \u062a\u062d\u062f\u064a\u062f \u0644\u063a\u0629 \u0627\u0644\u0628\u062f\u0627\u064a\u0629. \u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.',
 };
 
 const PACKS: Record<DemoLocale, Strings> = { en, he, ar };

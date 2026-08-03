@@ -19,7 +19,8 @@
  * to accommodate. See `normalizeSession`.
  *
  * `normalizeSession()` is the single place where wire format meets the widget.
- * Field-name aliases remain supported (the endpoint is still unwritten), but
+ * Field-name aliases remain supported for compatibility with deployed and
+ * earlier response spellings, but
  * the *values* are now strictly validated — a token we cannot use is worse than
  * no token, because it produces a connected UI attached to nothing.
  */
@@ -33,6 +34,7 @@ export type DemoErrorCode =
   | 'demo_capacity_reached'
   | 'rate_limited'
   | 'verification_failed'
+  | 'invalid_language'
   | 'consent_required'
   | 'invalid_request'
   | 'server_error';
@@ -43,6 +45,7 @@ const KNOWN_ERROR_CODES: readonly string[] = [
   'demo_capacity_reached',
   'rate_limited',
   'verification_failed',
+  'invalid_language',
   'consent_required',
   'invalid_request',
   'server_error',
@@ -90,8 +93,8 @@ export const PREFERRED_RESPONSE_FIELDS = {
 } as const;
 
 /**
- * Accepted spellings per field, preferred first. Retained because the endpoint
- * is unwritten; cut each list to one once the real shape lands.
+ * Accepted spellings per field, preferred first. Retained for compatibility;
+ * narrow these only as a separate, coordinated contract change.
  */
 const ALIASES: Record<keyof typeof PREFERRED_RESPONSE_FIELDS, readonly string[]> = {
   token: ['token', 'participant_token', 'access_token', 'accessToken', 'participantToken'],
@@ -259,6 +262,8 @@ export function readErrorCode(body: unknown, httpStatus: number): DemoErrorCode 
 export interface NormalizeOptions {
   /** Injected in tests so expiry checks are deterministic. */
   now?: number;
+  /** The canonical language sent in the request, when one was required. */
+  expectedLanguage?: DemoLocale;
 }
 
 /**
@@ -309,6 +314,15 @@ export function normalizeSession(raw: unknown, options: NormalizeOptions = {}): 
     problems.push(`missing ${PREFERRED_RESPONSE_FIELDS.language}`);
   } else if (!canonicalLanguage) {
     problems.push(`${PREFERRED_RESPONSE_FIELDS.language} "${language}" is not one of en, he, ar`);
+  }
+  if (
+    canonicalLanguage &&
+    options.expectedLanguage &&
+    canonicalLanguage !== options.expectedLanguage
+  ) {
+    problems.push(
+      `response language does not match requested language`,
+    );
   }
 
   const recording = parseRecording(pickRecord(raw, ALIASES.recording));

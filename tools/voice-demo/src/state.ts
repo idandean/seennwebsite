@@ -42,6 +42,7 @@ export type ClientErrorCode =
   | 'agent_lost'
   | 'microphone_denied'
   | 'microphone_unavailable'
+  | 'language_unavailable'
   | 'browser_unsupported'
   | 'network_error'
   | 'contract_violation'
