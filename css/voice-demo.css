@@ -1216,3 +1216,235 @@
 .svd[dir='rtl'] .svd__consent {
   text-align: start;
 }
+
+
+/* =========================================================================
+   Recording consent
+   -------------------------------------------------------------------------
+   Rendered only when `recordingConsentMode: 'required'` is set in the page's
+   config block. The committed pages do not set it, so none of this is on the
+   live site today — see tools/voice-demo/CONFIGURATION.md §7.
+
+   The disclosure sits between the outlined start button and the "~2 minutes"
+   line: a visitor should read it before pressing, not after. It is deliberately
+   legible rather than decorative — greying it out until it disappears is how a
+   disclosure becomes a dark pattern.
+   ========================================================================= */
+
+.svd__rec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+  padding-inline: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  /* 12.5px: small, but above the site's own fine print. */
+  font-size: 0.78rem;
+  line-height: 1.5;
+  /* ~7:1 on the aurora behind it. Readable is the whole point. */
+  color: rgba(233, 239, 247, 0.86);
+}
+
+.svd__rec-icon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  color: #f0c14b;
+}
+
+.svd__rec-lock {
+  width: 13px;
+  height: 13px;
+}
+
+.svd__rec-sep {
+  opacity: 0.5;
+}
+
+.svd__rec-details {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: #f0c14b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.svd__rec-details:hover {
+  color: #f7d582;
+}
+
+.svd__rec-details:focus-visible {
+  outline: 2px solid #f0c14b;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ---------- The gate ---------- */
+
+.svd__gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.svd__gate[hidden] {
+  display: none;
+}
+
+.svd__gate-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 8, 18, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* Same deep-navy glass as the orb card, so the dialog reads as part of the
+   demo rather than as a browser chrome prompt bolted on top of it. */
+.svd__gate-panel {
+  position: relative;
+  width: min(26rem, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1.5rem 1.4rem 1.25rem;
+  border: 1px solid rgba(240, 193, 75, 0.28);
+  border-radius: 18px;
+  background: linear-gradient(165deg, rgba(19, 25, 48, 0.97) 0%, rgba(9, 11, 26, 0.98) 100%);
+  box-shadow: 0 28px 70px rgba(3, 5, 15, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color: #e9eff7;
+  text-align: start;
+}
+
+.svd__gate-title {
+  margin: 0 0 0.75rem;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.svd__gate-body {
+  margin-bottom: 1rem;
+}
+
+.svd__gate-line {
+  margin: 0 0 0.6rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(233, 239, 247, 0.9);
+}
+
+.svd__gate-line:last-child {
+  margin-bottom: 0;
+}
+
+.svd__gate-policy {
+  display: inline-block;
+  margin-bottom: 1.15rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #f0c14b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.svd__gate-policy:hover {
+  color: #f7d582;
+}
+
+.svd__gate-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+/* Order lives in the DOM (dismiss first, affirmative last) and is not flipped
+   here: `flex-end` already resolves to the correct edge in both directions, so
+   a screen reader and a sighted RTL reader get the same order. */
+
+.svd__gate-back,
+.svd__gate-agree {
+  min-height: 44px;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.svd__gate-back {
+  border: 1px solid rgba(233, 239, 247, 0.28);
+  background: transparent;
+  color: rgba(233, 239, 247, 0.9);
+}
+
+.svd__gate-back:hover {
+  border-color: rgba(233, 239, 247, 0.5);
+  color: #fff;
+}
+
+.svd__gate-agree {
+  border: 1px solid #f0c14b;
+  background: #f0c14b;
+  color: #10131f;
+}
+
+.svd__gate-agree:hover {
+  background: #f7d582;
+  border-color: #f7d582;
+}
+
+.svd__gate-back:focus-visible,
+.svd__gate-agree:focus-visible,
+.svd__gate-policy:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ---------- Phone: a bottom sheet, not a centred box ---------- */
+
+@media (max-width: 640px) {
+  .svd__gate {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .svd__gate-panel {
+    width: 100%;
+    max-width: none;
+    /* Clears the home indicator on iOS. */
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    border-inline: 0;
+    border-bottom: 0;
+    border-radius: 20px 20px 0 0;
+    max-height: 85vh;
+  }
+
+  .svd__gate-actions {
+    flex-direction: column-reverse;
+  }
+
+  .svd__gate-back,
+  .svd__gate-agree {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svd__gate-back,
+  .svd__gate-agree {
+    transition: none;
+  }
+}

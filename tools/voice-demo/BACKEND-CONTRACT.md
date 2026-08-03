@@ -290,3 +290,45 @@ them by `rate_limited` vs `demo_capacity_reached`.
 
 Resolved since the last revision: recording (no), `amount`/`balance_month`
 (backend defaults), request body, auth header, Turnstile (mandatory).
+
+
+---
+
+## 6. Handoff: fields the pre-flight consent gate would need
+
+The website now has a frontend consent gate (disabled by default — see
+CONFIGURATION.md §8). It produces a receipt on approval and **sends nothing**,
+because this endpoint's request validation is strict and no field names are
+agreed. Nothing below is implemented on the wire.
+
+The receipt the browser holds:
+
+```jsonc
+{
+  "policy_version": "2026-08-03.1",   // opaque; bumped when wording changes
+  "locale": "he",                     // the locale the wording was shown in
+  "accepted_at": "2026-08-03T10:00:00.000Z"  // ISO-8601, UTC
+}
+```
+
+**What the backend needs to decide before the browser sends any of it:**
+
+1. **Field name and shape.** Nested `consent: { policy_version, locale,
+   accepted_at }` (what `client.ts` already builds for the v2 path), or three
+   flat top-level fields? The client currently snake-cases them.
+2. **Does an unknown field 400?** If validation is strict-by-default, adding
+   `consent` to the body breaks every request the moment the frontend flag is
+   switched on. Confirm the endpoint tolerates or expects it *before* the flag
+   flips anywhere.
+3. **Is consent required to be present when recording is on?** If yes, the
+   endpoint should reject a session request without it rather than silently
+   recording — the gate is only as good as the server that enforces it.
+4. **Who owns the wording?** Right now the frontend ships it, versioned by
+   `RECORDING_POLICY_VERSION`. If the server should own it instead, use the
+   §3 mechanism and the frontend copy gets deleted rather than duplicated.
+5. **Retention.** The copy promises deletion after **7 days**, in three
+   languages. That number is now a public commitment; the backend has to
+   actually delete on that schedule.
+
+Until 1–3 are answered the flag stays `disabled` and the receipt stays in
+frontend memory.

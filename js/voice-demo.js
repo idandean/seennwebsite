@@ -214,6 +214,111 @@
     return /^sb_secret_/i.test(value.trim()) || /service_role|SUPABASE_SERVICE|SERVICE_ROLE_KEY/i.test(value) || /LIVEKIT_API_SECRET|LIVEKIT_SECRET/i.test(value) || /\bsk_live_|\bsk_test_|secret_key/i.test(value);
   }
 
+  // src/consent.ts
+  var RECORDING_POLICY_VERSION = "2026-08-03.1";
+  var CONSENT_STRINGS = {
+    en: {
+      disclosure: "This demo is recorded and transcribed, then automatically deleted after 7 days",
+      detailsLabel: "Details",
+      dialogTitle: "Before we begin",
+      dialogBodyPrimary: "This demo is recorded and transcribed for review and improvement.",
+      dialogBodySecondary: "The recording and transcript are automatically deleted after 7 days.",
+      privacyLabel: "Privacy policy",
+      goBackLabel: "Go back",
+      agreeLabel: "Agree and start"
+    },
+    he: {
+      disclosure: "\u05D4\u05D4\u05D3\u05D2\u05DE\u05D4 \u05DE\u05D5\u05E7\u05DC\u05D8\u05EA \u05D5\u05DE\u05EA\u05D5\u05DE\u05DC\u05DC\u05EA \u05D5\u05E0\u05DE\u05D7\u05E7\u05EA \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05DC\u05D0\u05D7\u05E8 7 \u05D9\u05DE\u05D9\u05DD",
+      detailsLabel: "\u05E4\u05E8\u05D8\u05D9\u05DD",
+      dialogTitle: "\u05DC\u05E4\u05E0\u05D9 \u05E9\u05DE\u05EA\u05D7\u05D9\u05DC\u05D9\u05DD",
+      dialogBodyPrimary: "\u05D4\u05D4\u05D3\u05D2\u05DE\u05D4 \u05DE\u05D5\u05E7\u05DC\u05D8\u05EA \u05D5\u05DE\u05EA\u05D5\u05DE\u05DC\u05DC\u05EA \u05DC\u05E6\u05D5\u05E8\u05DB\u05D9 \u05D1\u05D3\u05D9\u05E7\u05D4 \u05D5\u05E9\u05D9\u05E4\u05D5\u05E8.",
+      dialogBodySecondary: "\u05D4\u05D4\u05E7\u05DC\u05D8\u05D4 \u05D5\u05D4\u05EA\u05DE\u05DC\u05D5\u05DC \u05E0\u05DE\u05D7\u05E7\u05D9\u05DD \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05DC\u05D0\u05D7\u05E8 7 \u05D9\u05DE\u05D9\u05DD.",
+      privacyLabel: "\u05DE\u05D3\u05D9\u05E0\u05D9\u05D5\u05EA \u05E4\u05E8\u05D8\u05D9\u05D5\u05EA",
+      goBackLabel: "\u05D7\u05D6\u05E8\u05D4",
+      agreeLabel: "\u05DE\u05D0\u05E9\u05E8\u05D9\u05DD \u05D5\u05DE\u05EA\u05D7\u05D9\u05DC\u05D9\u05DD"
+    },
+    ar: {
+      disclosure: "\u064A\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062A\u062C\u0631\u064A\u0628\u064A \u0648\u062A\u0641\u0631\u064A\u063A\u0647 \u0646\u0635\u064A\u064B\u0627\u060C \u0648\u064A\u064F\u062D\u0630\u0641 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627 \u0628\u0639\u062F 7 \u0623\u064A\u0627\u0645",
+      detailsLabel: "\u0627\u0644\u062A\u0641\u0627\u0635\u064A\u0644",
+      dialogTitle: "\u0642\u0628\u0644 \u0623\u0646 \u0646\u0628\u062F\u0623",
+      dialogBodyPrimary: "\u064A\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062A\u062C\u0631\u064A\u0628\u064A \u0648\u062A\u0641\u0631\u064A\u063A\u0647 \u0646\u0635\u064A\u064B\u0627 \u0644\u0623\u063A\u0631\u0627\u0636 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629 \u0648\u0627\u0644\u062A\u062D\u0633\u064A\u0646.",
+      dialogBodySecondary: "\u064A\u064F\u062D\u0630\u0641 \u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u0648\u0627\u0644\u0646\u0635 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627 \u0628\u0639\u062F 7 \u0623\u064A\u0627\u0645.",
+      privacyLabel: "\u0633\u064A\u0627\u0633\u0629 \u0627\u0644\u062E\u0635\u0648\u0635\u064A\u0629",
+      goBackLabel: "\u0631\u062C\u0648\u0639",
+      agreeLabel: "\u0645\u0648\u0627\u0641\u0642\u0629 \u0648\u0628\u062F\u0621"
+    }
+  };
+  var PRIVACY_POLICY_URLS = {
+    en: "/privacy-policy.html",
+    he: "/he/privacy-policy.html",
+    ar: "/privacy-policy.html"
+  };
+  function consentStringsFor(locale) {
+    var _a;
+    return (_a = CONSENT_STRINGS[locale]) != null ? _a : CONSENT_STRINGS.en;
+  }
+  function resolveConsentMode(raw) {
+    return raw === "required" ? "required" : "disabled";
+  }
+  var ConsentGate = class {
+    constructor(mode, locale, policyVersion = RECORDING_POLICY_VERSION) {
+      this.mode = mode;
+      this.locale = locale;
+      this.policyVersion = policyVersion;
+      this.receipt = null;
+    }
+    /** True when a visitor must agree before anything may happen. */
+    get required() {
+      return this.mode === "required";
+    }
+    /**
+     * A held approval only counts for the wording and language it was given
+     * for. Switching either throws it away rather than carrying it over.
+     */
+    get approved() {
+      if (!this.required) return true;
+      const held = this.receipt;
+      return held !== null && held.policyVersion === this.policyVersion && held.locale === this.locale;
+    }
+    /**
+     * Records an affirmative decision. Idempotent: clicking the button twice
+     * before the dialog closes must not produce a second approval, because the
+     * caller turns each approval into exactly one session.
+     */
+    approve(now = /* @__PURE__ */ new Date()) {
+      if (this.approved && this.receipt) return this.receipt;
+      this.receipt = {
+        policyVersion: this.policyVersion,
+        locale: this.locale,
+        acceptedAt: now.toISOString()
+      };
+      return this.receipt;
+    }
+    /** Consumes the approval. The next session needs a fresh one. */
+    take() {
+      const held = this.receipt;
+      this.receipt = null;
+      return held;
+    }
+    /** Drops any held approval without consuming it as a session. */
+    revoke() {
+      this.receipt = null;
+    }
+    /**
+     * Re-points the gate at a different language. Any approval given in the old
+     * one stops counting, because it was given to a sentence the visitor can no
+     * longer see.
+     */
+    setLocale(locale) {
+      if (locale === this.locale) return;
+      this.locale = locale;
+      this.receipt = null;
+    }
+    get currentLocale() {
+      return this.locale;
+    }
+  };
+
   // src/logging.ts
   var TOKEN_LIKE = [
     // JWTs — the participant token and the anon key are both this shape.
@@ -265,6 +370,7 @@
   var LIVEKIT_MODULE_URL = `https://cdn.jsdelivr.net/npm/livekit-client@${LIVEKIT_CLIENT_VERSION}/+esm`;
   var DEFAULT_CONFIG = {
     publicDemoMode: "disabled",
+    recordingConsentMode: "disabled",
     endpointBaseUrl: "",
     anonKey: "",
     endpointPath: "/functions/v1/public-voice-demo",
@@ -320,6 +426,7 @@
     if (isKillSignal(urlParameter())) mode = "disabled";
     if (isKillSignal(metaContent("seenn:public-demo-mode"))) mode = "disabled";
     config.publicDemoMode = mode;
+    config.recordingConsentMode = resolveConsentMode(inline == null ? void 0 : inline.recordingConsentMode);
     const dataset = sources.dataset;
     if (dataset) {
       if (dataset["orbSize"]) config.orbSize = Number(dataset["orbSize"]) || config.orbSize;
@@ -1224,7 +1331,8 @@
     hangUp: '<path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><path d="M22 2 2 22"/>',
     spinner: '<path d="M21 12a9 9 0 1 1-6.22-8.56"/>',
     retry: '<path d="M3 10h6V4"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L3 10"/>',
-    blocked: '<path d="M4.9 4.9 19.1 19.1"/><circle cx="12" cy="12" r="9"/>'
+    blocked: '<path d="M4.9 4.9 19.1 19.1"/><circle cx="12" cy="12" r="9"/>',
+    lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'
   };
   var LANGUAGE_LOOKUP_ATTEMPTS = 2;
   function icon(paths, className = "") {
@@ -1261,10 +1369,42 @@
       this.deadline = 0;
       this.destroyed = false;
       this.coreVideo = null;
+      /** Focus to hand back when the dialog closes. */
+      this.gateReturnFocus = null;
+      /** Guards against a second start between agreeing and the session existing. */
+      this.gateStarting = false;
       this.onPageHide = () => {
         void this.disconnect("page_hidden");
       };
       this.mountObserver = null;
+      /**
+       * Escape closes, and Tab is trapped inside the panel. Capture phase so the
+       * page behind the dialog never sees either.
+       */
+      this.onGateKeydown = (event) => {
+        if (this.gate.hidden) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.stopPropagation();
+          this.closeGate();
+          return;
+        }
+        if (event.key !== "Tab") return;
+        const focusables = Array.from(
+          this.gatePanel.querySelectorAll("a[href], button:not([disabled])")
+        ).filter((el) => !el.hidden);
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (event.shiftKey && active === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      };
       var _a, _b, _c, _d;
       this.mount = mount;
       this.config = config;
@@ -1282,6 +1422,7 @@
       this.makeTransport = (_d = deps.createTransport) != null ? _d : (events) => createLiveKitTransport(events, { moduleUrl: config.livekitModuleUrl });
       this.locale = resolveLocale(config.locale, document.documentElement.getAttribute("lang"));
       this.strings = stringsFor(this.locale);
+      this.consentGate = new ConsentGate(config.recordingConsentMode, this.locale);
       this.context = initialContext(unavailableReason(config));
       this.build();
       this.render();
@@ -1345,6 +1486,33 @@
         <span class="svd__start-label"></span>
       </button>
       <p class="svd__meta"></p>
+      <!--
+        Pre-flight recording disclosure. Sits between the control and the
+        "~2 minutes" line so it is read before the button is pressed, not
+        after. Rendered only when recordingConsentMode is 'required'.
+      -->
+      <p class="svd__rec" hidden>
+        <span class="svd__rec-icon" aria-hidden="true"></span>
+        <span class="svd__rec-text"></span>
+        <span class="svd__rec-sep" aria-hidden="true">\xB7</span>
+        <button type="button" class="svd__rec-details"></button>
+      </p>
+      <div class="svd__gate" hidden>
+        <div class="svd__gate-scrim" data-gate-dismiss></div>
+        <div class="svd__gate-panel" role="dialog" aria-modal="true"
+             aria-labelledby="svd-gate-title" aria-describedby="svd-gate-body">
+          <h2 class="svd__gate-title" id="svd-gate-title"></h2>
+          <div class="svd__gate-body" id="svd-gate-body">
+            <p class="svd__gate-line svd__gate-line--primary"></p>
+            <p class="svd__gate-line svd__gate-line--secondary"></p>
+          </div>
+          <a class="svd__gate-policy" target="_blank" rel="noopener noreferrer"></a>
+          <div class="svd__gate-actions">
+            <button type="button" class="svd__gate-back" data-gate-dismiss></button>
+            <button type="button" class="svd__gate-agree"></button>
+          </div>
+        </div>
+      </div>
       <div class="svd__consent" role="group" hidden>
         <p class="svd__consent-heading"></p>
         <p class="svd__consent-text"></p>
@@ -1383,6 +1551,19 @@
       this.sessionMeta = q(".svd__meta");
       const startIcon = this.root.querySelector(".svd__start-icon");
       if (startIcon) startIcon.innerHTML = icon(ICONS.mic, "svd__start-mic");
+      this.recNotice = q(".svd__rec");
+      this.recText = q(".svd__rec-text");
+      this.recDetails = q(".svd__rec-details");
+      const recIcon = this.root.querySelector(".svd__rec-icon");
+      if (recIcon) recIcon.innerHTML = icon(ICONS.lock, "svd__rec-lock");
+      this.gate = q(".svd__gate");
+      this.gatePanel = q(".svd__gate-panel");
+      this.gateTitle = q(".svd__gate-title");
+      this.gatePrimary = q(".svd__gate-line--primary");
+      this.gateSecondary = q(".svd__gate-line--secondary");
+      this.gatePolicy = q(".svd__gate-policy");
+      this.gateBack = q(".svd__gate-back");
+      this.gateAgree = q(".svd__gate-agree");
       this.consentPanel = q(".svd__consent");
       this.consentText = q(".svd__consent-text");
       this.consentLink = q(".svd__consent-link");
@@ -1413,6 +1594,13 @@
         if (!id) return;
         void ((_b = (_a = navigator.clipboard) == null ? void 0 : _a.writeText) == null ? void 0 : _b.call(_a, id).catch(() => void 0));
         this.supportCopy.textContent = this.strings.supportCopied;
+      });
+      this.recDetails.addEventListener("click", () => this.openGate());
+      this.gateAgree.addEventListener("click", () => {
+        void this.onGateAgree();
+      });
+      this.gate.querySelectorAll("[data-gate-dismiss]").forEach((el) => {
+        el.addEventListener("click", () => this.closeGate());
       });
       this.consentAccept.addEventListener("click", () => {
         var _a;
@@ -1525,7 +1713,7 @@
       return true;
     }
     render() {
-      var _a;
+      var _a, _b;
       if (this.destroyed) return;
       const { state, pendingConsent } = this.context;
       const s = this.strings;
@@ -1552,6 +1740,17 @@
       this.startButton.hidden = !offerStart;
       this.sessionMeta.textContent = s.sessionMeta;
       this.sessionMeta.hidden = state !== "ready";
+      const c = consentStringsFor(this.locale);
+      this.recText.textContent = c.disclosure;
+      this.recDetails.textContent = c.detailsLabel;
+      this.recNotice.hidden = !this.consentGate.required || state !== "ready";
+      this.gateTitle.textContent = c.dialogTitle;
+      this.gatePrimary.textContent = c.dialogBodyPrimary;
+      this.gateSecondary.textContent = c.dialogBodySecondary;
+      this.gatePolicy.textContent = c.privacyLabel;
+      this.gatePolicy.href = (_b = PRIVACY_POLICY_URLS[this.locale]) != null ? _b : PRIVACY_POLICY_URLS.en;
+      this.gateBack.textContent = c.goBackLabel;
+      this.gateAgree.textContent = c.agreeLabel;
       const busy = state === "requestingMicrophone" || state === "connecting" || state === "reconnecting";
       this.primaryButton.disabled = busy || state === "unavailable" || pendingConsent !== null;
       this.primaryButton.innerHTML = state === "listening" || state === "assistantSpeaking" ? icon(ICONS.hangUp) : busy ? icon(ICONS.spinner, "svd-spin") : state === "unavailable" ? icon(ICONS.blocked) : state === "ready" ? icon(ICONS.mic) : icon(ICONS.retry);
@@ -1633,7 +1832,46 @@
         await this.disconnect("user_disconnected");
         return;
       }
+      if (this.consentGate.required && !this.consentGate.approved) {
+        this.openGate();
+        return;
+      }
       await this.start();
+    }
+    // --- Recording consent gate ---------------------------------------------
+    openGate() {
+      if (!this.gate.hidden) return;
+      this.gateReturnFocus = document.activeElement;
+      this.gate.hidden = false;
+      this.root.classList.add("svd--gated");
+      this.gateBack.focus();
+      document.addEventListener("keydown", this.onGateKeydown, true);
+    }
+    closeGate() {
+      if (this.gate.hidden) return;
+      this.gate.hidden = true;
+      this.root.classList.remove("svd--gated");
+      document.removeEventListener("keydown", this.onGateKeydown, true);
+      const restore = this.gateReturnFocus;
+      this.gateReturnFocus = null;
+      if (restore && document.contains(restore)) restore.focus();
+    }
+    /**
+     * The one affirmative path. Guarded so a double click, or a click plus a
+     * keyboard activation, cannot produce two sessions: the flag is raised
+     * before any await and only ever lowered once the start has settled.
+     */
+    async onGateAgree() {
+      if (this.gateStarting || this.gate.hidden) return;
+      this.gateStarting = true;
+      this.consentGate.approve(new Date(this.now()));
+      this.closeGate();
+      try {
+        this.consentGate.take();
+        await this.start();
+      } finally {
+        this.gateStarting = false;
+      }
     }
     /**
      * Begins a session. Safe to call twice: the machine rejects a second START

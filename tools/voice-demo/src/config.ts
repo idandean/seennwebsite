@@ -23,14 +23,26 @@
  */
 
 import { looksLikeServerSecret } from './contract';
+import { resolveConsentMode } from './consent';
 import { logger } from './logging';
 import type { DemoLocale } from './contract';
+import type { RecordingConsentMode } from './consent';
 
 export type PublicDemoMode = 'enabled' | 'disabled';
 
 export interface VoiceDemoConfig {
   /** Only `window.SEENN_VOICE_DEMO` can set this to 'enabled'. */
   publicDemoMode: PublicDemoMode;
+
+  /**
+   * Whether a visitor must agree to being recorded before the demo may touch a
+   * microphone.
+   *
+   * 'disabled' is both today's shipped behaviour and today's truth: the demo
+   * records nothing, so it must not claim otherwise. Resolved by exact literal
+   * match like publicDemoMode — see resolveConsentMode.
+   */
+  recordingConsentMode: RecordingConsentMode;
 
   /** Supabase project hosting the endpoint. Staging and production differ. */
   endpointBaseUrl: string;
@@ -118,6 +130,7 @@ export const LIVEKIT_MODULE_URL = `https://cdn.jsdelivr.net/npm/livekit-client@$
 
 export const DEFAULT_CONFIG: VoiceDemoConfig = {
   publicDemoMode: 'disabled',
+  recordingConsentMode: 'disabled',
   endpointBaseUrl: '',
   anonKey: '',
   endpointPath: '/functions/v1/public-voice-demo',
@@ -214,6 +227,12 @@ export function resolveConfig(sources: ConfigSources = {}): VoiceDemoConfig {
   if (isKillSignal(metaContent('seenn:public-demo-mode'))) mode = 'disabled';
 
   config.publicDemoMode = mode;
+
+  // Fail closed on anything that is not the exact literal. Deliberately not
+  // readable from the dataset or a URL parameter: a page that does not record
+  // must not be able to start claiming it does, and a visitor must not be able
+  // to switch the disclosure off on a page that does.
+  config.recordingConsentMode = resolveConsentMode(inline?.recordingConsentMode);
 
   const dataset = sources.dataset;
   if (dataset) {

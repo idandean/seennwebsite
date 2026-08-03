@@ -143,3 +143,50 @@ Steps 6 and 7 are both required. Neither alone exposes the widget.
 `voice-demo-preview.html` at the repository root (gitignored) mounts the widget
 in all three locales against a hostname that cannot resolve. That is the way to
 look at the UI without touching the real pages.
+
+## 8. Recording consent (`recordingConsentMode`)
+
+**Committed value: `disabled`. It must stay that way until the backend
+actually records.** The demo records nothing today, so switching this on would
+put a sentence in front of visitors that is not true.
+
+```js
+window.SEENN_VOICE_DEMO = {
+  publicDemoMode: 'enabled',
+  recordingConsentMode: 'required',   // default 'disabled'
+  // ...
+};
+```
+
+Resolution is deliberately narrow, for the same reason `publicDemoMode` is:
+
+- Only the **exact literal** `'required'` turns it on. `'Required'`, `' required'`,
+  `true` and `1` all resolve to `'disabled'`.
+- It is **not** readable from the mount's `data-` attributes or from a URL
+  parameter. A page that does not record must not be able to start claiming it
+  does, and a visitor must not be able to switch the disclosure off on a page
+  that does.
+
+### What `required` changes
+
+- A disclosure line appears between the outlined start button and the
+  "~2 minutes" line, in the widget's locale (EN/HE/AR).
+- Pressing the orb **or** the start button opens a consent dialog instead of
+  starting. Before agreement there is no `getUserMedia`, no Turnstile, no
+  Supabase POST, no `livekit-client` import and no room connection.
+- Agreement is affirmative, held **in memory only**, and consumed by exactly
+  one session. It is not written to `localStorage`: a box ticked last week is
+  not informed consent for a microphone opening now.
+- Changing locale, or bumping `RECORDING_POLICY_VERSION` in `src/consent.ts`,
+  invalidates any approval already given.
+
+### Wording
+
+The three locales live in `src/consent.ts` and are reviewed copy. Change them
+and bump `RECORDING_POLICY_VERSION` **in the same commit**, or approvals given
+against the old sentence will keep counting.
+
+This is the opposite of the server-driven consent path in §3 of
+BACKEND-CONTRACT.md, which is still unused. That one renders wording the server
+supplies; this one has to ship its own, because it runs before any request
+exists to ask.
