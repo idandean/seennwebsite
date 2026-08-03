@@ -608,17 +608,6 @@ body {
   text-align: center;
 }
 
-.chan-eyebrow {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--chan-muted);
-}
-
 .chan-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
