@@ -50,7 +50,25 @@
 
     // Cloudflare Turnstile SITE key — public. Its matching secret key lives in
     // the Supabase Edge Function's environment and must never appear here.
-    turnstileSiteKey: '0x4AAAAAAEEN9zjBnCHDnqNy'
+    turnstileSiteKey: '0x4AAAAAAEEN9zjBnCHDnqNy',
+
+    // ------------------------------------------------------------------
+    // Recording consent — WIRED, DELIBERATELY OFF.
+    //
+    // Flip to 'required' ONLY once Codex has confirmed all four are live on
+    // staging:
+    //   1. the consent catalog endpoint, serving policy 2026-08-03.2
+    //      at /functions/v1/public-voice-demo-consent for en/he/ar
+    //   2. the schema migration that stores the acceptance
+    //   3. the retention worker that actually deletes audio and transcript
+    //      within 7 days — the sentence promises this in three languages
+    //   4. an agent build that records and transcribes
+    //
+    // Turning this on earlier tells visitors they are being recorded when
+    // they are not, or promises a deletion nothing performs. Either is worse
+    // than shipping the demo without it.
+    // ------------------------------------------------------------------
+    recordingConsentMode: 'disabled'
   };
 </script>
 <script defer src="/js/voice-demo.js"></script>

@@ -146,9 +146,7 @@ look at the UI without touching the real pages.
 
 ## 8. Recording consent (`recordingConsentMode`)
 
-**Committed value: `disabled`. It must stay that way until the backend
-actually records.** The demo records nothing today, so switching this on would
-put a sentence in front of visitors that is not true.
+**Committed value everywhere, including the staging page: `disabled`.**
 
 ```js
 window.SEENN_VOICE_DEMO = {
@@ -158,35 +156,57 @@ window.SEENN_VOICE_DEMO = {
 };
 ```
 
-Resolution is deliberately narrow, for the same reason `publicDemoMode` is:
+Resolution is deliberately narrow, like `publicDemoMode`:
 
-- Only the **exact literal** `'required'` turns it on. `'Required'`, `' required'`,
-  `true` and `1` all resolve to `'disabled'`.
-- It is **not** readable from the mount's `data-` attributes or from a URL
+- Only the **exact literal** `'required'` turns it on. `'Required'`, `true`
+  and `1` all resolve to `'disabled'`.
+- It is **not** readable from the mount's `data-` attributes or a URL
   parameter. A page that does not record must not be able to start claiming it
   does, and a visitor must not be able to switch the disclosure off on a page
   that does.
 
-### What `required` changes
+### The wording is not ours
 
-- A disclosure line appears between the outlined start button and the
-  "~2 minutes" line, in the widget's locale (EN/HE/AR).
-- Pressing the orb **or** the start button opens a consent dialog instead of
-  starting. Before agreement there is no `getUserMedia`, no Turnstile, no
-  Supabase POST, no `livekit-client` import and no room connection.
-- Agreement is affirmative, held **in memory only**, and consumed by exactly
-  one session. It is not written to `localStorage`: a box ticked last week is
-  not informed consent for a microphone opening now.
-- Changing locale, or bumping `RECORDING_POLICY_VERSION` in `src/consent.ts`,
-  invalidates any approval already given.
+`src/consent.ts` contains **no consent sentence in any locale**, and a test
+fails if one appears. The sentence is a legal artefact: it lives in the
+backend's immutable consent catalog, versioned there, and the widget renders
+whatever the catalog returns or nothing at all.
 
-### Wording
+What the frontend does own is chrome — dialog title, the two button labels, the
+privacy link. One of those is load-bearing: the sentence quotes its own
+affirmative button ("By selecting 'Agree and start,' I consent to…"), so
+`agreeLabel` must keep matching the catalog text. A test asserts each locale's
+sentence contains that locale's label.
 
-The three locales live in `src/consent.ts` and are reviewed copy. Change them
-and bump `RECORDING_POLICY_VERSION` **in the same commit**, or approvals given
-against the old sentence will keep counting.
+### The flow when `required`
 
-This is the opposite of the server-driven consent path in §3 of
-BACKEND-CONTRACT.md, which is still unused. That one renders wording the server
-supplies; this one has to ship its own, because it runs before any request
-exists to ask.
+1. Visitor presses the orb or the start button.
+2. The canonical language is resolved first — the sentence has to be in the
+   language the session will run in.
+3. **One** read-only `GET` to the catalog for that language. This is the only
+   backend request permitted before acceptance.
+4. Anything wrong — non-2xx, unparseable, blank text, a policy version other
+   than the pinned `2026-08-03.2`, a locale that does not match the request —
+   and the gate **fails closed**: no dialog, no session, no microphone.
+5. The returned text is rendered verbatim into the dialog.
+6. On the affirmative button only: the session starts, carrying the receipt.
+
+Before step 6 there is no `getUserMedia`, no Turnstile execution, no session
+POST, no `livekit-client` import, no room join, and no consent-dependent
+analytics — all of those live inside `start()`, which the gate returns before.
+
+Dismissing (button, scrim or Escape) discards the row; reopening fetches a
+fresh one rather than reusing a sentence the visitor walked away from.
+
+Nothing is selected by default and nothing is persisted. Acceptance is held in
+memory and consumed by exactly one session.
+
+### Version pinning
+
+`CONSENT_POLICY_VERSION` in `src/consent.ts` is pinned to `2026-08-03.2`
+(audio **and** transcript). `2026-08-03.1` was recording-only and is retired; a
+test asserts it can never be submitted.
+
+The pin is enforced in both directions. An older catalog would have the widget
+record acceptance of a sentence it cannot render; a newer one would have it show
+a sentence and then misattribute it to the version it submits. Both fail closed.

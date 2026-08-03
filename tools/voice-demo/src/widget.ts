@@ -10,8 +10,15 @@ import { PublicVoiceDemoClient, DemoRequestError, rateLimitScopeFor } from './cl
 import { createTurnstileProvider } from './turnstile';
 import { TransportError, createLiveKitTransport } from './transport';
 import { readinessFor } from './agent';
-import { ConsentGate, consentStringsFor, PRIVACY_POLICY_URLS } from './consent';
+import {
+  CONSENT_POLICY_VERSION,
+  ConsentGate,
+  consentStringsFor,
+  fetchConsentCatalog,
+  PRIVACY_POLICY_URLS,
+} from './consent';
 import type { DemoLanguage } from './country-language';
+import type { ConsentReceipt } from './consent';
 import { directionFor, resolveLocale, stringsFor } from './i18n';
 import { agentIsReady, initialContext, isActive, reduce } from './state';
 import { logger } from './logging';
@@ -22,6 +29,14 @@ import type { Strings } from './i18n';
 import type { AnyErrorCode, DemoContext, DemoEvent, DemoState, FinishReason } from './state';
 import type { TransportEvents, TransportFactory, TransportPhase, VoiceTransport } from './transport';
 import type { TurnstileProvider } from './turnstile';
+
+/** Handed in by the consent gate so the session cannot drift from it. */
+export interface StartOptions {
+  /** Canonical language already resolved, and already agreed against. */
+  language?: DemoLanguage;
+  /** The visitor's acceptance of the exact catalog row they were shown. */
+  consent?: ConsentReceipt;
+}
 
 export interface WidgetDeps {
   createClient?: (config: VoiceDemoConfig) => PublicVoiceDemoClient;
@@ -133,8 +148,11 @@ export class VoiceDemoWidget {
   private gate!: HTMLElement;
   private gatePanel!: HTMLElement;
   private gateTitle!: HTMLElement;
-  private gatePrimary!: HTMLElement;
-  private gateSecondary!: HTMLElement;
+  private gateText!: HTMLElement;
+  /** Guards a second catalog fetch while one is already in flight. */
+  private gateLoading = false;
+  /** Canonical language the shown catalog row was fetched for. */
+  private gateLanguage: DemoLanguage | null = null;
   private gatePolicy!: HTMLAnchorElement;
   private gateBack!: HTMLButtonElement;
   private gateAgree!: HTMLButtonElement;
@@ -189,7 +207,7 @@ export class VoiceDemoWidget {
 
     this.locale = resolveLocale(config.locale, document.documentElement.getAttribute('lang'));
     this.strings = stringsFor(this.locale);
-    this.consentGate = new ConsentGate(config.recordingConsentMode, this.locale);
+    this.consentGate = new ConsentGate(config.recordingConsentMode);
     this.context = initialContext(unavailableReason(config));
 
     this.build();
@@ -278,8 +296,10 @@ export class VoiceDemoWidget {
              aria-labelledby="svd-gate-title" aria-describedby="svd-gate-body">
           <h2 class="svd__gate-title" id="svd-gate-title"></h2>
           <div class="svd__gate-body" id="svd-gate-body">
-            <p class="svd__gate-line svd__gate-line--primary"></p>
-            <p class="svd__gate-line svd__gate-line--secondary"></p>
+            <!-- Written once, from the catalog, in openGate(). Never
+                 pre-populated: an empty dialog is the correct state until the
+                 backend has said what the sentence is. -->
+            <p class="svd__gate-text"></p>
           </div>
           <a class="svd__gate-policy" target="_blank" rel="noopener noreferrer"></a>
           <div class="svd__gate-actions">
@@ -337,8 +357,7 @@ export class VoiceDemoWidget {
     this.gate = q('.svd__gate');
     this.gatePanel = q('.svd__gate-panel');
     this.gateTitle = q('.svd__gate-title');
-    this.gatePrimary = q('.svd__gate-line--primary');
-    this.gateSecondary = q('.svd__gate-line--secondary');
+    this.gateText = q('.svd__gate-text');
     this.gatePolicy = q<HTMLAnchorElement>('.svd__gate-policy');
     this.gateBack = q<HTMLButtonElement>('.svd__gate-back');
     this.gateAgree = q<HTMLButtonElement>('.svd__gate-agree');
@@ -532,8 +551,8 @@ export class VoiceDemoWidget {
     this.recNotice.hidden = !this.consentGate.required || state !== 'ready';
 
     this.gateTitle.textContent = c.dialogTitle;
-    this.gatePrimary.textContent = c.dialogBodyPrimary;
-    this.gateSecondary.textContent = c.dialogBodySecondary;
+    // The body is deliberately not written here: it comes from the catalog,
+    // once, in openGate(). Re-rendering must never overwrite it with chrome.
     this.gatePolicy.textContent = c.privacyLabel;
     this.gatePolicy.href = PRIVACY_POLICY_URLS[this.locale] ?? PRIVACY_POLICY_URLS.en;
     this.gateBack.textContent = c.goBackLabel;
@@ -664,10 +683,11 @@ export class VoiceDemoWidget {
     }
 
     // The gate returns before start() when consent is required and absent, so
-    // no microphone, Turnstile, Supabase, LiveKit import or room join happens
-    // on this gesture. Opening the dialog is pure DOM.
+    // no microphone, Turnstile, session POST, LiveKit import or room join
+    // happens on this gesture — and no consent-dependent analytics, which are
+    // all inside start().
     if (this.consentGate.required && !this.consentGate.approved) {
-      this.openGate();
+      await this.openGate();
       return;
     }
 
@@ -676,8 +696,56 @@ export class VoiceDemoWidget {
 
   // --- Recording consent gate ---------------------------------------------
 
-  private openGate(): void {
-    if (!this.gate.hidden) return;
+  /**
+   * Resolves the session's language, fetches the catalog row for it, and only
+   * then shows a dialog. Any failure along the way is terminal for this
+   * gesture: we will not invent wording, and we will not let a visitor agree
+   * to a sentence we could not load.
+   */
+  private async openGate(): Promise<void> {
+    if (!this.gate.hidden || this.gateLoading) return;
+    this.gateLoading = true;
+    this.startButton.disabled = true;
+
+    try {
+      // The canonical language has to be settled first: the sentence must be
+      // in the language the session will actually run in, and the locale we
+      // submit has to match both.
+      const language = await this.resolveInitialLanguage();
+      if (this.destroyed) return;
+      if (!language) {
+        this.dispatch({ type: 'ERROR', code: 'contract_violation' });
+        return;
+      }
+
+      const result = await fetchConsentCatalog({
+        url: `${this.config.endpointBaseUrl.replace(/\/+$/, '')}${this.config.consentCatalogPath}`,
+        locale: language,
+        anonKey: this.config.anonKey,
+        expectedVersion: CONSENT_POLICY_VERSION,
+        timeoutMs: this.config.consentCatalogTimeoutMs,
+      });
+      if (this.destroyed) return;
+
+      if (result.status !== 'ok') {
+        // Fail closed. The reason never reaches the visitor — it can carry
+        // network detail — but it is worth having in the console.
+        logger.error(`consent unavailable: ${result.reason}`);
+        this.dispatch({ type: 'ERROR', code: 'contract_violation' });
+        return;
+      }
+
+      this.gateLanguage = language;
+      this.consentGate.present(result.entry);
+      this.gateText.textContent = result.entry.text;
+      this.showGate();
+    } finally {
+      this.gateLoading = false;
+      this.startButton.disabled = false;
+    }
+  }
+
+  private showGate(): void {
     this.gateReturnFocus = document.activeElement as HTMLElement | null;
     this.gate.hidden = false;
     this.root.classList.add('svd--gated');
@@ -690,6 +758,10 @@ export class VoiceDemoWidget {
   private closeGate(): void {
     if (this.gate.hidden) return;
     this.gate.hidden = true;
+    // Dismissing throws the catalog row away. Re-opening fetches a fresh one
+    // rather than reusing a sentence the visitor already walked away from.
+    this.consentGate.revoke();
+    this.gateLanguage = null;
     this.root.classList.remove('svd--gated');
     document.removeEventListener('keydown', this.onGateKeydown, true);
     const restore = this.gateReturnFocus;
@@ -740,16 +812,32 @@ export class VoiceDemoWidget {
     if (this.gateStarting || this.gate.hidden) return;
     this.gateStarting = true;
 
-    this.consentGate.approve(new Date(this.now()));
-    this.closeGate();
+    // Built from the row that was actually rendered, never from a constant:
+    // the acceptance has to name the sentence the visitor read.
+    const receipt = this.consentGate.approve(new Date(this.now()));
+    const language = this.gateLanguage;
+
+    // Belt and braces. The gate only arms on a validated row, but submitting
+    // a locale that disagrees with the session's language would record
+    // agreement to a sentence in a language we did not run in.
+    if (!receipt || !language || receipt.locale !== language) {
+      this.gateStarting = false;
+      this.closeGate();
+      this.dispatch({ type: 'ERROR', code: 'contract_violation' });
+      return;
+    }
+
+    this.gate.hidden = true;
+    this.root.classList.remove('svd--gated');
+    document.removeEventListener('keydown', this.onGateKeydown, true);
+    this.gateReturnFocus = null;
 
     try {
-      // Consumed here rather than held: the approval covers this session and
-      // nothing after it. The receipt is not sent anywhere — the backend's
-      // consent field names are not agreed, and inventing them would produce a
-      // request its strict validation rejects. See BACKEND-CONTRACT.md §3.
+      // Consumed rather than held: the acceptance covers this session and
+      // nothing after it.
       this.consentGate.take();
-      await this.start();
+      this.gateLanguage = null;
+      await this.start({ language, consent: receipt });
     } finally {
       this.gateStarting = false;
     }
@@ -760,7 +848,7 @@ export class VoiceDemoWidget {
    * while a connection is in flight, and this returns without touching the
    * microphone or the network.
    */
-  async start(): Promise<void> {
+  async start(options: StartOptions = {}): Promise<void> {
     if (this.destroyed) return;
 
     const reason = unavailableReason(this.config);
@@ -793,7 +881,11 @@ export class VoiceDemoWidget {
     // Fired now, awaited just before the POST: it runs alongside the
     // microphone prompt and the Turnstile challenge, so it adds no latency of
     // its own to the twenty seconds a visitor will tolerate.
-    const initialLanguage = this.resolveInitialLanguage();
+    // The consent gate has already resolved this, and the locale in the
+    // receipt was validated against it. Re-resolving could drift.
+    const initialLanguage = options.language
+      ? Promise.resolve<DemoLanguage | null>(options.language)
+      : this.resolveInitialLanguage();
 
     // 1. Microphone — never before this point.
     let microphone: MediaStream;
@@ -822,7 +914,7 @@ export class VoiceDemoWidget {
         this.fail('language_unavailable');
         return;
       }
-      session = await this.obtainSession(attempt, resolvedLanguage);
+      session = await this.obtainSession(attempt, resolvedLanguage, options.consent);
     } catch (cause) {
       if (stale()) return;
       this.handleRequestError(cause);
@@ -921,6 +1013,7 @@ export class VoiceDemoWidget {
   private async obtainSession(
     attempt: number,
     initialLanguage: DemoLanguage,
+    consent?: ConsentReceipt | undefined,
   ): Promise<import('./contract').DemoSession | null> {
     for (let round = 0; round < 2; round += 1) {
       // A fresh, single-use token immediately before *every* POST, including
@@ -936,7 +1029,9 @@ export class VoiceDemoWidget {
           // The country-resolved starting language is mandatory. Rendering
           // locale and browser locale remain separate and are never sent.
           language: initialLanguage,
-          consent: this.context.acceptedConsent ?? undefined,
+          // Pre-flight acceptance if the gate produced one, otherwise the
+          // server-driven v2 path's. Never both, never invented.
+          consent: consent ?? this.context.acceptedConsent ?? undefined,
           turnstileToken,
           signal: this.abortController?.signal,
         });

@@ -292,43 +292,77 @@ Resolved since the last revision: recording (no), `amount`/`balance_month`
 (backend defaults), request body, auth header, Turnstile (mandatory).
 
 
+
 ---
 
-## 6. Handoff: fields the pre-flight consent gate would need
+## 6. Recording consent — policy 2026-08-03.2
 
-The website now has a frontend consent gate (disabled by default — see
-CONFIGURATION.md §8). It produces a receipt on approval and **sends nothing**,
-because this endpoint's request validation is strict and no field names are
-agreed. Nothing below is implemented on the wire.
+Supersedes §3's server-mid-request model for the website demo. §3 remains for
+the case where the backend wants to demand consent inside a session response;
+it is still unused.
 
-The receipt the browser holds:
+### 6.1 The consent catalog (the only pre-consent request)
+
+```
+GET {endpointBaseUrl}/functions/v1/public-voice-demo-consent
+      ?locale=en|he|ar
+      &policy_version=2026-08-03.2
+Headers: apikey: <publishable key>
+```
+
+Read-only, `credentials: 'omit'`, no body. Expected `200`:
 
 ```jsonc
 {
-  "policy_version": "2026-08-03.1",   // opaque; bumped when wording changes
-  "locale": "he",                     // the locale the wording was shown in
-  "accepted_at": "2026-08-03T10:00:00.000Z"  // ISO-8601, UTC
+  "policy_version": "2026-08-03.2",
+  "locale": "he",
+  "text": "…the exact approved sentence for this locale…"
 }
 ```
 
-**What the backend needs to decide before the browser sends any of it:**
+The widget **fails closed** — no dialog, no session, no microphone — on any of:
 
-1. **Field name and shape.** Nested `consent: { policy_version, locale,
-   accepted_at }` (what `client.ts` already builds for the v2 path), or three
-   flat top-level fields? The client currently snake-cases them.
-2. **Does an unknown field 400?** If validation is strict-by-default, adding
-   `consent` to the body breaks every request the moment the frontend flag is
-   switched on. Confirm the endpoint tolerates or expects it *before* the flag
-   flips anywhere.
-3. **Is consent required to be present when recording is on?** If yes, the
-   endpoint should reject a session request without it rather than silently
-   recording — the gate is only as good as the server that enforces it.
-4. **Who owns the wording?** Right now the frontend ships it, versioned by
-   `RECORDING_POLICY_VERSION`. If the server should own it instead, use the
-   §3 mechanism and the frontend copy gets deleted rather than duplicated.
-5. **Retention.** The copy promises deletion after **7 days**, in three
-   languages. That number is now a public commitment; the backend has to
-   actually delete on that schedule.
+- non-2xx, a network error, or a response that is not an object
+- `text` absent or blank
+- `policy_version` absent, or **not exactly** `2026-08-03.2`
+- `locale` absent, not one of `en|he|ar`, or **not equal to the requested one**
 
-Until 1–3 are answered the flag stays `disabled` and the receipt stays in
-frontend memory.
+The rows must be immutable per `(policy_version, locale)`. The widget renders
+`text` verbatim as plain text — no markup, no interpolation, no fallback.
+
+### 6.2 What is submitted on acceptance
+
+Added to the existing session `POST` body, nested exactly like this and with no
+other consent-related field anywhere in the body:
+
+```jsonc
+{
+  "language": "he",
+  "turnstile_token": "…",
+  "consent": {
+    "policy_version": "2026-08-03.2",
+    "locale": "he",
+    "accepted_at": "2026-08-04T09:15:22.481Z"
+  }
+}
+```
+
+- `locale` always equals both the catalog row that was displayed and the
+  request's own `language`. Tests assert all three agree.
+- `accepted_at` is ISO-8601 UTC, generated at the moment of the click.
+- The receipt is never flattened onto the body and never gains fields.
+- `2026-08-03.1` can never appear; the constant is gone and a test enforces it.
+
+### 6.3 Still owed by the backend before this can be switched on
+
+1. The catalog endpoint deployed on staging, serving all three locales.
+2. The migration that stores the acceptance.
+3. **The retention worker that actually deletes audio and transcript within 7
+   days.** The sentence promises this in three languages; it is a commitment,
+   not copy.
+4. An agent build that records and transcribes.
+5. Confirmation that the endpoint accepts the `consent` object above — if its
+   validation is strict-by-default, adding it must not 400.
+
+Until all five are confirmed, `recordingConsentMode` stays `'disabled'` on
+every page including staging.

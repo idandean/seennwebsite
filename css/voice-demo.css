@@ -1336,7 +1336,7 @@
   margin-bottom: 1rem;
 }
 
-.svd__gate-line {
+.svd__gate-text {
   margin: 0 0 0.6rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
@@ -1344,7 +1344,7 @@
   color: rgba(233, 239, 247, 0.9);
 }
 
-.svd__gate-line:last-child {
+.svd__gate-text:last-child {
   margin-bottom: 0;
 }
 

@@ -215,14 +215,12 @@
   }
 
   // src/consent.ts
-  var RECORDING_POLICY_VERSION = "2026-08-03.1";
+  var CONSENT_POLICY_VERSION = "2026-08-03.2";
   var CONSENT_STRINGS = {
     en: {
       disclosure: "This demo is recorded and transcribed, then automatically deleted after 7 days",
       detailsLabel: "Details",
       dialogTitle: "Before we begin",
-      dialogBodyPrimary: "This demo is recorded and transcribed for review and improvement.",
-      dialogBodySecondary: "The recording and transcript are automatically deleted after 7 days.",
       privacyLabel: "Privacy policy",
       goBackLabel: "Go back",
       agreeLabel: "Agree and start"
@@ -231,21 +229,17 @@
       disclosure: "\u05D4\u05D4\u05D3\u05D2\u05DE\u05D4 \u05DE\u05D5\u05E7\u05DC\u05D8\u05EA \u05D5\u05DE\u05EA\u05D5\u05DE\u05DC\u05DC\u05EA \u05D5\u05E0\u05DE\u05D7\u05E7\u05EA \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05DC\u05D0\u05D7\u05E8 7 \u05D9\u05DE\u05D9\u05DD",
       detailsLabel: "\u05E4\u05E8\u05D8\u05D9\u05DD",
       dialogTitle: "\u05DC\u05E4\u05E0\u05D9 \u05E9\u05DE\u05EA\u05D7\u05D9\u05DC\u05D9\u05DD",
-      dialogBodyPrimary: "\u05D4\u05D4\u05D3\u05D2\u05DE\u05D4 \u05DE\u05D5\u05E7\u05DC\u05D8\u05EA \u05D5\u05DE\u05EA\u05D5\u05DE\u05DC\u05DC\u05EA \u05DC\u05E6\u05D5\u05E8\u05DB\u05D9 \u05D1\u05D3\u05D9\u05E7\u05D4 \u05D5\u05E9\u05D9\u05E4\u05D5\u05E8.",
-      dialogBodySecondary: "\u05D4\u05D4\u05E7\u05DC\u05D8\u05D4 \u05D5\u05D4\u05EA\u05DE\u05DC\u05D5\u05DC \u05E0\u05DE\u05D7\u05E7\u05D9\u05DD \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05DC\u05D0\u05D7\u05E8 7 \u05D9\u05DE\u05D9\u05DD.",
       privacyLabel: "\u05DE\u05D3\u05D9\u05E0\u05D9\u05D5\u05EA \u05E4\u05E8\u05D8\u05D9\u05D5\u05EA",
       goBackLabel: "\u05D7\u05D6\u05E8\u05D4",
-      agreeLabel: "\u05DE\u05D0\u05E9\u05E8\u05D9\u05DD \u05D5\u05DE\u05EA\u05D7\u05D9\u05DC\u05D9\u05DD"
+      agreeLabel: "\u05D4\u05E1\u05DB\u05DE\u05D4 \u05D5\u05D4\u05EA\u05D7\u05DC\u05D4"
     },
     ar: {
       disclosure: "\u064A\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062A\u062C\u0631\u064A\u0628\u064A \u0648\u062A\u0641\u0631\u064A\u063A\u0647 \u0646\u0635\u064A\u064B\u0627\u060C \u0648\u064A\u064F\u062D\u0630\u0641 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627 \u0628\u0639\u062F 7 \u0623\u064A\u0627\u0645",
       detailsLabel: "\u0627\u0644\u062A\u0641\u0627\u0635\u064A\u0644",
       dialogTitle: "\u0642\u0628\u0644 \u0623\u0646 \u0646\u0628\u062F\u0623",
-      dialogBodyPrimary: "\u064A\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062A\u062C\u0631\u064A\u0628\u064A \u0648\u062A\u0641\u0631\u064A\u063A\u0647 \u0646\u0635\u064A\u064B\u0627 \u0644\u0623\u063A\u0631\u0627\u0636 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629 \u0648\u0627\u0644\u062A\u062D\u0633\u064A\u0646.",
-      dialogBodySecondary: "\u064A\u064F\u062D\u0630\u0641 \u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u0648\u0627\u0644\u0646\u0635 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627 \u0628\u0639\u062F 7 \u0623\u064A\u0627\u0645.",
       privacyLabel: "\u0633\u064A\u0627\u0633\u0629 \u0627\u0644\u062E\u0635\u0648\u0635\u064A\u0629",
       goBackLabel: "\u0631\u062C\u0648\u0639",
-      agreeLabel: "\u0645\u0648\u0627\u0641\u0642\u0629 \u0648\u0628\u062F\u0621"
+      agreeLabel: "\u0623\u0648\u0627\u0641\u0642 \u0648\u0623\u0628\u062F\u0623"
     }
   };
   var PRIVACY_POLICY_URLS = {
@@ -257,65 +251,128 @@
     var _a;
     return (_a = CONSENT_STRINGS[locale]) != null ? _a : CONSENT_STRINGS.en;
   }
+  function isLocale(value) {
+    return value === "en" || value === "he" || value === "ar";
+  }
+  function readCatalogEntry(payload, requested, expectedVersion) {
+    if (typeof payload !== "object" || payload === null) {
+      return { status: "failed", reason: "catalog response was not an object" };
+    }
+    const row = payload;
+    const text = row["text"];
+    const version = row["policy_version"];
+    const locale = row["locale"];
+    if (typeof text !== "string" || text.trim() === "") {
+      return { status: "failed", reason: "catalog entry has no consent text" };
+    }
+    if (typeof version !== "string" || version.trim() === "") {
+      return { status: "failed", reason: "catalog entry has no policy version" };
+    }
+    if (version !== expectedVersion) {
+      return {
+        status: "failed",
+        reason: `catalog served policy ${version}, this build renders ${expectedVersion}`
+      };
+    }
+    if (!isLocale(locale) || locale !== requested) {
+      return { status: "failed", reason: "catalog entry locale does not match the requested locale" };
+    }
+    return { status: "ok", entry: { policyVersion: version, locale, text } };
+  }
+  async function fetchConsentCatalog(options) {
+    var _a, _b, _c;
+    const expectedVersion = (_a = options.expectedVersion) != null ? _a : CONSENT_POLICY_VERSION;
+    const doFetch = (_b = options.fetchImpl) != null ? _b : globalThis.fetch.bind(globalThis);
+    const timeoutMs = (_c = options.timeoutMs) != null ? _c : 4e3;
+    if (!options.url || !options.anonKey) {
+      return { status: "failed", reason: "consent catalog is not configured" };
+    }
+    let url;
+    try {
+      const parsed = new URL(options.url);
+      parsed.searchParams.set("locale", options.locale);
+      parsed.searchParams.set("policy_version", expectedVersion);
+      url = parsed.toString();
+    } catch {
+      return { status: "failed", reason: "consent catalog URL is not a valid URL" };
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    if (options.signal) {
+      options.signal.addEventListener("abort", () => controller.abort(), { once: true });
+    }
+    try {
+      const response = await doFetch(url, {
+        method: "GET",
+        credentials: "omit",
+        cache: "no-store",
+        headers: { apikey: options.anonKey },
+        signal: controller.signal
+      });
+      if (!response.ok) {
+        return { status: "failed", reason: `catalog request failed with ${response.status}` };
+      }
+      const payload = await response.json();
+      return readCatalogEntry(payload, options.locale, expectedVersion);
+    } catch {
+      return { status: "failed", reason: "catalog request could not be completed" };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   function resolveConsentMode(raw) {
     return raw === "required" ? "required" : "disabled";
   }
   var ConsentGate = class {
-    constructor(mode, locale, policyVersion = RECORDING_POLICY_VERSION) {
+    constructor(mode, policyVersion = CONSENT_POLICY_VERSION) {
       this.mode = mode;
-      this.locale = locale;
       this.policyVersion = policyVersion;
+      this.entry = null;
       this.receipt = null;
     }
-    /** True when a visitor must agree before anything may happen. */
     get required() {
       return this.mode === "required";
     }
-    /**
-     * A held approval only counts for the wording and language it was given
-     * for. Switching either throws it away rather than carrying it over.
-     */
+    /** The catalog row currently on screen, if the dialog is showing one. */
+    get pending() {
+      return this.entry;
+    }
+    /** Arms the gate with a validated catalog row. Clears any prior acceptance. */
+    present(entry) {
+      this.entry = entry;
+      this.receipt = null;
+    }
     get approved() {
       if (!this.required) return true;
       const held = this.receipt;
-      return held !== null && held.policyVersion === this.policyVersion && held.locale === this.locale;
+      return held !== null && held.policyVersion === this.policyVersion;
     }
     /**
-     * Records an affirmative decision. Idempotent: clicking the button twice
-     * before the dialog closes must not produce a second approval, because the
-     * caller turns each approval into exactly one session.
+     * Records the affirmative act against the row that was actually shown.
+     * Idempotent, so a double click cannot yield two acceptances.
      */
     approve(now = /* @__PURE__ */ new Date()) {
-      if (this.approved && this.receipt) return this.receipt;
+      if (this.receipt) return this.receipt;
+      const shown = this.entry;
+      if (!shown || shown.policyVersion !== this.policyVersion) return null;
       this.receipt = {
-        policyVersion: this.policyVersion,
-        locale: this.locale,
+        policyVersion: shown.policyVersion,
+        locale: shown.locale,
         acceptedAt: now.toISOString()
       };
       return this.receipt;
     }
-    /** Consumes the approval. The next session needs a fresh one. */
+    /** Consumes the acceptance. The next session needs a fresh one. */
     take() {
       const held = this.receipt;
       this.receipt = null;
+      this.entry = null;
       return held;
     }
-    /** Drops any held approval without consuming it as a session. */
+    /** Drops everything — used when the dialog is dismissed. */
     revoke() {
       this.receipt = null;
-    }
-    /**
-     * Re-points the gate at a different language. Any approval given in the old
-     * one stops counting, because it was given to a sentence the visitor can no
-     * longer see.
-     */
-    setLocale(locale) {
-      if (locale === this.locale) return;
-      this.locale = locale;
-      this.receipt = null;
-    }
-    get currentLocale() {
-      return this.locale;
+      this.entry = null;
     }
   };
 
@@ -371,6 +428,8 @@
   var DEFAULT_CONFIG = {
     publicDemoMode: "disabled",
     recordingConsentMode: "disabled",
+    consentCatalogPath: "/functions/v1/public-voice-demo-consent",
+    consentCatalogTimeoutMs: 4e3,
     endpointBaseUrl: "",
     anonKey: "",
     endpointPath: "/functions/v1/public-voice-demo",
@@ -1369,6 +1428,10 @@
       this.deadline = 0;
       this.destroyed = false;
       this.coreVideo = null;
+      /** Guards a second catalog fetch while one is already in flight. */
+      this.gateLoading = false;
+      /** Canonical language the shown catalog row was fetched for. */
+      this.gateLanguage = null;
       /** Focus to hand back when the dialog closes. */
       this.gateReturnFocus = null;
       /** Guards against a second start between agreeing and the session existing. */
@@ -1422,7 +1485,7 @@
       this.makeTransport = (_d = deps.createTransport) != null ? _d : (events) => createLiveKitTransport(events, { moduleUrl: config.livekitModuleUrl });
       this.locale = resolveLocale(config.locale, document.documentElement.getAttribute("lang"));
       this.strings = stringsFor(this.locale);
-      this.consentGate = new ConsentGate(config.recordingConsentMode, this.locale);
+      this.consentGate = new ConsentGate(config.recordingConsentMode);
       this.context = initialContext(unavailableReason(config));
       this.build();
       this.render();
@@ -1503,8 +1566,10 @@
              aria-labelledby="svd-gate-title" aria-describedby="svd-gate-body">
           <h2 class="svd__gate-title" id="svd-gate-title"></h2>
           <div class="svd__gate-body" id="svd-gate-body">
-            <p class="svd__gate-line svd__gate-line--primary"></p>
-            <p class="svd__gate-line svd__gate-line--secondary"></p>
+            <!-- Written once, from the catalog, in openGate(). Never
+                 pre-populated: an empty dialog is the correct state until the
+                 backend has said what the sentence is. -->
+            <p class="svd__gate-text"></p>
           </div>
           <a class="svd__gate-policy" target="_blank" rel="noopener noreferrer"></a>
           <div class="svd__gate-actions">
@@ -1559,8 +1624,7 @@
       this.gate = q(".svd__gate");
       this.gatePanel = q(".svd__gate-panel");
       this.gateTitle = q(".svd__gate-title");
-      this.gatePrimary = q(".svd__gate-line--primary");
-      this.gateSecondary = q(".svd__gate-line--secondary");
+      this.gateText = q(".svd__gate-text");
       this.gatePolicy = q(".svd__gate-policy");
       this.gateBack = q(".svd__gate-back");
       this.gateAgree = q(".svd__gate-agree");
@@ -1745,8 +1809,6 @@
       this.recDetails.textContent = c.detailsLabel;
       this.recNotice.hidden = !this.consentGate.required || state !== "ready";
       this.gateTitle.textContent = c.dialogTitle;
-      this.gatePrimary.textContent = c.dialogBodyPrimary;
-      this.gateSecondary.textContent = c.dialogBodySecondary;
       this.gatePolicy.textContent = c.privacyLabel;
       this.gatePolicy.href = (_b = PRIVACY_POLICY_URLS[this.locale]) != null ? _b : PRIVACY_POLICY_URLS.en;
       this.gateBack.textContent = c.goBackLabel;
@@ -1833,14 +1895,52 @@
         return;
       }
       if (this.consentGate.required && !this.consentGate.approved) {
-        this.openGate();
+        await this.openGate();
         return;
       }
       await this.start();
     }
     // --- Recording consent gate ---------------------------------------------
-    openGate() {
-      if (!this.gate.hidden) return;
+    /**
+     * Resolves the session's language, fetches the catalog row for it, and only
+     * then shows a dialog. Any failure along the way is terminal for this
+     * gesture: we will not invent wording, and we will not let a visitor agree
+     * to a sentence we could not load.
+     */
+    async openGate() {
+      if (!this.gate.hidden || this.gateLoading) return;
+      this.gateLoading = true;
+      this.startButton.disabled = true;
+      try {
+        const language = await this.resolveInitialLanguage();
+        if (this.destroyed) return;
+        if (!language) {
+          this.dispatch({ type: "ERROR", code: "contract_violation" });
+          return;
+        }
+        const result = await fetchConsentCatalog({
+          url: `${this.config.endpointBaseUrl.replace(/\/+$/, "")}${this.config.consentCatalogPath}`,
+          locale: language,
+          anonKey: this.config.anonKey,
+          expectedVersion: CONSENT_POLICY_VERSION,
+          timeoutMs: this.config.consentCatalogTimeoutMs
+        });
+        if (this.destroyed) return;
+        if (result.status !== "ok") {
+          logger.error(`consent unavailable: ${result.reason}`);
+          this.dispatch({ type: "ERROR", code: "contract_violation" });
+          return;
+        }
+        this.gateLanguage = language;
+        this.consentGate.present(result.entry);
+        this.gateText.textContent = result.entry.text;
+        this.showGate();
+      } finally {
+        this.gateLoading = false;
+        this.startButton.disabled = false;
+      }
+    }
+    showGate() {
       this.gateReturnFocus = document.activeElement;
       this.gate.hidden = false;
       this.root.classList.add("svd--gated");
@@ -1850,6 +1950,8 @@
     closeGate() {
       if (this.gate.hidden) return;
       this.gate.hidden = true;
+      this.consentGate.revoke();
+      this.gateLanguage = null;
       this.root.classList.remove("svd--gated");
       document.removeEventListener("keydown", this.onGateKeydown, true);
       const restore = this.gateReturnFocus;
@@ -1864,11 +1966,22 @@
     async onGateAgree() {
       if (this.gateStarting || this.gate.hidden) return;
       this.gateStarting = true;
-      this.consentGate.approve(new Date(this.now()));
-      this.closeGate();
+      const receipt = this.consentGate.approve(new Date(this.now()));
+      const language = this.gateLanguage;
+      if (!receipt || !language || receipt.locale !== language) {
+        this.gateStarting = false;
+        this.closeGate();
+        this.dispatch({ type: "ERROR", code: "contract_violation" });
+        return;
+      }
+      this.gate.hidden = true;
+      this.root.classList.remove("svd--gated");
+      document.removeEventListener("keydown", this.onGateKeydown, true);
+      this.gateReturnFocus = null;
       try {
         this.consentGate.take();
-        await this.start();
+        this.gateLanguage = null;
+        await this.start({ language, consent: receipt });
       } finally {
         this.gateStarting = false;
       }
@@ -1878,7 +1991,7 @@
      * while a connection is in flight, and this returns without touching the
      * microphone or the network.
      */
-    async start() {
+    async start(options = {}) {
       if (this.destroyed) return;
       const reason = unavailableReason(this.config);
       if (reason) {
@@ -1891,7 +2004,7 @@
       const stale = () => this.destroyed || this.context.attempt !== attempt || !isActive(this.context.state);
       track("voice_demo_start", { voice_demo_locale: this.locale });
       this.primeAudio();
-      const initialLanguage = this.resolveInitialLanguage();
+      const initialLanguage = options.language ? Promise.resolve(options.language) : this.resolveInitialLanguage();
       let microphone;
       try {
         microphone = await this.requestMicrophone();
@@ -1916,7 +2029,7 @@
           this.fail("language_unavailable");
           return;
         }
-        session = await this.obtainSession(attempt, resolvedLanguage);
+        session = await this.obtainSession(attempt, resolvedLanguage, options.consent);
       } catch (cause) {
         if (stale()) return;
         this.handleRequestError(cause);
@@ -1990,7 +2103,7 @@
       }
       return null;
     }
-    async obtainSession(attempt, initialLanguage) {
+    async obtainSession(attempt, initialLanguage, consent) {
       var _a, _b, _c;
       for (let round = 0; round < 2; round += 1) {
         const turnstileToken = await this.freshTurnstileToken();
@@ -2002,7 +2115,9 @@
             // The country-resolved starting language is mandatory. Rendering
             // locale and browser locale remain separate and are never sent.
             language: initialLanguage,
-            consent: (_a = this.context.acceptedConsent) != null ? _a : void 0,
+            // Pre-flight acceptance if the gate produced one, otherwise the
+            // server-driven v2 path's. Never both, never invented.
+            consent: (_a = consent != null ? consent : this.context.acceptedConsent) != null ? _a : void 0,
             turnstileToken,
             signal: (_b = this.abortController) == null ? void 0 : _b.signal
           });

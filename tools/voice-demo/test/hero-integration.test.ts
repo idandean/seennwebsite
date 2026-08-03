@@ -61,8 +61,39 @@ describe('activation on both homepages', () => {
     expect(inline.turnstileSiteKey).toBe(LIVE.turnstileSiteKey);
   });
 
-  it.each(HOMEPAGES)('%s reuses the SAME values as the staging page', (page) => {
-    expect(inlineConfigOf(read(page))).toEqual(inlineConfigOf(read('voice-demo-staging.html')));
+  /**
+   * Connection values only, not the whole block.
+   *
+   * What this guards is that no public page can point at a different Supabase
+   * project or a different Turnstile key than the one that was vetted. Consent
+   * mode is deliberately excluded: staging is where recording gets switched on
+   * first, and a strict deep-equal here would either block that or drag the
+   * public pages along with it. The rule that actually matters for consent is
+   * asserted separately, below.
+   */
+  it.each(HOMEPAGES)('%s reuses the staging page connection values', (page) => {
+    const home = inlineConfigOf(read(page));
+    const staging = inlineConfigOf(read('voice-demo-staging.html'));
+    for (const key of ['publicDemoMode', 'endpointBaseUrl', 'anonKey', 'turnstileSiteKey'] as const) {
+      expect(home[key]).toEqual(staging[key]);
+    }
+  });
+
+  /**
+   * The public pages do not record. This must hold however staging is
+   * configured, and it is the assertion that has to fail loudly if anyone ever
+   * copies a `recordingConsentMode: 'required'` onto a homepage before the
+   * backend records, retains and deletes as the consent sentence promises.
+   */
+  it.each(HOMEPAGES)('%s keeps recording consent switched off', (page) => {
+    const inline = inlineConfigOf(read(page));
+    expect(inline.recordingConsentMode ?? 'disabled').toBe('disabled');
+    expect(resolveConfig({ inline }).recordingConsentMode).toBe('disabled');
+  });
+
+  it('the staging page is prepared but likewise switched off', () => {
+    const inline = inlineConfigOf(read('voice-demo-staging.html'));
+    expect(resolveConfig({ inline }).recordingConsentMode).toBe('disabled');
   });
 
   it.each(HOMEPAGES)('%s resolves to a runnable widget', (page) => {

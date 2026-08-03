@@ -44,6 +44,15 @@ export interface VoiceDemoConfig {
    */
   recordingConsentMode: RecordingConsentMode;
 
+  /**
+   * Path to the backend's immutable consent catalog, relative to
+   * `endpointBaseUrl`. A read-only GET, and the only backend request permitted
+   * before a visitor accepts.
+   */
+  consentCatalogPath: string;
+  /** Bounded, so a hanging catalog never leaves the button doing nothing. */
+  consentCatalogTimeoutMs: number;
+
   /** Supabase project hosting the endpoint. Staging and production differ. */
   endpointBaseUrl: string;
   /** Supabase ANON / publishable key. A secret key here is refused, loudly. */
@@ -131,6 +140,8 @@ export const LIVEKIT_MODULE_URL = `https://cdn.jsdelivr.net/npm/livekit-client@$
 export const DEFAULT_CONFIG: VoiceDemoConfig = {
   publicDemoMode: 'disabled',
   recordingConsentMode: 'disabled',
+  consentCatalogPath: '/functions/v1/public-voice-demo-consent',
+  consentCatalogTimeoutMs: 4000,
   endpointBaseUrl: '',
   anonKey: '',
   endpointPath: '/functions/v1/public-voice-demo',
