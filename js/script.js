@@ -60,6 +60,71 @@ const translations = {
         disputesDesc: "She replies, resolves what she can, and escalates the rest to you.",
         outcomesTitle: "Records outcomes:",
         outcomesDesc: "She logs every promise, dispute, and result to your system \u2014 nothing slips.",
+        // Channels showcase
+        channels: "Channels",
+        chanEyebrow: "Channels",
+        chanPhone: "Phone call",
+        chanWhatsapp: "WhatsApp",
+        chanEmail: "Email",
+        chanPhoneSub: "Natural-voice calls that follow your rules",
+        chanWaSub: "Payment links, and she answers replies",
+        chanMailSub: "On-brand follow-up, logged to your system",
+        heroChanLabel: "Jess collects on",
+        chanTitle: "How does Seenn reach clients who owe you money?",
+        chanAnswer: "Seenn's AI agent, Jess, chases every overdue invoice on the channels clients actually answer: a natural-voice phone call, an official WhatsApp Business message, and email. She can send a payment link for the exact balance, answers replies, resolves disputes, closes the loop when the money lands, and decides herself when and where to make contact next.",
+        chanFloatLabel: "Outcome",
+        chanPhoneH: "A real phone call \u2014 the channel almost no competitor will make",
+        chanPhone1: "She calls in a natural voice, under your brand and your rules \u2014 and handles the answers instead of leaving a voicemail.",
+        chanPhone2: "On the call she can send a payment link for the exact balance, so it is settled on the spot.",
+        chanPhone3: "She closes the loop herself: re-sends the invoice, matches the payment when it lands, and marks it settled.",
+        chanPhone4: "When the call ends she sets the next move \u2014 when to follow up, and on which channel.",
+        chanCallLabel: "Outbound call",
+        chanCallStatus: "INV500000954 \u00b7 $4,830.00",
+        chanCallJess: "Jess",
+        chanCallClient: "Bayside Foods",
+        chanCallSaid1: "Hi, this is Jess calling from Northwind Supplies about invoice INV500000954 \u2014 $4,830.00, fourteen days past due.",
+        chanCallSaid2: "I don't think we ever received that one.",
+        chanCallSaid3: "No problem \u2014 I'm sending it to you on WhatsApp right now with a payment link. Can you settle it this week?",
+        chanCallSaid4: "Thursday works. Send it over.",
+        chanCallOut2: "Promise to pay \u00b7 12 Aug",
+        chanPhoneCap: "She calls, handles the objection, and books the promise to pay \u2014 then writes the outcome back against the invoice.",
+        chanWaH: "WhatsApp: where overdue clients actually reply",
+        chanWa1: "Every message names the invoice and the exact balance, and she can send a payment link that settles it in one tap.",
+        chanWa2: "When a client writes back she answers, and can re-send the invoice or the receipt herself.",
+        chanWa3: "She closes the loop in the thread: matches the payment and confirms the invoice is settled.",
+        chanWa4: "Official WhatsApp Business API \u2014 an approved Meta Tech Provider, so it comes from a verified business number.",
+        chanWaLink: "How WhatsApp payment reminders work \u2192",
+        chanWaOnline: "online",
+        chanToday: "Today",
+        waBadge: "Official WhatsApp Business",
+        chanWaM1: "Hi Harborline Logistics \u2014 Jess here from Northwind Supplies.",
+        chanWaM2: "Invoice INV500000967 \u00b7 $6,240.00 \u00b7 due 12 July 2026",
+        chanWaM3: "It's still showing as open on our side. You can settle it here:",
+        chanWaM4: "Which months does this cover?",
+        chanWaM5: "May and July 2026. I've re-sent the invoice so you can check it against your books.",
+        chanWaM6: "Paid this morning by transfer.",
+        chanWaM7: "Thank you \u2014 I've matched the transfer to INV500000967 and closed it. Receipt attached.",
+        chanWaInput: "Type a message",
+        chanFloatWa: "Paid \u00b7 INV500000967 closed",
+        chanWaCap: "One thread, start to finish: the reminder, the client's question, the invoice, the payment and the receipt \u2014 all handled by Jess.",
+        chanMailH: "Email: the follow-up that never forgets",
+        chanMail1: "Personalised follow-ups under your brand, on the schedule and tone you set.",
+        chanMail2: "She can attach what the client asked for \u2014 the invoice or a receipt \u2014 and add a payment link.",
+        chanMail3: "She reads the reply, answers it, and closes the loop against the invoice.",
+        chanMail4: "Every send, reply and outcome is logged \u2014 and she picks when the next one goes out.",
+        chanMailSubject: "Invoice INV500000972 \u2014 14 days overdue",
+        chanMailLabel: "Overdue",
+        chanMailTo: "to accounts@meridianinteriors.com",
+        chanMailP1: "Hi Dana \u2014 invoice INV500000972 for $2,150.00 was due on 12 July and is still showing as open on our side.",
+        chanMailP2: "I've attached the invoice. If it has already been paid, just reply here and I'll match it against our records.",
+        chanMailBtn: "Pay invoice",
+        chanMailReplyName: "Dana Levi \u00b7 Meridian Interiors",
+        chanMailReplyText: "Paid this morning by transfer \u2014 can you send a receipt?",
+        chanMailAnswered: "Jess replied and attached the receipt \u00b7 11:41",
+        chanMailReply: "Reply",
+        chanMailForward: "Forward",
+        chanMailCap: "Sent under your own brand \u2014 and Jess reads the reply that comes back.",
+        chanNote: "Illustrated with example companies and invoice numbers. Seenn never publishes a real customer's name, number or payment link \u2014 every message goes out from your own business number and brand.",
 
         // How it works
         howItWorksTitle: "How It Works",
@@ -310,6 +375,71 @@ const translations = {
         disputesDesc: "\u05D4\u05D9\u05D0 \u05DE\u05D2\u05D9\u05D1\u05D4, \u05E4\u05D5\u05EA\u05E8\u05EA \u05DE\u05D4 \u05E9\u05D0\u05E4\u05E9\u05E8, \u05D5\u05DE\u05E2\u05D1\u05D9\u05E8\u05D4 \u05D0\u05DC\u05D9\u05DB\u05DD \u05D0\u05EA \u05D4\u05E9\u05D0\u05E8.",
         outcomesTitle: "\u05EA\u05D9\u05E2\u05D5\u05D3 \u05EA\u05D5\u05E6\u05D0\u05D5\u05EA:",
         outcomesDesc: "\u05D4\u05D9\u05D0 \u05DE\u05EA\u05E2\u05D3\u05EA \u05DB\u05DC \u05D4\u05D1\u05D8\u05D7\u05D4, \u05DE\u05D7\u05DC\u05D5\u05E7\u05EA \u05D5\u05EA\u05D5\u05E6\u05D0\u05D4 \u05D1\u05DE\u05E2\u05E8\u05DB\u05EA \u05E9\u05DC\u05DB\u05DD \u2014 \u05E9\u05D5\u05DD \u05D3\u05D1\u05E8 \u05DC\u05D0 \u05E0\u05D5\u05E4\u05DC.",
+        // Channels showcase
+        channels: "\u05e2\u05e8\u05d5\u05e6\u05d9\u05dd",
+        chanEyebrow: "\u05e2\u05e8\u05d5\u05e6\u05d9\u05dd",
+        chanPhone: "\u05e9\u05d9\u05d7\u05ea \u05d8\u05dc\u05e4\u05d5\u05df",
+        chanWhatsapp: "\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4",
+        chanEmail: "\u05d0\u05d9\u05de\u05d9\u05d9\u05dc",
+        chanPhoneSub: "\u05e9\u05d9\u05d7\u05d5\u05ea \u05d1\u05e7\u05d5\u05dc \u05d8\u05d1\u05e2\u05d9 \u05dc\u05e4\u05d9 \u05d4\u05db\u05dc\u05dc\u05d9\u05dd \u05e9\u05dc\u05db\u05dd",
+        chanWaSub: "\u05e7\u05d9\u05e9\u05d5\u05e8\u05d9 \u05ea\u05e9\u05dc\u05d5\u05dd, \u05d5\u05d4\u05d9\u05d0 \u05e2\u05d5\u05e0\u05d4 \u05d2\u05dd \u05dc\u05ea\u05e9\u05d5\u05d1\u05d5\u05ea",
+        chanMailSub: "\u05de\u05e2\u05e7\u05d1 \u05de\u05d4\u05de\u05d5\u05ea\u05d2 \u05e9\u05dc\u05db\u05dd, \u05de\u05ea\u05d5\u05e2\u05d3 \u05d1\u05de\u05e2\u05e8\u05db\u05ea",
+        heroChanLabel: "\u05d2'\u05e1 \u05d2\u05d5\u05d1\u05d4 \u05d3\u05e8\u05da",
+        chanTitle: "\u05d0\u05d9\u05da Seenn \u05de\u05d2\u05d9\u05e2\u05d4 \u05dc\u05dc\u05e7\u05d5\u05d7\u05d5\u05ea \u05e9\u05d7\u05d9\u05d9\u05d1\u05d9\u05dd \u05dc\u05db\u05dd \u05db\u05e1\u05e3?",
+        chanAnswer: "\u05d2'\u05e1, \u05e1\u05d5\u05db\u05e0\u05ea \u05d4-AI \u05e9\u05dc Seenn, \u05e8\u05d5\u05d3\u05e4\u05ea \u05d0\u05d7\u05e8\u05d9 \u05db\u05dc \u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05e4\u05ea\u05d5\u05d7\u05d4 \u05d1\u05e2\u05e8\u05d5\u05e6\u05d9\u05dd \u05e9\u05d4\u05dc\u05e7\u05d5\u05d7\u05d5\u05ea \u05d1\u05d0\u05de\u05ea \u05e2\u05d5\u05e0\u05d9\u05dd \u05d1\u05d4\u05dd: \u05e9\u05d9\u05d7\u05ea \u05d8\u05dc\u05e4\u05d5\u05df \u05d1\u05e7\u05d5\u05dc \u05d8\u05d1\u05e2\u05d9, \u05d4\u05d5\u05d3\u05e2\u05ea \u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u05d1\u05d9\u05d6\u05e0\u05e1 \u05e8\u05e9\u05de\u05d9\u05ea \u05d5\u05d0\u05d9\u05de\u05d9\u05d9\u05dc. \u05d4\u05d9\u05d0 \u05d9\u05db\u05d5\u05dc\u05d4 \u05dc\u05e9\u05dc\u05d5\u05d7 \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd \u05dc\u05e1\u05db\u05d5\u05dd \u05d4\u05de\u05d3\u05d5\u05d9\u05e7, \u05e2\u05d5\u05e0\u05d4 \u05dc\u05ea\u05e9\u05d5\u05d1\u05d5\u05ea, \u05de\u05d8\u05e4\u05dc\u05ea \u05d1\u05de\u05d7\u05dc\u05d5\u05e7\u05d5\u05ea, \u05e1\u05d5\u05d2\u05e8\u05ea \u05d0\u05ea \u05d4\u05de\u05e2\u05d2\u05dc \u05db\u05e9\u05d4\u05db\u05e1\u05e3 \u05e0\u05db\u05e0\u05e1, \u05d5\u05e7\u05d5\u05d1\u05e2\u05ea \u05d1\u05e2\u05e6\u05de\u05d4 \u05de\u05ea\u05d9 \u05d5\u05d0\u05d9\u05da \u05dc\u05e4\u05e0\u05d5\u05ea \u05d1\u05e4\u05e2\u05dd \u05d4\u05d1\u05d0\u05d4.",
+        chanFloatLabel: "\u05ea\u05d5\u05e6\u05d0\u05d4",
+        chanPhoneH: "\u05e9\u05d9\u05d7\u05ea \u05d8\u05dc\u05e4\u05d5\u05df \u05d0\u05de\u05d9\u05ea\u05d9\u05ea \u2014 \u05d4\u05e2\u05e8\u05d5\u05e5 \u05e9\u05db\u05de\u05e2\u05d8 \u05d0\u05e3 \u05de\u05ea\u05d7\u05e8\u05d4 \u05dc\u05d0 \u05e0\u05d5\u05d2\u05e2 \u05d1\u05d5",
+        chanPhone1: "\u05d4\u05d9\u05d0 \u05de\u05ea\u05e7\u05e9\u05e8\u05ea \u05d1\u05e7\u05d5\u05dc \u05d8\u05d1\u05e2\u05d9, \u05d1\u05e9\u05dd \u05d4\u05de\u05d5\u05ea\u05d2 \u05e9\u05dc\u05db\u05dd \u05d5\u05dc\u05e4\u05d9 \u05d4\u05db\u05dc\u05dc\u05d9\u05dd \u05e9\u05dc\u05db\u05dd \u2014 \u05d5\u05de\u05d8\u05e4\u05dc\u05ea \u05d1\u05ea\u05e9\u05d5\u05d1\u05d5\u05ea \u05d1\u05de\u05e7\u05d5\u05dd \u05dc\u05d4\u05e9\u05d0\u05d9\u05e8 \u05d4\u05d5\u05d3\u05e2\u05d4 \u05d1\u05ea\u05d0 \u05d4\u05e7\u05d5\u05dc\u05d9.",
+        chanPhone2: "\u05ea\u05d5\u05da \u05db\u05d3\u05d9 \u05d4\u05e9\u05d9\u05d7\u05d4 \u05d4\u05d9\u05d0 \u05d9\u05db\u05d5\u05dc\u05d4 \u05dc\u05e9\u05dc\u05d5\u05d7 \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd \u05dc\u05e1\u05db\u05d5\u05dd \u05d4\u05de\u05d3\u05d5\u05d9\u05e7, \u05db\u05da \u05e9\u05d0\u05e4\u05e9\u05e8 \u05dc\u05e1\u05d2\u05d5\u05e8 \u05d0\u05ea \u05d6\u05d4 \u05e2\u05dc \u05d4\u05de\u05e7\u05d5\u05dd.",
+        chanPhone3: "\u05d4\u05d9\u05d0 \u05e1\u05d5\u05d2\u05e8\u05ea \u05d0\u05ea \u05d4\u05de\u05e2\u05d2\u05dc \u05d1\u05e2\u05e6\u05de\u05d4: \u05e9\u05d5\u05dc\u05d7\u05ea \u05e9\u05d5\u05d1 \u05d0\u05ea \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea, \u05de\u05e6\u05dc\u05d9\u05d1\u05d4 \u05d0\u05ea \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u05d5\u05de\u05e1\u05de\u05e0\u05ea \u05e9\u05d4\u05d7\u05d5\u05d1 \u05e0\u05e1\u05d2\u05e8.",
+        chanPhone4: "\u05db\u05e9\u05d4\u05e9\u05d9\u05d7\u05d4 \u05e0\u05d2\u05de\u05e8\u05ea \u05d4\u05d9\u05d0 \u05e7\u05d5\u05d1\u05e2\u05ea \u05d0\u05ea \u05d4\u05e6\u05e2\u05d3 \u05d4\u05d1\u05d0 \u2014 \u05de\u05ea\u05d9 \u05dc\u05d7\u05d6\u05d5\u05e8 \u05d5\u05d1\u05d0\u05d9\u05d6\u05d4 \u05e2\u05e8\u05d5\u05e5.",
+        chanCallLabel: "\u05e9\u05d9\u05d7\u05d4 \u05d9\u05d5\u05e6\u05d0\u05ea",
+        chanCallStatus: "INV500000954 \u00b7 4,830 \u20aa",
+        chanCallJess: "\u05d2'\u05e1",
+        chanCallClient: "\u05d0\u05dc\u05d5\u05e0\u05d9 \u05e9\u05d9\u05e0\u05d5\u05e2",
+        chanCallSaid1: "\u05e9\u05dc\u05d5\u05dd, \u05de\u05d3\u05d1\u05e8\u05ea \u05d2'\u05e1 \u05de\u05de\u05d2\u05d3 \u05d0\u05e1\u05e4\u05e7\u05d4 \u05d8\u05db\u05e0\u05d9\u05ea \u05d1\u05e0\u05d5\u05d2\u05e2 \u05dc\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea INV500000954 \u2014 4,830 \u20aa, \u05d1\u05d0\u05d9\u05d7\u05d5\u05e8 \u05e9\u05dc \u05e9\u05d1\u05d5\u05e2\u05d9\u05d9\u05dd.",
+        chanCallSaid2: "\u05d0\u05e0\u05d9 \u05dc\u05d0 \u05d7\u05d5\u05e9\u05d1 \u05e9\u05e7\u05d9\u05d1\u05dc\u05e0\u05d5 \u05d0\u05ea \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05d4\u05d6\u05d0\u05ea.",
+        chanCallSaid3: "\u05d0\u05d9\u05df \u05d1\u05e2\u05d9\u05d4 \u2014 \u05d0\u05e0\u05d9 \u05e9\u05d5\u05dc\u05d7\u05ea \u05dc\u05db\u05dd \u05d0\u05d5\u05ea\u05d4 \u05e2\u05db\u05e9\u05d9\u05d5 \u05d1\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u05e2\u05dd \u05e7\u05d9\u05e9\u05d5\u05e8 \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd. \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e1\u05d2\u05d5\u05e8 \u05d0\u05ea \u05d6\u05d4 \u05d4\u05e9\u05d1\u05d5\u05e2?",
+        chanCallSaid4: "\u05d9\u05d5\u05dd \u05d7\u05de\u05d9\u05e9\u05d9 \u05de\u05ea\u05d0\u05d9\u05dd. \u05ea\u05e9\u05dc\u05d7\u05d9.",
+        chanCallOut2: "\u05d4\u05ea\u05d7\u05d9\u05d9\u05d1\u05d5\u05ea \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd \u00b7 12.8",
+        chanPhoneCap: "\u05d4\u05d9\u05d0 \u05de\u05ea\u05e7\u05e9\u05e8\u05ea, \u05de\u05d8\u05e4\u05dc\u05ea \u05d1\u05d4\u05ea\u05e0\u05d2\u05d3\u05d5\u05ea, \u05e1\u05d5\u05d2\u05e8\u05ea \u05d4\u05ea\u05d7\u05d9\u05d9\u05d1\u05d5\u05ea \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd \u2014 \u05d5\u05d0\u05d6 \u05e8\u05d5\u05e9\u05de\u05ea \u05d0\u05ea \u05d4\u05ea\u05d5\u05e6\u05d0\u05d4 \u05d1\u05d7\u05d6\u05e8\u05d4 \u05de\u05d5\u05dc \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea.",
+        chanWaH: "\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4: \u05e9\u05dd \u05dc\u05e7\u05d5\u05d7\u05d5\u05ea \u05e9\u05d7\u05d9\u05d9\u05d1\u05d9\u05dd \u05d1\u05d0\u05de\u05ea \u05e2\u05d5\u05e0\u05d9\u05dd",
+        chanWa1: "\u05db\u05dc \u05d4\u05d5\u05d3\u05e2\u05d4 \u05de\u05e6\u05d9\u05d9\u05e0\u05ea \u05d0\u05ea \u05de\u05e1\u05e4\u05e8 \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05d5\u05d0\u05ea \u05e1\u05db\u05d5\u05dd \u05d4\u05d7\u05d5\u05d1 \u05d4\u05de\u05d3\u05d5\u05d9\u05e7, \u05d5\u05d4\u05d9\u05d0 \u05d9\u05db\u05d5\u05dc\u05d4 \u05dc\u05e9\u05dc\u05d5\u05d7 \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd \u05e9\u05e1\u05d5\u05d2\u05e8 \u05d0\u05ea \u05d6\u05d4 \u05d1\u05dc\u05d7\u05d9\u05e6\u05d4 \u05d0\u05d7\u05ea.",
+        chanWa2: "\u05db\u05e9\u05d4\u05dc\u05e7\u05d5\u05d7 \u05db\u05d5\u05ea\u05d1 \u05d1\u05d7\u05d6\u05e8\u05d4 \u05d4\u05d9\u05d0 \u05e2\u05d5\u05e0\u05d4, \u05d5\u05d9\u05db\u05d5\u05dc\u05d4 \u05dc\u05e9\u05dc\u05d5\u05d7 \u05e9\u05d5\u05d1 \u05d1\u05e2\u05e6\u05de\u05d4 \u05d0\u05ea \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05d0\u05d5 \u05d0\u05ea \u05d4\u05e7\u05d1\u05dc\u05d4.",
+        chanWa3: "\u05d4\u05d9\u05d0 \u05e1\u05d5\u05d2\u05e8\u05ea \u05d0\u05ea \u05d4\u05de\u05e2\u05d2\u05dc \u05d1\u05ea\u05d5\u05da \u05d4\u05e9\u05d9\u05d7\u05d4: \u05de\u05e6\u05dc\u05d9\u05d1\u05d4 \u05d0\u05ea \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u05d5\u05de\u05d0\u05e9\u05e8\u05ea \u05e9\u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05e0\u05e1\u05d2\u05e8\u05d4.",
+        chanWa4: "WhatsApp Business API \u05e8\u05e9\u05de\u05d9 \u2014 \u05e1\u05e4\u05e7 \u05d8\u05db\u05e0\u05d5\u05dc\u05d5\u05d2\u05d9 \u05de\u05d0\u05d5\u05e9\u05e8 \u05e9\u05dc Meta, \u05db\u05da \u05e9\u05d4\u05d4\u05d5\u05d3\u05e2\u05d5\u05ea \u05d9\u05d5\u05e6\u05d0\u05d5\u05ea \u05de\u05de\u05e1\u05e4\u05e8 \u05e2\u05e1\u05e7\u05d9 \u05de\u05d0\u05d5\u05de\u05ea.",
+        chanWaLink: "\u05d0\u05d9\u05da \u05e2\u05d5\u05d1\u05d3\u05d5\u05ea \u05ea\u05d6\u05db\u05d5\u05e8\u05d5\u05ea \u05ea\u05e9\u05dc\u05d5\u05dd \u05d1\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u2190",
+        chanWaOnline: "\u05de\u05d7\u05d5\u05d1\u05e8",
+        chanToday: "\u05d4\u05d9\u05d5\u05dd",
+        waBadge: "\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u05d1\u05d9\u05d6\u05e0\u05e1 \u05e8\u05e9\u05de\u05d9",
+        chanWaM1: "\u05e9\u05dc\u05d5\u05dd \u05db\u05e8\u05de\u05dc \u05dc\u05d5\u05d2\u05d9\u05e1\u05d8\u05d9\u05e7\u05d4 \u2014 \u05db\u05d0\u05df \u05d2'\u05e1 \u05de\u05de\u05d2\u05d3 \u05d0\u05e1\u05e4\u05e7\u05d4 \u05d8\u05db\u05e0\u05d9\u05ea.",
+        chanWaM2: "\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea INV500000967 \u00b7 6,240 \u20aa \u00b7 \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd \u05e2\u05d3 12.7.2026",
+        chanWaM3: "\u05d4\u05d7\u05d5\u05d1 \u05e2\u05d3\u05d9\u05d9\u05df \u05e4\u05ea\u05d5\u05d7 \u05d0\u05e6\u05dc\u05e0\u05d5. \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e9\u05dc\u05dd \u05db\u05d0\u05df:",
+        chanWaM4: "\u05e2\u05dc \u05d0\u05d9\u05dc\u05d5 \u05d7\u05d5\u05d3\u05e9\u05d9\u05dd \u05d6\u05d4?",
+        chanWaM5: "\u05de\u05d0\u05d9 \u05d5\u05d9\u05d5\u05dc\u05d9 2026. \u05e9\u05dc\u05d7\u05ea\u05d9 \u05dc\u05db\u05dd \u05e9\u05d5\u05d1 \u05d0\u05ea \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05db\u05d3\u05d9 \u05e9\u05ea\u05d5\u05db\u05dc\u05d5 \u05dc\u05d4\u05e6\u05dc\u05d9\u05d1 \u05de\u05d5\u05dc \u05d4\u05e1\u05e4\u05e8\u05d9\u05dd \u05e9\u05dc\u05db\u05dd.",
+        chanWaM6: "\u05e9\u05d5\u05dc\u05dd \u05d4\u05d1\u05d5\u05e7\u05e8 \u05d1\u05d4\u05e2\u05d1\u05e8\u05d4 \u05d1\u05e0\u05e7\u05d0\u05d9\u05ea.",
+        chanWaM7: "\u05ea\u05d5\u05d3\u05d4 \u2014 \u05d4\u05e6\u05dc\u05d1\u05ea\u05d9 \u05d0\u05ea \u05d4\u05d4\u05e2\u05d1\u05e8\u05d4 \u05de\u05d5\u05dc INV500000967 \u05d5\u05e1\u05d2\u05e8\u05ea\u05d9 \u05d0\u05d5\u05ea\u05d4. \u05d4\u05e7\u05d1\u05dc\u05d4 \u05de\u05e6\u05d5\u05e8\u05e4\u05ea.",
+        chanWaInput: "\u05d4\u05e7\u05dc\u05d3 \u05ea\u05d2\u05d5\u05d1\u05d4\u2026",
+        chanFloatWa: "\u05e9\u05d5\u05dc\u05dd \u00b7 INV500000967 \u05e0\u05e1\u05d2\u05e8\u05d4",
+        chanWaCap: "\u05e9\u05d9\u05d7\u05d4 \u05d0\u05d7\u05ea \u05de\u05ea\u05d7\u05d9\u05dc\u05ea\u05d4 \u05d5\u05e2\u05d3 \u05e1\u05d5\u05e4\u05d4: \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea, \u05e9\u05d0\u05dc\u05ea \u05d4\u05dc\u05e7\u05d5\u05d7, \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea, \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u05d5\u05d4\u05e7\u05d1\u05dc\u05d4 \u2014 \u05d4\u05db\u05d5\u05dc \u05d8\u05d5\u05e4\u05dc \u05e2\u05dc \u05d9\u05d3\u05d9 \u05d2'\u05e1.",
+        chanMailH: "\u05d0\u05d9\u05de\u05d9\u05d9\u05dc: \u05d4\u05de\u05e2\u05e7\u05d1 \u05e9\u05dc\u05d0 \u05e9\u05d5\u05db\u05d7",
+        chanMail1: "\u05de\u05e2\u05e7\u05d1\u05d9\u05dd \u05d0\u05d9\u05e9\u05d9\u05d9\u05dd \u05d1\u05e9\u05dd \u05d4\u05de\u05d5\u05ea\u05d2 \u05e9\u05dc\u05db\u05dd, \u05d1\u05ea\u05d6\u05de\u05d5\u05df \u05d5\u05d1\u05d8\u05d5\u05df \u05e9\u05d0\u05ea\u05dd \u05e7\u05d5\u05d1\u05e2\u05d9\u05dd.",
+        chanMail2: "\u05d4\u05d9\u05d0 \u05d9\u05db\u05d5\u05dc\u05d4 \u05dc\u05e6\u05e8\u05e3 \u05d0\u05ea \u05de\u05d4 \u05e9\u05d4\u05dc\u05e7\u05d5\u05d7 \u05d1\u05d9\u05e7\u05e9 \u2014 \u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05d0\u05d5 \u05e7\u05d1\u05dc\u05d4 \u2014 \u05d5\u05dc\u05d4\u05d5\u05e1\u05d9\u05e3 \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd.",
+        chanMail3: "\u05d4\u05d9\u05d0 \u05e7\u05d5\u05e8\u05d0\u05ea \u05d0\u05ea \u05d4\u05ea\u05e9\u05d5\u05d1\u05d4, \u05e2\u05d5\u05e0\u05d4 \u05dc\u05d4, \u05d5\u05e1\u05d5\u05d2\u05e8\u05ea \u05d0\u05ea \u05d4\u05de\u05e2\u05d2\u05dc \u05de\u05d5\u05dc \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea.",
+        chanMail4: "\u05db\u05dc \u05e9\u05dc\u05d9\u05d7\u05d4, \u05ea\u05e9\u05d5\u05d1\u05d4 \u05d5\u05ea\u05d5\u05e6\u05d0\u05d4 \u05de\u05ea\u05d5\u05e2\u05d3\u05d5\u05ea \u2014 \u05d5\u05d4\u05d9\u05d0 \u05e7\u05d5\u05d1\u05e2\u05ea \u05de\u05ea\u05d9 \u05d9\u05d5\u05e6\u05d0 \u05d4\u05de\u05e2\u05e7\u05d1 \u05d4\u05d1\u05d0.",
+        chanMailSubject: "\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea INV500000972 \u2014 \u05d1\u05d0\u05d9\u05d7\u05d5\u05e8 \u05e9\u05dc 14 \u05d9\u05d5\u05dd",
+        chanMailLabel: "\u05d1\u05d0\u05d9\u05d7\u05d5\u05e8",
+        chanMailTo: "to accounts@meridian-interiors.co.il",
+        chanMailP1: "\u05e9\u05dc\u05d5\u05dd \u05d3\u05e0\u05d4 \u2014 \u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea INV500000972 \u05e2\u05dc \u05e1\u05da 2,150 \u20aa \u05d4\u05d9\u05d9\u05ea\u05d4 \u05d0\u05de\u05d5\u05e8\u05d4 \u05dc\u05d4\u05d9\u05e4\u05e8\u05e2 \u05d1-12 \u05d1\u05d9\u05d5\u05dc\u05d9 \u05d5\u05e2\u05d3\u05d9\u05d9\u05df \u05e4\u05ea\u05d5\u05d7\u05d4 \u05d0\u05e6\u05dc\u05e0\u05d5.",
+        chanMailP2: "\u05e6\u05d9\u05e8\u05e4\u05ea\u05d9 \u05d0\u05ea \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea. \u05d0\u05dd \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u05db\u05d1\u05e8 \u05d1\u05d5\u05e6\u05e2, \u05e4\u05e9\u05d5\u05d8 \u05d4\u05e9\u05d9\u05d1\u05d5 \u05db\u05d0\u05df \u05d5\u05d0\u05e6\u05dc\u05d9\u05d1 \u05d0\u05ea \u05d6\u05d4 \u05de\u05d5\u05dc \u05d4\u05e8\u05d9\u05e9\u05d5\u05de\u05d9\u05dd \u05e9\u05dc\u05e0\u05d5.",
+        chanMailBtn: "\u05dc\u05ea\u05e9\u05dc\u05d5\u05dd \u05d4\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea",
+        chanMailReplyName: "\u05d3\u05e0\u05d4 \u05dc\u05d5\u05d9 \u00b7 \u05de\u05e8\u05d9\u05d3\u05d9\u05d0\u05df \u05e2\u05d9\u05e6\u05d5\u05d1 \u05e4\u05e0\u05d9\u05dd",
+        chanMailReplyText: "\u05e9\u05d5\u05dc\u05dd \u05d4\u05d1\u05d5\u05e7\u05e8 \u05d1\u05d4\u05e2\u05d1\u05e8\u05d4 \u2014 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e7\u05d1\u05dc \u05e7\u05d1\u05dc\u05d4?",
+        chanMailAnswered: "\u05d2'\u05e1 \u05d4\u05e9\u05d9\u05d1\u05d4 \u05d5\u05e6\u05d9\u05e8\u05e4\u05d4 \u05d0\u05ea \u05d4\u05e7\u05d1\u05dc\u05d4 \u00b7 11:41",
+        chanMailReply: "\u05d4\u05e9\u05d1",
+        chanMailForward: "\u05d4\u05e2\u05d1\u05e8",
+        chanMailCap: "\u05e0\u05e9\u05dc\u05d7 \u05d1\u05e9\u05dd \u05d4\u05de\u05d5\u05ea\u05d2 \u05e9\u05dc\u05db\u05dd \u2014 \u05d5\u05d2'\u05e1 \u05e7\u05d5\u05e8\u05d0\u05ea \u05d2\u05dd \u05d0\u05ea \u05d4\u05ea\u05e9\u05d5\u05d1\u05d4 \u05e9\u05d7\u05d5\u05d6\u05e8\u05ea.",
+        chanNote: "\u05d4\u05d4\u05de\u05d7\u05e9\u05d4 \u05de\u05d1\u05d5\u05e1\u05e1\u05ea \u05e2\u05dc \u05d7\u05d1\u05e8\u05d5\u05ea \u05d5\u05de\u05e1\u05e4\u05e8\u05d9 \u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea \u05dc\u05d3\u05d5\u05d2\u05de\u05d4. Seenn \u05dc\u05d0 \u05de\u05e4\u05e8\u05e1\u05de\u05ea \u05e9\u05dd, \u05de\u05e1\u05e4\u05e8 \u05d0\u05d5 \u05e7\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd \u05e9\u05dc \u05dc\u05e7\u05d5\u05d7 \u05d0\u05de\u05d9\u05ea\u05d9 \u2014 \u05db\u05dc \u05d4\u05d5\u05d3\u05e2\u05d4 \u05d9\u05d5\u05e6\u05d0\u05ea \u05de\u05d4\u05de\u05e1\u05e4\u05e8 \u05d4\u05e2\u05e1\u05e7\u05d9 \u05d5\u05de\u05d4\u05de\u05d5\u05ea\u05d2 \u05e9\u05dc\u05db\u05dd.",
 
         // How it works
         howItWorksTitle: "\u05D0\u05D9\u05DA \u05D6\u05D4 \u05E2\u05D5\u05D1\u05D3",
@@ -719,3 +849,132 @@ async function handleDemoSubmit(event) {
         addWhatsApp();
     }
 })();
+
+
+/* =========================================================================
+   Channel showcase (#channels): tabs, plus playback of the conversation.
+
+   initChannelTabs() is called by an inline <script> placed straight after the
+   section, so the panels are already collapsed before the browser has a
+   chance to paint them — no flash, no layout shift. The links in the Channels
+   nav menu share the same data-channel vocabulary and simply pick a panel on
+   their way to the anchor.
+
+   Playback is additive: every message is fully visible without the .is-live
+   class, so a visitor whose JS never runs still reads the whole thread. The
+   class only ever adds motion, and the CSS behind it is inside a
+   prefers-reduced-motion: no-preference query.
+   ========================================================================= */
+function initChannelTabs() {
+    var section = document.getElementById('channels');
+    if (!section || section.getAttribute('data-tabs-ready') === '1') return;
+    section.setAttribute('data-tabs-ready', '1');
+
+    var tabs = Array.prototype.slice.call(section.querySelectorAll('[role="tab"]'));
+    if (!tabs.length) return;
+
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var onScreen = false;
+    var timer = null;
+
+    /* The call screen is the one thing here that has to keep moving after the
+       entrance animation, otherwise a frozen duration gives the mock away. */
+    function runTimer(panel) {
+        if (timer) { clearInterval(timer); timer = null; }
+        var readout = panel && panel.querySelector('[data-call-timer]');
+        if (!readout || still) return;
+
+        var parts = (readout.textContent || '0:00').split(':');
+        var seconds = (parseInt(parts[0], 10) || 0) * 60 + (parseInt(parts[1], 10) || 0);
+
+        timer = setInterval(function () {
+            seconds += 1;
+            var m = Math.floor(seconds / 60), s = seconds % 60;
+            readout.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        }, 1000);
+    }
+
+    /* Restarting means removing the class and letting a frame pass, otherwise
+       the browser never sees a change and the animation does not re-run. */
+    function play(panel) {
+        if (!panel) return;
+        panel.classList.remove('is-live');
+        if (still) { runTimer(panel); return; }
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                panel.classList.add('is-live');
+                runTimer(panel);
+            });
+        });
+    }
+
+    function visiblePanel() {
+        return section.querySelector('[role="tabpanel"]:not([hidden])');
+    }
+
+    function select(channel, moveFocus) {
+        tabs.forEach(function (tab) {
+            var on = tab.getAttribute('data-channel') === channel;
+            tab.setAttribute('aria-selected', on ? 'true' : 'false');
+            tab.tabIndex = on ? 0 : -1;
+            var panel = document.getElementById(tab.getAttribute('aria-controls'));
+            if (panel) panel.hidden = !on;
+            if (on && moveFocus) tab.focus();
+        });
+        if (onScreen) play(visiblePanel());
+    }
+
+    tabs.forEach(function (tab, index) {
+        tab.addEventListener('click', function () {
+            select(tab.getAttribute('data-channel'), false);
+        });
+
+        // Arrow keys move between tabs, and they follow the reading direction
+        // so the Hebrew page behaves the way an RTL reader expects.
+        tab.addEventListener('keydown', function (event) {
+            var rtl = document.documentElement.getAttribute('dir') === 'rtl';
+            var next = null;
+            if (event.key === 'ArrowRight') next = rtl ? index - 1 : index + 1;
+            else if (event.key === 'ArrowLeft') next = rtl ? index + 1 : index - 1;
+            else if (event.key === 'Home') next = 0;
+            else if (event.key === 'End') next = tabs.length - 1;
+            if (next === null) return;
+            event.preventDefault();
+            next = (next + tabs.length) % tabs.length;
+            select(tabs[next].getAttribute('data-channel'), true);
+        });
+    });
+
+    // The nav menu links are ordinary anchors to #channels; the click handler
+    // only decides which panel they land on.
+    var links = document.querySelectorAll('[data-channel]:not([role="tab"])');
+    Array.prototype.forEach.call(links, function (link) {
+        link.addEventListener('click', function () {
+            select(link.getAttribute('data-channel'), false);
+        });
+    });
+
+    var selected = tabs.filter(function (tab) {
+        return tab.getAttribute('aria-selected') === 'true';
+    })[0] || tabs[0];
+    select(selected.getAttribute('data-channel'), false);
+
+    // Hold the thread until the section is actually looked at, so the whole
+    // conversation is not already over by the time a visitor scrolls to it.
+    if (!('IntersectionObserver' in window)) {
+        onScreen = true;
+        play(visiblePanel());
+        return;
+    }
+
+    new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                if (!onScreen) { onScreen = true; play(visiblePanel()); }
+            } else {
+                onScreen = false;
+                if (timer) { clearInterval(timer); timer = null; }
+            }
+        });
+    }, { threshold: 0.28 }).observe(section);
+}

@@ -33,6 +33,7 @@ Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started t
 ## Key facts
 - Product: AI accounts-receivable / collections agent (the AI agent is named Jess)
 - Channels: phone (natural voice), WhatsApp, SMS, email
+- WhatsApp: official WhatsApp Business API — Seenn is an approved Meta Tech Provider, so messages come from a verified business number. Every reminder carries a payment link for the client's exact outstanding balance, Jess reads and answers incoming replies, and she falls back to SMS when a client is not on WhatsApp.
 - Capabilities: automated reminders, payment links, dispute handling, outcome logging, custom escalation rules
 - Integrations: connects with ERP and accounting systems (e.g. Priority, SAP, Hashavshevet)
 - Markets: United States, Israel

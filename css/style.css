@@ -422,3 +422,1248 @@ body {
   margin-top: 2.75rem;
   font-family: 'Inter', sans-serif;
 }
+
+/* =========================================================
+   Channels — the three ways Jess reaches an overdue client.
+   Two surfaces share one vocabulary: a "Channels" menu in the
+   main nav, and the showcase it points at (#channels).
+   Box directions are logical throughout, so the RTL page (/he/)
+   mirrors without a second set of rules.
+   ========================================================= */
+
+:root {
+  --chan-ink: #111827;          /* the gray-900 the rest of the page uses */
+  --chan-muted: #5b6472;
+  --chan-line: rgba(17, 24, 39, 0.12);
+  --chan-gold: #C9B555;         /* the site's CTA gold */
+  --chan-wa: #25D366;           /* WhatsApp brand green — badges only */
+  --chan-wa-ink: #0B6B3A;       /* the green that is safe to set type in */
+  --chan-wa-tint: #EAF7EF;
+}
+
+/* ---------- The "Channels" entry in the main nav ---------- */
+
+/* Same dropdown mechanics as the Products menu next to it; only the row
+   gets an icon, because three channels read faster as glyphs than as text. */
+/* The Products menu next door opens on hover only. Give this one keyboard
+   parity: tabbing to the trigger opens the panel, which is what makes the
+   three links reachable without a mouse. Specificity beats Tailwind's
+   single-class .opacity-0/.invisible regardless of load order. */
+.group:focus-within > .navchan-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+.navchan {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.navchan:hover { background-color: rgba(17, 24, 39, 0.06); }
+
+.navchan__icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin-top: 0.15rem;
+  fill: currentColor;
+  color: var(--chan-muted);
+}
+
+.navchan--wa .navchan__icon { color: #128C7E; }
+
+.navchan__name {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.navchan__desc {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #6b7280;
+  margin-top: 0.15rem;
+}
+
+/* ---------- Chips in the hero, over the aurora ---------- */
+
+.hero-channels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 1.4rem;
+  padding-inline: 1rem;
+}
+
+.hero-channels__label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(233, 239, 247, 0.72);
+}
+
+.hchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #F3F6FA;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.hchip:hover,
+.hchip:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.hchip__icon { width: 15px; height: 15px; flex: none; fill: currentColor; }
+
+/* WhatsApp carries its own colour on every surface it appears on — that is
+   the whole point of giving it more weight than a plain list item. */
+.hchip--wa {
+  background: rgba(37, 211, 102, 0.18);
+  border-color: rgba(37, 211, 102, 0.55);
+  color: #EAFBF0;
+}
+
+.hchip--wa:hover,
+.hchip--wa:focus-visible {
+  background: rgba(37, 211, 102, 0.28);
+  border-color: rgba(37, 211, 102, 0.80);
+}
+
+.hchip--wa .hchip__icon { color: var(--chan-wa); }
+
+/* On a phone the three chips fit on one line only without the label, and one
+   clean row beats a ragged two. */
+@media (max-width: 639px) {
+  .hero-channels__label { display: none; }
+}
+
+@media (min-width: 1024px) {
+  .hero-channels { justify-content: flex-start; padding-inline: 0; }
+}
+
+/* ---------- The showcase ---------- */
+
+.chan-section {
+  position: relative;
+  overflow: hidden;
+  background-color: #F5F0E8;
+  padding-block: 2.5rem;
+  /* the header is sticky, so an anchor jump has to clear it */
+  scroll-margin-top: 5.5rem;
+}
+
+/* Borrowed from the Jess fold below so the two sections read as one family. */
+.chan-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.chan-decor span {
+  position: absolute;
+  display: block;
+  background-color: rgba(230, 220, 240, 0.42);
+  border-radius: 20px;
+}
+
+.chan-decor span:nth-child(1) { top: 9%; left: 1.5%; width: 140px; height: 110px; }
+.chan-decor span:nth-child(2) { top: 63%; left: 3%; width: 108px; height: 86px; border-radius: 18px; }
+.chan-decor span:nth-child(3) { bottom: 8%; right: 4%; width: 124px; height: 98px; border-radius: 18px; }
+.chan-decor span:nth-child(4) { top: 19%; right: 10%; width: 84px; height: 68px; border-radius: 14px; opacity: 0.75; }
+
+.chan-section > .container { position: relative; z-index: 1; }
+
+/* Below this there is no margin left to put them in — they would sit under
+   the copy rather than beside it. */
+@media (max-width: 1279px) {
+  .chan-decor { display: none; }
+}
+
+.chan-head {
+  max-width: 50rem;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+
+.chan-eyebrow {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--chan-muted);
+}
+
+.chan-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.2vw, 2.35rem);
+  line-height: 1.18;
+  color: var(--chan-ink);
+  margin-bottom: 1rem;
+}
+
+.chan-answer {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: #4b5563;
+}
+
+/* A segmented control rather than three separate cards: one object with a
+   moving highlight reads as a switch, three cards read as three choices you
+   have to compare. */
+.chan-tabswrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.chan-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.25rem;
+  width: 100%;
+  max-width: 34rem;
+  padding: 0.3rem;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 999px;
+  background: #E9E2D6;
+}
+
+.chan-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.5rem 0.4rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--chan-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chan-tab:hover { color: var(--chan-ink); }
+
+.chan-tab__icon { width: 17px; height: 17px; flex: none; fill: currentColor; }
+
+.chan-tab[aria-selected="true"] {
+  background: #fff;
+  color: var(--chan-ink);
+  box-shadow: 0 1px 3px rgba(17, 24, 39, 0.14);
+}
+
+.chan-tab--wa[aria-selected="true"] .chan-tab__icon { color: #128C7E; }
+
+@media (max-width: 420px) {
+  .chan-tab { font-size: 0.72rem; gap: 0.3rem; padding: 0.5rem 0.25rem; }
+  .chan-tab__icon { width: 15px; height: 15px; }
+}
+
+/* ---------- Panels ---------- */
+
+.chan-panel {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+/* Grid items default to min-width:auto, so the frame's min-content width sets
+   the track width and drags the copy column out with it. On a phone that is
+   the difference between a tidy column and a sideways-scrolling page. */
+.chan-panel > * { min-width: 0; }
+/* [hidden] is display:none from the UA sheet, which loses to the rule above */
+.chan-panel[hidden] { display: none; }
+
+@media (min-width: 1024px) {
+  .chan-panel { grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr); gap: 3.5rem; }
+}
+
+.chan-copy h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  line-height: 1.28;
+  color: var(--chan-ink);
+  margin-bottom: 1.1rem;
+}
+
+.chan-list { display: grid; gap: 0.8rem; margin-bottom: 1.4rem; }
+
+.chan-list li {
+  display: flex;
+  gap: 0.6rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: #374151;
+}
+
+.chan-list svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  margin-top: 0.2rem;
+  fill: currentColor;
+  color: var(--chan-wa-ink);
+}
+
+.chan-more {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--chan-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.chan-more:hover { color: var(--chan-wa-ink); }
+
+/* ---------- Each channel on its own surface ----------
+   A phone for the two conversations that happen on a phone, an email client
+   for the one that doesn't. The point is recognition: a visitor should know
+   what they are looking at before reading a word of it. */
+
+.chan-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-block: 0.25rem;
+}
+
+/* Ambient light so the device sits in the page instead of on top of it. */
+.chan-stage::before {
+  content: '';
+  position: absolute;
+  inset: 6% 4%;
+  border-radius: 50%;
+  background: radial-gradient(60% 55% at 50% 45%, rgba(201, 181, 85, 0.20) 0%, rgba(18, 140, 126, 0.10) 45%, rgba(245, 240, 232, 0) 72%);
+  filter: blur(34px);
+  pointer-events: none;
+}
+
+.chan-stage--wa::before {
+  background: radial-gradient(60% 55% at 50% 45%, rgba(37, 211, 102, 0.22) 0%, rgba(18, 140, 126, 0.12) 45%, rgba(245, 240, 232, 0) 72%);
+}
+
+/* ---------- Phone shell ---------- */
+
+.device {
+  position: relative;
+  z-index: 1;
+  width: min(332px, 100%);
+  padding: 9px;
+  border-radius: 42px;
+  background: linear-gradient(160deg, #2b3240 0%, #171b23 55%, #232934 100%);
+  box-shadow:
+    0 34px 60px rgba(17, 24, 39, 0.30),
+    0 4px 12px rgba(17, 24, 39, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+}
+
+.device__screen {
+  position: relative;
+  border-radius: 34px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: 470px;
+}
+
+/* the pill cut-out, drawn over the screen like the real thing */
+.device__pill {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 78px;
+  height: 20px;
+  border-radius: 999px;
+  background: #14171e;
+  z-index: 5;
+}
+
+.device__status {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.55rem 1.1rem 0.3rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 6;
+}
+
+.device__sigs { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 0.3rem; }
+
+/* Signal, wifi and battery drawn in CSS — at 10px they only need to read as
+   a status bar, and this is cheaper than three more sprite symbols. */
+.sig { display: inline-flex; align-items: flex-end; gap: 1.5px; height: 9px; }
+.sig i { display: block; width: 2px; background: currentColor; border-radius: 1px; }
+.sig i:nth-child(1) { height: 3px; }
+.sig i:nth-child(2) { height: 5px; }
+.sig i:nth-child(3) { height: 7px; }
+.sig i:nth-child(4) { height: 9px; }
+
+.wifi {
+  width: 0;
+  height: 0;
+  border-inline: 5px solid transparent;
+  border-bottom: 9px solid currentColor;
+}
+
+.batt {
+  position: relative;
+  width: 17px;
+  height: 9px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 1px;
+  opacity: 0.9;
+}
+
+.batt::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 72%;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.batt::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -3px;
+  top: 2px;
+  width: 2px;
+  height: 3px;
+  background: currentColor;
+  border-radius: 0 1px 1px 0;
+}
+
+/* ---------- WhatsApp ---------- */
+
+.wa-screen { display: flex; flex-direction: column; flex: 1; }
+.wa-screen .device__status { background: #075E54; color: #EAF7EF; }
+
+.wa-top {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.7rem 0.6rem;
+  background: #075E54;
+  color: #fff;
+}
+
+.wa-top__back { width: 16px; height: 16px; flex: none; fill: currentColor; opacity: 0.9; }
+
+.wa-top__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: #25D366;
+  color: #06301c;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.wa-top__who { min-width: 0; flex: 1 1 auto; line-height: 1.25; }
+
+.wa-top__name {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wa-top__sub {
+  display: block;
+  font-size: 0.66rem;
+  color: rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wa-top__icons { display: inline-flex; gap: 0.7rem; opacity: 0.9; }
+.wa-top__icons svg { width: 15px; height: 15px; fill: currentColor; }
+
+/* The doodled wallpaper is what makes a green bubble read as WhatsApp rather
+   than as "a green box". Drawn here rather than shipped as an asset. */
+.wa-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 0.55rem 0.4rem;
+  overflow: hidden;
+  background-color: #ECE5DD;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='0.05' stroke-width='1.3' stroke-linecap='round'%3E%3Ccircle cx='14' cy='14' r='5.5'/%3E%3Cpath d='M40 9h13v9h-7l-4 4v-4h-2z'/%3E%3Cpath d='M9 47l6-6 6 6'/%3E%3Crect x='40' y='40' width='13' height='13' rx='3'/%3E%3Cpath d='M27 62h11M27 28h9'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.wa-day {
+  align-self: center;
+  margin: 0.15rem 0 0.35rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 1px rgba(17, 24, 39, 0.08);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5b6472;
+}
+
+.wabub {
+  position: relative;
+  max-width: 82%;
+  padding: 0.4rem 0.55rem 0.3rem;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: #1f2937;
+  box-shadow: 0 1px 1px rgba(17, 24, 39, 0.10);
+}
+
+/* Logical radii and a logical tail, so the thread mirrors on /he/ the way a
+   real RTL WhatsApp does: outgoing on the left, tail on the left. */
+.wabub--out {
+  align-self: flex-end;
+  background: #D9FDD3;
+  border-radius: 8px 8px 0 8px;
+}
+
+.wabub--in {
+  align-self: flex-start;
+  background: #fff;
+  border-radius: 8px 8px 8px 0;
+}
+
+.wabub::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-bottom: 8px solid transparent;
+}
+
+.wabub--out::after {
+  inset-inline-end: -7px;
+  border-inline-start: 8px solid #D9FDD3;
+}
+
+.wabub--in::after {
+  inset-inline-start: -7px;
+  border-inline-end: 8px solid #fff;
+}
+
+.wabub p { margin: 0 0 0.22rem; }
+
+.wabub__inv {
+  font-weight: 700;
+  color: #0d3b22;
+}
+
+.wabub__pay,
+.wabub__file {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.3rem 0 0.15rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+  background: rgba(17, 24, 39, 0.06);
+  font-size: 0.68rem;
+}
+
+.wabub__pay span,
+.wabub__file span { min-width: 0; overflow-wrap: anywhere; }
+.wabub__pay { color: #0B6B3A; }
+.wabub__pay span { text-decoration: underline; text-underline-offset: 2px; }
+.wabub__file { color: #4b5563; }
+.wabub__pay svg,
+.wabub__file svg { width: 13px; height: 13px; flex: none; fill: currentColor; }
+
+.wabub__meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.2rem;
+  font-size: 0.6rem;
+  color: #7a8290;
+  font-variant-numeric: tabular-nums;
+}
+
+.wabub__meta svg { width: 13px; height: 13px; fill: currentColor; color: #34B7F1; }
+
+/* Three dots, the universal "someone is answering you". It only exists as a
+   beat between two messages, so with no JS and no motion it never appears —
+   an idle typing bubble under a finished thread reads as a bug. */
+.wa-typing {
+  display: none;
+  align-self: flex-start;
+  align-items: center;
+  gap: 3px;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px 8px 8px 0;
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(17, 24, 39, 0.10);
+}
+
+.wa-typing i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9aa3b0;
+  display: block;
+}
+
+.wa-input {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem 0.55rem;
+  background: #ECE5DD;
+}
+
+.wa-input__field {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.7rem;
+  color: #9aa3b0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wa-input__send {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: #25D366;
+  color: #fff;
+}
+
+.wa-input__send svg { width: 14px; height: 14px; fill: currentColor; }
+
+/* ---------- Live call ---------- */
+
+.call-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(170deg, #1b2a44 0%, #16233b 48%, #101a2c 100%);
+  color: #E9EFF7;
+}
+
+.call-screen .device__status { color: rgba(233, 239, 247, 0.85); }
+
+.call-head { padding: 0.3rem 1rem 0.7rem; text-align: center; }
+
+.call-head__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(233, 239, 247, 0.6);
+}
+
+.call-live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex: none;
+}
+
+.call-avatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  margin: 0.5rem auto 0.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(201, 181, 85, 0.20);
+  color: #E8D89A;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.call-avatar::before,
+.call-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 181, 85, 0.45);
+  opacity: 0;
+}
+
+.call-name {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.call-meta {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.7rem;
+  color: rgba(233, 239, 247, 0.62);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the bars are the only thing on the screen that says "she is speaking" */
+.call-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 22px;
+  margin: 0.5rem 0 0.15rem;
+}
+
+.call-wave i {
+  display: block;
+  width: 3px;
+  height: 30%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #E8D89A 0%, #C9B555 100%);
+  opacity: 0.85;
+}
+
+.call-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem 0.3rem;
+  overflow: hidden;
+}
+
+.call-line {
+  max-width: 88%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.call-line--them {
+  align-self: flex-end;
+  background: rgba(201, 181, 85, 0.16);
+  border-color: rgba(201, 181, 85, 0.24);
+}
+
+.call-line__who {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(233, 239, 247, 0.5);
+  margin-bottom: 0.1rem;
+}
+
+.call-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.1rem;
+  padding: 0.45rem 0 0.8rem;
+}
+
+.call-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.10);
+  color: #E9EFF7;
+}
+
+.call-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.call-btn--end { background: #E5484D; color: #fff; transform: rotate(135deg); }
+
+/* ---------- Email client ---------- */
+
+.mail-win {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  box-shadow: 0 30px 60px rgba(17, 24, 39, 0.16), 0 3px 10px rgba(17, 24, 39, 0.06);
+  font-family: 'Inter', sans-serif;
+}
+
+.mail-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  color: #8a93a1;
+}
+
+.mail-bar svg { width: 15px; height: 15px; fill: currentColor; }
+.mail-bar__count { margin-inline-start: auto; font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+
+.mail-subject {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem 0.5rem;
+}
+
+.mail-subject h4 {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--chan-ink);
+}
+
+.mail-label {
+  flex: none;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: #FDECEC;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #B4232A;
+  white-space: nowrap;
+}
+
+.mail-from {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 1rem 0.8rem;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.07);
+}
+
+.mail-from__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: #16233b;
+  color: #E8D89A;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mail-from__who { min-width: 0; flex: 1 1 auto; line-height: 1.35; }
+
+.mail-from__name {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--chan-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mail-from__addr {
+  display: block;
+  font-size: 0.74rem;
+  color: #8a93a1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mail-from__time { flex: none; font-size: 0.72rem; color: #8a93a1; }
+
+.mail-body {
+  padding: 0.95rem 1rem 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #374151;
+}
+
+.mail-body p { margin-bottom: 0.7rem; }
+
+.mail-attach {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.2rem 0 1rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 8px;
+  background: #FAFAFB;
+}
+
+.mail-attach svg { width: 17px; height: 17px; flex: none; fill: currentColor; color: #B4232A; }
+.mail-attach b { display: block; font-family: 'Montserrat', sans-serif; font-size: 0.76rem; font-weight: 600; color: #374151; }
+.mail-attach small { display: block; font-size: 0.68rem; color: #8a93a1; }
+
+.mail-pay {
+  display: inline-block;
+  padding: 0.5rem 1.05rem;
+  border-radius: 8px;
+  background: var(--chan-gold);
+  color: #111;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+/* The reply lives in the thread rather than on a floating badge: an email
+   client is the one surface here where the answer coming back IS the proof. */
+.mail-reply {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem 0.75rem;
+  border-top: 1px solid rgba(17, 24, 39, 0.07);
+  background: #FAFAFB;
+}
+
+.mail-reply__avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--chan-gold);
+  color: #1f2937;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.mail-reply__who { min-width: 0; flex: 1 1 auto; line-height: 1.4; }
+
+.mail-reply__name {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--chan-ink);
+}
+
+.mail-reply__text { display: block; font-size: 0.82rem; color: #4b5563; }
+.mail-reply__time { flex: none; font-size: 0.72rem; color: #8a93a1; }
+
+.mail-answered {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 1rem 0.9rem;
+  background: #FAFAFB;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--chan-wa-ink);
+}
+
+.mail-answered svg { width: 14px; height: 14px; flex: none; fill: currentColor; }
+
+.mail-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 1rem;
+  border-top: 1px solid rgba(17, 24, 39, 0.07);
+}
+
+.mail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.85rem;
+  border: 1px solid rgba(17, 24, 39, 0.16);
+  border-radius: 999px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.mail-btn svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* ---------- The outcome card that floats off the device ---------- */
+
+/* Hangs off the device's lower corner, over the input bar rather than over a
+   message — a floating card that covers the content it is advertising is
+   worse than no floating card. */
+.chan-float {
+  position: absolute;
+  z-index: 2;
+  bottom: 0.5rem;
+  inset-inline-start: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.16);
+}
+
+.chan-float__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--chan-wa-tint);
+  color: var(--chan-wa-ink);
+}
+
+.chan-float__icon svg { width: 14px; height: 14px; fill: currentColor; }
+
+.chan-float__label {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a93a1;
+}
+
+.chan-float__value {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--chan-ink);
+  white-space: nowrap;
+}
+
+/* No room for a card floating over a 330px phone on a 360px screen. */
+@media (max-width: 767px) {
+  .chan-float {
+    position: static;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  .chan-stage { padding-block: 0.5rem; }
+}
+
+.chan-cap {
+  margin-top: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--chan-muted);
+  text-align: center;
+}
+
+/* ---------- Playback ----------
+   The conversation plays once the panel is on screen. Everything is fully
+   visible without the .is-live class, so a visitor whose JS never runs still
+   reads the whole thread — the animation only ever adds motion. */
+
+@keyframes chanRise {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes chanTypingBlip {
+  0%, 100% { opacity: 0; transform: translateY(6px); }
+  8%, 92%  { opacity: 1; transform: none; }
+}
+
+@keyframes chanDot {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30%           { opacity: 1;    transform: translateY(-3px); }
+}
+
+@keyframes chanWave {
+  0%, 100% { height: 22%; }
+  50%      { height: 92%; }
+}
+
+@keyframes chanPing {
+  0%   { opacity: 0.7; transform: scale(0.9); }
+  70%  { opacity: 0;   transform: scale(1.5); }
+  100% { opacity: 0;   transform: scale(1.5); }
+}
+
+@keyframes chanFloatIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chan-panel.is-live .wabub,
+  .chan-panel.is-live .call-line,
+  .chan-panel.is-live .wa-day {
+    animation: chanRise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 780ms);
+  }
+
+  /* shows in the gap before the reply it precedes, then gets out of the way */
+  .chan-panel.is-live .wa-typing {
+    display: flex;
+    animation: chanTypingBlip 780ms ease-in-out both;
+    animation-delay: calc(var(--i, 0) * 780ms);
+  }
+
+  .chan-panel.is-live .wa-typing i {
+    animation: chanDot 1.05s ease-in-out infinite;
+  }
+
+  .chan-panel.is-live .wa-typing i:nth-child(2) { animation-delay: 0.15s; }
+  .chan-panel.is-live .wa-typing i:nth-child(3) { animation-delay: 0.3s; }
+
+  .chan-panel.is-live .call-wave i {
+    animation: chanWave 0.9s ease-in-out infinite;
+  }
+
+  .chan-panel.is-live .call-wave i:nth-child(2n)  { animation-duration: 1.15s; }
+  .chan-panel.is-live .call-wave i:nth-child(3n)  { animation-duration: 0.75s; }
+  .chan-panel.is-live .call-wave i:nth-child(4n)  { animation-duration: 1.35s; }
+  .chan-panel.is-live .call-wave i:nth-child(5n)  { animation-duration: 0.95s; }
+
+  .chan-panel.is-live .call-avatar::before,
+  .chan-panel.is-live .call-avatar::after {
+    animation: chanPing 2.4s ease-out infinite;
+  }
+
+  .chan-panel.is-live .call-avatar::after { animation-delay: 1.2s; }
+
+  .chan-panel.is-live .mail-win,
+  .chan-panel.is-live .chan-float {
+    animation: chanFloatIn 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 780ms);
+  }
+}
+
+/* ---------- Footnote ---------- */
+
+.chan-note {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 48rem;
+  margin: 1.75rem auto 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #8a93a1;
+  text-align: center;
+}
+
+.chan-note svg { width: 14px; height: 14px; flex: none; margin-top: 0.2rem; fill: currentColor; }
+
+/* a small badge that lets the existing Jess bullet flag the official channel
+   without rewriting the line it sits on */
+.wa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-inline-start: 0.4rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--chan-wa-tint);
+  border: 1px solid rgba(11, 107, 58, 0.25);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--chan-wa-ink);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.wa-badge svg { width: 12px; height: 12px; fill: currentColor; }
+
+/* Don't leave the focus ring to the UA default: these sit on cream, on gold
+   and on the dark aurora, and one ring has to stay visible on all three. */
+.chan-tab:focus-visible,
+.chan-more:focus-visible,
+.navchan:focus-visible {
+  outline: 2px solid var(--chan-ink);
+  outline-offset: 2px;
+}
+
+.hchip:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hchip, .chan-tab, .navchan { transition: none; }
+}

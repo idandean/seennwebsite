@@ -108,7 +108,14 @@
   "name": "Seenn",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
-  "description": "סוכן AI לגביית תשלומים שמתקשר ללקוחות, שולח תזכורות ב-WhatsApp ובאימייל, ומשפר תזרים מזומנים"
+  "description": "סוכן AI לגביית תשלומים שמתקשר ללקוחות, שולח תזכורות ב-WhatsApp ובאימייל, ומשפר תזרים מזומנים",
+  "featureList": [
+    "שיחות טלפון בקול טבעי ללקוחות שחייבים",
+    "תזכורות תשלום בוואטסאפ ביזנס רשמי עם קישור תשלום לסכום המדויק",
+    "תזכורות SMS",
+    "מעקבים מותאמים אישית באימייל",
+    "טיפול במחלוקות ותיעוד התוצאה בחזרה במערכת הנהלת החשבונות"
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,6 +177,14 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Seenn פונה ללקוחות שחייבים בארבעה ערוצים: שיחות טלפון עם קול AI טבעי, הודעות WhatsApp עם קישורי תשלום ישירים, תזכורות SMS ומעקבים מותאמים אישית באימייל. כל ערוץ ניתן להגדרה — אתם מחליטים באילו ערוצים להשתמש, סדר ההסלמה, תזמון בין תזכורות וטון התקשורת. כל האינטראקציות נרשמות ומנוטרות בלוח הבקרה של Seenn."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם Seenn שולחת תזכורות תשלום בוואטסאפ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן. Seenn שולחת תזכורות תשלום דרך WhatsApp Business API הרשמי, ו-Seenn היא ספק טכנולוגי מאושר של Meta, כך שההודעות יוצאות ממספר עסקי מאומת. כל הודעה נושאת קישור תשלום לסכום החוב המדויק של הלקוח. ג׳ס גם קוראת ועונה להודעות שמגיעות בחזרה בוואטסאפ: היא פותרת מחלוקות פשוטות, שולחת חשבונית, כרטסת או קבלה לפי בקשה, ועוברת ל-SMS כשלקוח לא נמצא בוואטסאפ."
       }
     },
     {
@@ -251,6 +266,28 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display">
 <div id="root">
+<!-- Icon sprite for the channel chips, tabs and badges. One definition per
+     glyph; every icon below is a <use> reference to it. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<symbol id="ic-phone" viewBox="0 0 24 24"><path d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"/></symbol>
+<symbol id="ic-wa" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></symbol>
+<symbol id="ic-mail" viewBox="0 0 24 24"><path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z"/><path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z"/></symbol>
+<symbol id="ic-check" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+<symbol id="ic-lock" viewBox="0 0 24 24"><path d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25V9.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3V6.75A5.25 5.25 0 0 0 12 1.5Zm3.75 8.25h-7.5V6.75a3.75 3.75 0 1 1 7.5 0v3Z"/></symbol>
+<symbol id="ic-doc" viewBox="0 0 24 24"><path d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875Z"/><path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z"/></symbol>
+<symbol id="ic-link" viewBox="0 0 24 24"><path d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 1-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.758a3.75 3.75 0 0 0 0-5.303Z"/><path d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l4.5-4.5a3.75 3.75 0 0 0-1.035-6.037.75.75 0 0 1 .646-1.353 5.25 5.25 0 0 1 1.449 8.45l-4.5 4.5a5.25 5.25 0 1 1-7.424-7.424l1.757-1.757a.75.75 0 1 1 1.06 1.06l-1.757 1.758a3.75 3.75 0 0 0 0 5.303Z"/></symbol>
+<symbol id="ic-checks" viewBox="0 0 24 24"><path d="M17.6 6.7 9.9 14.4 7.6 12l-1.4 1.4 3.7 3.7 9.1-9.1zm4.2 0-9.1 9.1-1.1-1.1-1.4 1.4 2.5 2.5 10.5-10.5z"/><path d="M6.2 13.4 4.8 12l-1.4 1.4 3.7 3.7 1.4-1.4z"/></symbol>
+<symbol id="ic-back" viewBox="0 0 24 24"><path d="M15.5 3.9 14.1 2.5 4.6 12l9.5 9.5 1.4-1.4L7.4 12z"/></symbol>
+<symbol id="ic-video" viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></symbol>
+<symbol id="ic-send" viewBox="0 0 24 24"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
+<symbol id="ic-micoff" viewBox="0 0 24 24"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5a3 3 0 0 0-6 0v.18l5.98 5.99zM4.27 3 3 4.27l6.01 6.01V11a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52a5 5 0 0 1-5-5H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/></symbol>
+<symbol id="ic-keypad" viewBox="0 0 24 24"><path d="M5 5h2v2H5zM11 5h2v2h-2zM17 5h2v2h-2zM5 11h2v2H5zM11 11h2v2h-2zM17 11h2v2h-2zM5 17h2v2H5zM11 17h2v2h-2zM17 17h2v2h-2z"/></symbol>
+<symbol id="ic-archive" viewBox="0 0 24 24"><path d="M20.54 5.23 19.15 3.5A1.45 1.45 0 0 0 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23A1.97 1.97 0 0 0 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5c0-.49-.17-.94-.46-1.27zM12 17.5 6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.82-1h12l.93 1H5.12z"/></symbol>
+<symbol id="ic-trash" viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+<symbol id="ic-star" viewBox="0 0 24 24"><path d="m12 17.27 6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></symbol>
+<symbol id="ic-reply" viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></symbol>
+<symbol id="ic-forward" viewBox="0 0 24 24"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></symbol>
+</svg>
 <header class="backdrop-blur-sm sticky top-0 z-50" style="background-color: rgba(245, 240, 232, 0.95);">
 <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-16">
@@ -276,6 +313,42 @@
 <a href="#michael-section" class="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">
 <div class="font-semibold">מייקל - סוכן שירות לאחר שעות העבודה</div>
 <div class="text-xs text-gray-600 mt-1">בקרוב</div>
+</a>
+</div>
+</div>
+</div>
+
+<!-- Channels. Same dropdown mechanics as Products above; each row opens
+     that channel's panel in the showcase. -->
+<div class="relative group">
+<button class="text-sm font-medium text-gray-800 hover:text-primary transition-colors flex items-center gap-1" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;">
+<span>ערוצים</span>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+</svg>
+</button>
+<div class="navchan-menu absolute left-auto right-0 mt-2 w-72 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50" style="background-color: rgba(245, 240, 232, 0.98);">
+<div class="py-2">
+<a href="#channels" class="navchan" data-channel="phone">
+<svg class="navchan__icon" aria-hidden="true"><use href="#ic-phone"></use></svg>
+<span>
+<span class="navchan__name">שיחת טלפון</span>
+<span class="navchan__desc">שיחות בקול טבעי לפי הכללים שלכם</span>
+</span>
+</a>
+<a href="#channels" class="navchan navchan--wa" data-channel="whatsapp">
+<svg class="navchan__icon" aria-hidden="true"><use href="#ic-wa"></use></svg>
+<span>
+<span class="navchan__name">וואטסאפ</span>
+<span class="navchan__desc">קישורי תשלום, והיא עונה גם לתשובות</span>
+</span>
+</a>
+<a href="#channels" class="navchan" data-channel="email">
+<svg class="navchan__icon" aria-hidden="true"><use href="#ic-mail"></use></svg>
+<span>
+<span class="navchan__name">אימייל</span>
+<span class="navchan__desc">מעקב מהמותג שלכם, מתועד במערכת</span>
+</span>
 </a>
 </div>
 </div>
@@ -314,6 +387,21 @@
 <div class="font-medium">מייקל - סוכן שירות לאחר שעות העבודה</div>
 </a>
 </div>
+<div class="border-b border-gray-200 pb-3">
+<div class="font-semibold text-gray-800 mb-2" style="font-family: 'Montserrat', sans-serif;">ערוצים</div>
+<a href="#channels" onclick="toggleMobileMenu()" class="navchan rounded-lg" data-channel="phone">
+<svg class="navchan__icon" aria-hidden="true"><use href="#ic-phone"></use></svg>
+<span><span class="navchan__name">שיחת טלפון</span></span>
+</a>
+<a href="#channels" onclick="toggleMobileMenu()" class="navchan navchan--wa rounded-lg" data-channel="whatsapp">
+<svg class="navchan__icon" aria-hidden="true"><use href="#ic-wa"></use></svg>
+<span><span class="navchan__name">וואטסאפ</span></span>
+</a>
+<a href="#channels" onclick="toggleMobileMenu()" class="navchan rounded-lg" data-channel="email">
+<svg class="navchan__icon" aria-hidden="true"><use href="#ic-mail"></use></svg>
+<span><span class="navchan__name">אימייל</span></span>
+</a>
+</div>
 <a href="#pricing" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">תמחור</a>
 <a href="/he/blog/" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">בלוג</a>
 <a href="/he/about.html" class="block py-2 text-base font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif;">אודות</a>
@@ -324,6 +412,7 @@
 </div>
 </div>
 </nav>
+
 </header>
 <main>
 <section class="relative pt-16 sm:pt-24 pb-24 sm:pb-32 text-white overflow-hidden" style="min-height: 60vh; background-image: url('../images/hero-aurora-mountains.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
@@ -334,6 +423,24 @@
 <p class="text-sm sm:text-base md:text-lg max-w-3xl mx-auto lg:mx-0 mb-6 sm:mb-8 text-gray-200 px-4">סוכן ה-AI שלכם מתקשר ללקוחות שחייבים, פועל לפי הכללים שלכם, ומשפר את תזרים המזומנים. חסכו 10+ שעות בשבוע על גבייה — בלי לגייס עובד נוסף. עסקים שמשתמשים ב-Seenn רואים שיפור של עד 40% בגביית חובות לקוחות.</p>
 <div class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-3 sm:gap-4 px-4">
 <a class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-black bg-[#C9B555] rounded-lg hover:bg-[#BFA34A] transition-colors text-center" href="#" onclick="openDemoModal(); return false;">בקשו הדגמה</a>
+</div>
+
+<!-- The three channels, named in the fold. WhatsApp carries its own colour
+     and its own trust line because it is the channel clients answer on. -->
+<div class="hero-channels">
+<span class="hero-channels__label">ג'ס גובה דרך</span>
+<a class="hchip" href="#channels" data-channel="phone">
+<svg class="hchip__icon" fill="currentColor" aria-hidden="true"><use href="#ic-phone"></use></svg>
+<span>שיחת טלפון</span>
+</a>
+<a class="hchip hchip--wa" href="#channels" data-channel="whatsapp">
+<svg class="hchip__icon" fill="currentColor" aria-hidden="true"><use href="#ic-wa"></use></svg>
+<span>וואטסאפ</span>
+</a>
+<a class="hchip" href="#channels" data-channel="email">
+<svg class="hchip__icon" fill="currentColor" aria-hidden="true"><use href="#ic-mail"></use></svg>
+<span>אימייל</span>
+</a>
 </div>
 </div>
 
@@ -380,6 +487,249 @@
 </div>
 </div>
 </section>
+
+<!-- Channel showcase. The Channels menu in the nav points here; each tab is
+     one screen of the same product, so the three read as one system rather
+     than three unrelated graphics. WhatsApp is the tab that opens.
+     The threads are illustrations: example companies, so no real customer's
+     name, number or payment link is ever published. -->
+<section id="channels" class="chan-section" aria-labelledby="chan-title">
+<!-- The same lavender rounded squares the Jess fold uses, so the two read
+     as one family. Purely decorative: behind the content, and dropped on
+     small screens where there is no margin to put them in. -->
+<div class="chan-decor" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="chan-head">
+<span class="chan-eyebrow">ערוצים</span>
+<h2 id="chan-title" class="chan-title">איך Seenn מגיעה ללקוחות שחייבים לכם כסף?</h2>
+<p class="chan-answer">ג'ס, סוכנת ה-AI של Seenn, רודפת אחרי כל חשבונית פתוחה בערוצים שהלקוחות באמת עונים בהם: שיחת טלפון בקול טבעי, הודעת וואטסאפ ביזנס רשמית ואימייל. היא יכולה לשלוח קישור תשלום לסכום המדויק, עונה לתשובות, מטפלת במחלוקות, סוגרת את המעגל כשהכסף נכנס, וקובעת בעצמה מתי ואיך לפנות בפעם הבאה.</p>
+</div>
+
+<div class="chan-tabswrap">
+<div class="chan-tabs" role="tablist" aria-label="ערוצי הגבייה של Seenn">
+<button type="button" class="chan-tab" role="tab" id="chan-tab-phone" aria-controls="chan-panel-phone" aria-selected="false" tabindex="-1" data-channel="phone">
+<svg class="chan-tab__icon" aria-hidden="true"><use href="#ic-phone"></use></svg>
+<span>שיחת טלפון</span>
+</button>
+<button type="button" class="chan-tab chan-tab--wa" role="tab" id="chan-tab-whatsapp" aria-controls="chan-panel-whatsapp" aria-selected="true" tabindex="0" data-channel="whatsapp">
+<svg class="chan-tab__icon" aria-hidden="true"><use href="#ic-wa"></use></svg>
+<span>וואטסאפ</span>
+</button>
+<button type="button" class="chan-tab" role="tab" id="chan-tab-email" aria-controls="chan-panel-email" aria-selected="false" tabindex="-1" data-channel="email">
+<svg class="chan-tab__icon" aria-hidden="true"><use href="#ic-mail"></use></svg>
+<span>אימייל</span>
+</button>
+</div>
+</div>
+
+<!-- Phone -->
+<div class="chan-panel" role="tabpanel" id="chan-panel-phone" aria-labelledby="chan-tab-phone" tabindex="0" hidden>
+<div class="chan-copy">
+<h3>שיחת טלפון אמיתית — הערוץ שכמעט אף מתחרה לא נוגע בו</h3>
+<ul class="chan-list">
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>היא מתקשרת בקול טבעי, בשם המותג שלכם ולפי הכללים שלכם — ומטפלת בתשובות במקום להשאיר הודעה בתא הקולי.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>תוך כדי השיחה היא יכולה לשלוח קישור תשלום לסכום המדויק, כך שאפשר לסגור את זה על המקום.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>היא סוגרת את המעגל בעצמה: שולחת שוב את החשבונית, מצליבה את התשלום ומסמנת שהחוב נסגר.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>כשהשיחה נגמרת היא קובעת את הצעד הבא — מתי לחזור ובאיזה ערוץ.</span></li>
+</ul>
+</div>
+<div>
+<div class="chan-stage">
+<div class="device">
+<span class="device__pill"></span>
+<div class="device__screen">
+<div class="call-screen">
+<div class="device__status">
+<span>9:41</span>
+<span class="device__sigs"><span class="sig"><i></i><i></i><i></i><i></i></span><span class="wifi"></span><span class="batt"></span></span>
+</div>
+<div class="call-head">
+<span class="call-head__label"><span class="call-live"></span><span>שיחה יוצאת</span></span>
+<span class="call-avatar">אש</span>
+<span class="call-name">אלוני שינוע בע״מ</span>
+<span class="call-meta"><span>INV500000954 · 4,830 ₪</span> · <span data-call-timer>01:12</span></span>
+<div class="call-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
+<div class="call-lines">
+<div class="call-line" style="--i:0"><span class="call-line__who">ג'ס</span><span>שלום, מדברת ג'ס ממגד אספקה טכנית בנוגע לחשבונית INV500000954 — 4,830 ₪, באיחור של שבועיים.</span></div>
+<div class="call-line call-line--them" style="--i:1"><span class="call-line__who">אלוני שינוע</span><span>אני לא חושב שקיבלנו את החשבונית הזאת.</span></div>
+<div class="call-line" style="--i:2"><span class="call-line__who">ג'ס</span><span>אין בעיה — אני שולחת לכם אותה עכשיו בוואטסאפ עם קישור לתשלום. אפשר לסגור את זה השבוע?</span></div>
+<div class="call-line call-line--them" style="--i:3"><span class="call-line__who">אלוני שינוע</span><span>יום חמישי מתאים. תשלחי.</span></div>
+</div>
+<div class="call-actions" aria-hidden="true">
+<span class="call-btn"><svg><use href="#ic-micoff"></use></svg></span>
+<span class="call-btn"><svg><use href="#ic-keypad"></use></svg></span>
+<span class="call-btn call-btn--end"><svg><use href="#ic-phone"></use></svg></span>
+</div>
+</div>
+</div>
+</div>
+<div class="chan-float" style="--i:4.6">
+<span class="chan-float__icon"><svg aria-hidden="true"><use href="#ic-check"></use></svg></span>
+<span>
+<span class="chan-float__label">תוצאה</span>
+<span class="chan-float__value">התחייבות לתשלום · 12.8</span>
+</span>
+</div>
+</div>
+<p class="chan-cap">היא מתקשרת, מטפלת בהתנגדות, סוגרת התחייבות לתשלום — ואז רושמת את התוצאה בחזרה מול החשבונית.</p>
+</div>
+</div>
+
+<!-- WhatsApp -->
+<div class="chan-panel" role="tabpanel" id="chan-panel-whatsapp" aria-labelledby="chan-tab-whatsapp" tabindex="0">
+<div class="chan-copy">
+<h3>וואטסאפ: שם לקוחות שחייבים באמת עונים</h3>
+<ul class="chan-list">
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>כל הודעה מציינת את מספר החשבונית ואת סכום החוב המדויק, והיא יכולה לשלוח קישור תשלום שסוגר את זה בלחיצה אחת.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>כשהלקוח כותב בחזרה היא עונה, ויכולה לשלוח שוב בעצמה את החשבונית או את הקבלה.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>היא סוגרת את המעגל בתוך השיחה: מצליבה את התשלום ומאשרת שהחשבונית נסגרה.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>WhatsApp Business API רשמי — ספק טכנולוגי מאושר של Meta, כך שההודעות יוצאות ממספר עסקי מאומת.</span></li>
+</ul>
+<a class="chan-more" href="/he/whatsapp-reminders.html">איך עובדות תזכורות תשלום בוואטסאפ ←</a>
+</div>
+<div>
+<div class="chan-stage chan-stage--wa">
+<div class="device">
+<span class="device__pill"></span>
+<div class="device__screen">
+<div class="wa-screen">
+<div class="device__status">
+<span>9:41</span>
+<span class="device__sigs"><span class="sig"><i></i><i></i><i></i><i></i></span><span class="wifi"></span><span class="batt"></span></span>
+</div>
+<div class="wa-top">
+<svg class="wa-top__back" aria-hidden="true"><use href="#ic-back"></use></svg>
+<span class="wa-top__avatar">כל</span>
+<span class="wa-top__who">
+<span class="wa-top__name">כרמל לוגיסטיקה בע״מ</span>
+<span class="wa-top__sub">מחובר</span>
+</span>
+<span class="wa-top__icons" aria-hidden="true">
+<svg><use href="#ic-video"></use></svg>
+<svg><use href="#ic-phone"></use></svg>
+</span>
+</div>
+<div class="wa-body">
+<span class="wa-day" style="--i:0">היום</span>
+<div class="wabub wabub--out" style="--i:0">
+<p><span>שלום כרמל לוגיסטיקה — כאן ג'ס ממגד אספקה טכנית.</span></p>
+<p class="wabub__inv"><span>חשבונית INV500000967 · 6,240 ₪ · לתשלום עד 12.7.2026</span></p>
+<p><span>החוב עדיין פתוח אצלנו. אפשר לשלם כאן:</span></p>
+<span class="wabub__pay"><svg aria-hidden="true"><use href="#ic-link"></use></svg><span>seenn.ai/pay/INV500000967</span></span>
+<span class="wabub__meta"><span>09:14</span><svg aria-hidden="true"><use href="#ic-checks"></use></svg></span>
+</div>
+<div class="wabub wabub--in" style="--i:1">
+<p><span>על אילו חודשים זה?</span></p>
+<span class="wabub__meta"><span>09:21</span></span>
+</div>
+<div class="wa-typing" style="--i:2" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="wabub wabub--out" style="--i:3">
+<p><span>מאי ויולי 2026. שלחתי לכם שוב את החשבונית כדי שתוכלו להצליב מול הספרים שלכם.</span></p>
+<span class="wabub__file"><svg aria-hidden="true"><use href="#ic-doc"></use></svg><span>Invoice-INV500000967.pdf</span></span>
+<span class="wabub__meta"><span>09:23</span><svg aria-hidden="true"><use href="#ic-checks"></use></svg></span>
+</div>
+<div class="wabub wabub--in" style="--i:4">
+<p><span>שולם הבוקר בהעברה בנקאית.</span></p>
+<span class="wabub__meta"><span>11:48</span></span>
+</div>
+<div class="wabub wabub--out" style="--i:5">
+<p><span>תודה — הצלבתי את ההעברה מול INV500000967 וסגרתי אותה. הקבלה מצורפת.</span></p>
+<span class="wabub__file"><svg aria-hidden="true"><use href="#ic-doc"></use></svg><span>Receipt-INV500000967.pdf</span></span>
+<span class="wabub__meta"><span>11:49</span><svg aria-hidden="true"><use href="#ic-checks"></use></svg></span>
+</div>
+</div>
+<div class="wa-input" aria-hidden="true">
+<span class="wa-input__field">הקלד תגובה…</span>
+<span class="wa-input__send"><svg><use href="#ic-send"></use></svg></span>
+</div>
+</div>
+</div>
+</div>
+<div class="chan-float" style="--i:6">
+<span class="chan-float__icon"><svg aria-hidden="true"><use href="#ic-check"></use></svg></span>
+<span>
+<span class="chan-float__label">תוצאה</span>
+<span class="chan-float__value">שולם · INV500000967 נסגרה</span>
+</span>
+</div>
+</div>
+<p class="chan-cap">שיחה אחת מתחילתה ועד סופה: התזכורת, שאלת הלקוח, החשבונית, התשלום והקבלה — הכול טופל על ידי ג'ס.</p>
+</div>
+</div>
+
+<!-- Email -->
+<div class="chan-panel" role="tabpanel" id="chan-panel-email" aria-labelledby="chan-tab-email" tabindex="0" hidden>
+<div class="chan-copy">
+<h3>אימייל: המעקב שלא שוכח</h3>
+<ul class="chan-list">
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>מעקבים אישיים בשם המותג שלכם, בתזמון ובטון שאתם קובעים.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>היא יכולה לצרף את מה שהלקוח ביקש — חשבונית או קבלה — ולהוסיף קישור תשלום.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>היא קוראת את התשובה, עונה לה, וסוגרת את המעגל מול החשבונית.</span></li>
+<li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>כל שליחה, תשובה ותוצאה מתועדות — והיא קובעת מתי יוצא המעקב הבא.</span></li>
+</ul>
+</div>
+<div>
+<div class="chan-stage">
+<div class="mail-win" style="--i:0">
+<div class="mail-bar" aria-hidden="true">
+<svg><use href="#ic-back"></use></svg>
+<svg><use href="#ic-archive"></use></svg>
+<svg><use href="#ic-trash"></use></svg>
+<svg><use href="#ic-star"></use></svg>
+<span class="mail-bar__count">1 / 12</span>
+</div>
+<div class="mail-subject">
+<h4>חשבונית INV500000972 — באיחור של 14 יום</h4>
+<span class="mail-label">באיחור</span>
+</div>
+<div class="mail-from">
+<span class="mail-from__avatar">מא</span>
+<span class="mail-from__who">
+<span class="mail-from__name">מגד אספקה טכנית</span>
+<span class="mail-from__addr" dir="ltr">to accounts@meridian-interiors.co.il</span>
+</span>
+<span class="mail-from__time">09:02</span>
+</div>
+<div class="mail-body">
+<p>שלום דנה — חשבונית INV500000972 על סך 2,150 ₪ הייתה אמורה להיפרע ב-12 ביולי ועדיין פתוחה אצלנו.</p>
+<p>צירפתי את החשבונית. אם התשלום כבר בוצע, פשוט השיבו כאן ואצליב את זה מול הרישומים שלנו.</p>
+<span class="mail-attach">
+<svg aria-hidden="true"><use href="#ic-doc"></use></svg>
+<span><b>Invoice-INV500000972.pdf</b><small>148 KB</small></span>
+</span>
+<div><span class="mail-pay">לתשלום החשבונית</span></div>
+</div>
+<div class="mail-reply">
+<span class="mail-reply__avatar">דל</span>
+<span class="mail-reply__who">
+<span class="mail-reply__name">דנה לוי · מרידיאן עיצוב פנים</span>
+<span class="mail-reply__text">שולם הבוקר בהעברה — אפשר לקבל קבלה?</span>
+</span>
+<span class="mail-reply__time">11:40</span>
+</div>
+<div class="mail-answered">
+<svg aria-hidden="true"><use href="#ic-check"></use></svg>
+<span>ג'ס השיבה וצירפה את הקבלה · 11:41</span>
+</div>
+<div class="mail-actions" aria-hidden="true">
+<span class="mail-btn"><svg><use href="#ic-reply"></use></svg><span>השב</span></span>
+<span class="mail-btn"><svg><use href="#ic-forward"></use></svg><span>העבר</span></span>
+</div>
+</div>
+</div>
+<p class="chan-cap">נשלח בשם המותג שלכם — וג'ס קוראת גם את התשובה שחוזרת.</p>
+</div>
+</div>
+
+<p class="chan-note">
+<svg aria-hidden="true"><use href="#ic-lock"></use></svg>
+<span>ההמחשה מבוססת על חברות ומספרי חשבונית לדוגמה. Seenn לא מפרסמת שם, מספר או קישור תשלום של לקוח אמיתי — כל הודעה יוצאת מהמספר העסקי ומהמותג שלכם.</span>
+</p>
+
+</div>
+</section>
+<script>if (typeof initChannelTabs === 'function') initChannelTabs();</script>
 
 <!-- AI collector devours overdue invoices stripe -->
 <section class="feed-stripe">
@@ -431,7 +781,7 @@
 <p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>תזכורות טלפוניות:</strong> <span>שיחות קוליות טבעיות שפועלות לפי הכללים שלכם.</span> <a href="/he/collection-software.html" class="text-base underline text-gray-600 hover:text-gray-900 whitespace-nowrap">כך עובדת תוכנת גבייה אוטומטית ←</a></p>
 </div>
 <div class="border-b border-gray-300 pb-6">
-<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>WhatsApp / SMS:</strong> <span>קישור תשלום לסכום המדויק — הלקוח משלם בלחיצה אחת.</span> <a href="/he/whatsapp-reminders.html" class="text-base underline text-gray-600 hover:text-gray-900 whitespace-nowrap">כך עובדת תזכורת תשלום בוואטסאפ ←</a></p>
+<p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>WhatsApp / SMS:</strong> <span>קישור תשלום לסכום המדויק — הלקוח משלם בלחיצה אחת.</span> <span class="wa-badge"><svg fill="currentColor" aria-hidden="true"><use href="#ic-wa"></use></svg><span>וואטסאפ ביזנס רשמי</span></span> <a href="/he/whatsapp-reminders.html" class="text-base underline text-gray-600 hover:text-gray-900 whitespace-nowrap">כך עובדת תזכורת תשלום בוואטסאפ ←</a></p>
 </div>
 <div class="border-b border-gray-300 pb-6">
 <p class="text-xl text-gray-900" style="font-family: 'Montserrat', sans-serif;"><strong>מעקבים באימייל:</strong> <span>אישיים, משקפים את המותג שלכם, ונשמרים במערכת.</span></p>
@@ -710,6 +1060,16 @@ Seenn מיועד לעסקים קטנים ובינוניים שעובדים בת�
 </div>
 <div class="faq-answer">
 Seenn פונה ללקוחות שחייבים בארבעה ערוצים: <a href="/he/collection-software.html" class="underline hover:text-gray-900">שיחות טלפון עם קול AI טבעי</a>, <a href="/he/whatsapp-reminders.html" class="underline hover:text-gray-900">הודעות WhatsApp עם קישורי תשלום ישירים</a>, תזכורות SMS ומעקבים מותאמים אישית באימייל. כל ערוץ ניתן להגדרה — אתם מחליטים באילו ערוצים להשתמש, סדר ההסלמה, תזמון בין תזכורות וטון התקשורת. כל האינטראקציות נרשמות ומנוטרות בלוח הבקרה של Seenn.
+</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question" onclick="toggleFaq(this)">
+<span>האם Seenn שולחת תזכורות תשלום בוואטסאפ?</span>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+</div>
+<div class="faq-answer">
+כן. Seenn שולחת תזכורות תשלום דרך <a href="/he/whatsapp-reminders.html" class="underline hover:text-gray-900">WhatsApp Business API הרשמי</a> — Seenn היא ספק טכנולוגי מאושר של Meta — וכל הודעה נושאת קישור תשלום לסכום החוב המדויק של הלקוח. ג'ס גם קוראת ועונה להודעות שמגיעות בחזרה בוואטסאפ: היא פותרת מחלוקות פשוטות, שולחת חשבונית, כרטסת או קבלה לפי בקשה, ועוברת ל-SMS כשלקוח לא נמצא בוואטסאפ. כל הודעה נרשמת מול החשבונית בלוח הבקרה של Seenn.
 </div>
 </div>
 
