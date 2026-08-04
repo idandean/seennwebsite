@@ -53,16 +53,13 @@ beforeEach(() => {
 });
 
 /**
- * Staged recording rollout: the demo runs on the unlisted staging page only
- * while the recorded flow is validated end to end. Both homepages are off
- * and their mounts hidden.
+ * The recorded demo is public. Both homepages run it, and both require the
+ * visitor to accept the server's consent wording before anything happens.
  */
-describe('the public homepages are switched off', () => {
-  it.each(HOMEPAGES)('%s keeps the vetted values but stays disabled', (page) => {
+describe('the recorded demo is live on both homepages', () => {
+  it.each(HOMEPAGES)('%s carries the working configuration', (page) => {
     const inline = inlineConfigOf(read(page));
-    // Off, but not gutted: the endpoint and keys stay so switching back on
-    // is one word rather than a re-derivation.
-    expect(inline.publicDemoMode).toBe('disabled');
+    expect(inline.publicDemoMode).toBe('enabled');
     expect(inline.endpointBaseUrl).toBe(LIVE.endpointBaseUrl);
     expect(inline.anonKey).toBe(LIVE.anonKey);
     expect(inline.turnstileSiteKey).toBe(LIVE.turnstileSiteKey);
@@ -89,34 +86,33 @@ describe('the public homepages are switched off', () => {
   });
 
   /**
-   * The public pages do not record. This must hold however staging is
-   * configured, and it is the assertion that has to fail loudly if anyone ever
-   * copies a `recordingConsentMode: 'required'` onto a homepage before the
-   * backend records, retains and deletes as the consent sentence promises.
+   * Recording is on, so consent must be too. A page that records without
+   * this flag would open a microphone having shown nobody anything, which is
+   * the single failure this whole gate exists to prevent.
    */
-  it.each(HOMEPAGES)('%s keeps recording consent switched off', (page) => {
+  it.each(HOMEPAGES)('%s requires consent before recording', (page) => {
     const inline = inlineConfigOf(read(page));
-    expect(inline.recordingConsentMode ?? 'disabled').toBe('disabled');
-    expect(resolveConfig({ inline }).recordingConsentMode).toBe('disabled');
+    expect(inline.recordingConsentMode).toBe('required');
+    expect(resolveConfig({ inline }).recordingConsentMode).toBe('required');
   });
 
-  it('the staging page is the one place recording is on', () => {
-    const inline = inlineConfigOf(read('voice-demo-staging.html'));
-    const config = resolveConfig({ inline });
-    expect(config.publicDemoMode).toBe('enabled');
-    expect(config.recordingConsentMode).toBe('required');
+  it('every page that runs the demo requires consent — no exceptions', () => {
+    for (const page of ['index.html', 'he/index.html', 'voice-demo-staging.html']) {
+      const config = resolveConfig({ inline: inlineConfigOf(read(page)) });
+      if (config.publicDemoMode !== 'enabled') continue;
+      expect(config.recordingConsentMode, page).toBe('required');
+    }
   });
 
-  it.each(HOMEPAGES)('%s resolves to a widget that will not run', (page) => {
+  it.each(HOMEPAGES)('%s resolves to a runnable widget', (page) => {
     const config = resolveConfig({ inline: inlineConfigOf(read(page)) });
-    expect(config.publicDemoMode).toBe('disabled');
-    expect(unavailableReason(config)).toBe('flag_disabled');
+    expect(config.publicDemoMode).toBe('enabled');
+    expect(unavailableReason(config)).toBeNull();
   });
 
-  it.each(HOMEPAGES)('%s ships the mount hidden', (page) => {
-    // Belt and braces. A disabled widget renders nothing anyway; `hidden`
-    // means a misconfiguration leaves an empty slot, not a dead orb.
-    expect(read(page)).toMatch(/data-seenn-voice-demo\s+hidden/);
+  it.each(HOMEPAGES)('%s no longer ships the mount hidden', (page) => {
+    expect(read(page)).toMatch(/data-seenn-voice-demo(?!\s+hidden)/);
+    expect(read(page)).not.toMatch(/data-seenn-voice-demo\s+hidden/);
   });
 
   it.each(HOMEPAGES)('%s loads the config before the bundle', (page) => {

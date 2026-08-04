@@ -571,6 +571,58 @@ describe('accessibility', () => {
   });
 });
 
+describe('the dialog follows the sentence, not the page', () => {
+  /**
+   * The rendering locale and the session's canonical language are independent:
+   * a visitor on the English homepage can resolve to a Hebrew session. The
+   * sentence is then Hebrew — and it quotes its own button — so the chrome and
+   * the direction have to be Hebrew too, or the sentence names a control that
+   * is not on screen.
+   */
+  it.each([
+    ['en', 'he', 'rtl'],
+    ['en', 'ar', 'rtl'],
+    ['he', 'en', 'ltr'],
+    ['he', 'ar', 'rtl'],
+  ] as const)('page %s with a %s session renders the dialog %s', async (pageLocale, sessionLocale, dir) => {
+    const h = harness({ locale: sessionLocale });
+    const host = mount(
+      config({
+        recordingConsentMode: 'required',
+        locale: pageLocale,
+        languageOverride: sessionLocale,
+      }),
+      h.deps,
+    );
+
+    await pressStart(host);
+
+    const shown = q(host, '.svd__gate-text').textContent ?? '';
+    const agree = q(host, '.svd__gate-agree').textContent ?? '';
+
+    expect(shown).toBe(WORDING[sessionLocale]);
+    expect(agree).toBe(CONSENT_STRINGS[sessionLocale].agreeLabel);
+    // The load-bearing one: the sentence must name the button beside it.
+    expect(shown).toContain(agree);
+    expect(q(host, '.svd__gate-title').textContent).toBe(CONSENT_STRINGS[sessionLocale].dialogTitle);
+    expect(q(host, '.svd__gate-back').textContent).toBe(CONSENT_STRINGS[sessionLocale].goBackLabel);
+    expect(q(host, '.svd__gate').getAttribute('dir')).toBe(dir);
+    expect(q(host, '.svd__gate').getAttribute('lang')).toBe(sessionLocale);
+  });
+
+  it('the surrounding page keeps its own direction', async () => {
+    const h = harness({ locale: 'he' });
+    const host = mount(
+      config({ recordingConsentMode: 'required', locale: 'en', languageOverride: 'he' }),
+      h.deps,
+    );
+    await pressStart(host);
+    // The widget is still an English page; only the dialog flips.
+    expect(q(host, '.svd').getAttribute('dir')).toBe('ltr');
+    expect(q(host, '.svd__gate').getAttribute('dir')).toBe('rtl');
+  });
+});
+
 describe('no secrets', () => {
   it('the shipped strings carry no key-shaped material', () => {
     const blob = JSON.stringify(CONSENT_STRINGS);

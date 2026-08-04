@@ -550,13 +550,10 @@ export class VoiceDemoWidget {
     this.recDetails.textContent = c.detailsLabel;
     this.recNotice.hidden = !this.consentGate.required || state !== 'ready';
 
-    this.gateTitle.textContent = c.dialogTitle;
-    // The body is deliberately not written here: it comes from the catalog,
-    // once, in openGate(). Re-rendering must never overwrite it with chrome.
-    this.gatePolicy.textContent = c.privacyLabel;
-    this.gatePolicy.href = PRIVACY_POLICY_URLS[this.locale] ?? PRIVACY_POLICY_URLS.en;
-    this.gateBack.textContent = c.goBackLabel;
-    this.gateAgree.textContent = c.agreeLabel;
+    // Chrome only; the body comes from the catalog, once, in openGate(). While
+    // a row is on screen its own locale wins, so a re-render cannot revert the
+    // dialog to the page's language mid-decision.
+    this.applyGateChrome(this.consentGate.pending?.locale ?? this.locale);
 
     // Primary button
     const busy = state === 'requestingMicrophone' || state === 'connecting' || state === 'reconnecting';
@@ -738,11 +735,33 @@ export class VoiceDemoWidget {
       this.gateLanguage = language;
       this.consentGate.present(result.entry);
       this.gateText.textContent = result.entry.text;
+      // The dialog belongs to the sentence, not to the page. A visitor on the
+      // English homepage whose session resolves to Hebrew is shown the Hebrew
+      // sentence — and that sentence quotes its own button, so the chrome and
+      // the direction have to follow it too, or it names a control that is not
+      // on screen.
+      this.applyGateChrome(result.entry.locale);
       this.showGate();
     } finally {
       this.gateLoading = false;
       this.startButton.disabled = false;
     }
+  }
+
+  /**
+   * Writes the dialog's chrome in a given locale, and points the dialog's own
+   * direction at it. Separate from render() because the locale it needs is the
+   * catalog row's, which render() has no reason to know about.
+   */
+  private applyGateChrome(locale: DemoLocale): void {
+    const c = consentStringsFor(locale);
+    this.gate.setAttribute('dir', directionFor(locale));
+    this.gate.lang = locale;
+    this.gateTitle.textContent = c.dialogTitle;
+    this.gatePolicy.textContent = c.privacyLabel;
+    this.gatePolicy.href = PRIVACY_POLICY_URLS[locale] ?? PRIVACY_POLICY_URLS.en;
+    this.gateBack.textContent = c.goBackLabel;
+    this.gateAgree.textContent = c.agreeLabel;
   }
 
   private showGate(): void {

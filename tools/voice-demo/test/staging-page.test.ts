@@ -130,10 +130,9 @@ describe('staging page — controlled activation resolves the exact staging targ
   });
 });
 
-describe('homepages keep the configuration but do not run it', () => {
-  // Staged recording rollout: the staging page runs the recorded flow alone
-  // while it is validated. The homepages keep the vetted endpoint and keys so
-  // re-enabling is one word. Detailed coverage lives in
+describe('homepages now run the same recorded configuration', () => {
+  // The staged rollout is complete: the homepages run the same recorded flow
+  // the staging page proved. Detailed coverage lives in
   // hero-integration.test.ts.
   it('use identical values to the staging page', () => {
     for (const page of HOMEPAGES) {
@@ -144,15 +143,17 @@ describe('homepages keep the configuration but do not run it', () => {
     }
   });
 
-  it('are switched off', () => {
+  it('are switched on, with consent required', () => {
     for (const page of HOMEPAGES) {
-      expect(read(page), page).toMatch(/publicDemoMode:\s*'disabled'/);
+      const html = read(page);
+      expect(html, page).toMatch(/publicDemoMode:\s*'enabled'/);
+      expect(html, page).toMatch(/recordingConsentMode:\s*'required'/);
     }
   });
 
-  it('hide their mounts', () => {
+  it('no longer hide their mounts', () => {
     for (const page of HOMEPAGES) {
-      expect(read(page), page).toMatch(/data-seenn-voice-demo\s+hidden/);
+      expect(read(page), page).not.toMatch(/data-seenn-voice-demo\s+hidden/);
     }
   });
 

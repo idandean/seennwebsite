@@ -1849,7 +1849,7 @@
       return true;
     }
     render() {
-      var _a, _b;
+      var _a, _b, _c;
       if (this.destroyed) return;
       const { state, pendingConsent } = this.context;
       const s = this.strings;
@@ -1880,11 +1880,7 @@
       this.recText.textContent = c.disclosure;
       this.recDetails.textContent = c.detailsLabel;
       this.recNotice.hidden = !this.consentGate.required || state !== "ready";
-      this.gateTitle.textContent = c.dialogTitle;
-      this.gatePolicy.textContent = c.privacyLabel;
-      this.gatePolicy.href = (_b = PRIVACY_POLICY_URLS[this.locale]) != null ? _b : PRIVACY_POLICY_URLS.en;
-      this.gateBack.textContent = c.goBackLabel;
-      this.gateAgree.textContent = c.agreeLabel;
+      this.applyGateChrome((_c = (_b = this.consentGate.pending) == null ? void 0 : _b.locale) != null ? _c : this.locale);
       const busy = state === "requestingMicrophone" || state === "connecting" || state === "reconnecting";
       this.primaryButton.disabled = busy || state === "unavailable" || pendingConsent !== null;
       this.primaryButton.innerHTML = state === "listening" || state === "assistantSpeaking" ? icon(ICONS.hangUp) : busy ? icon(ICONS.spinner, "svd-spin") : state === "unavailable" ? icon(ICONS.blocked) : state === "ready" ? icon(ICONS.mic) : icon(ICONS.retry);
@@ -2006,11 +2002,28 @@
         this.gateLanguage = language;
         this.consentGate.present(result.entry);
         this.gateText.textContent = result.entry.text;
+        this.applyGateChrome(result.entry.locale);
         this.showGate();
       } finally {
         this.gateLoading = false;
         this.startButton.disabled = false;
       }
+    }
+    /**
+     * Writes the dialog's chrome in a given locale, and points the dialog's own
+     * direction at it. Separate from render() because the locale it needs is the
+     * catalog row's, which render() has no reason to know about.
+     */
+    applyGateChrome(locale) {
+      var _a;
+      const c = consentStringsFor(locale);
+      this.gate.setAttribute("dir", directionFor(locale));
+      this.gate.lang = locale;
+      this.gateTitle.textContent = c.dialogTitle;
+      this.gatePolicy.textContent = c.privacyLabel;
+      this.gatePolicy.href = (_a = PRIVACY_POLICY_URLS[locale]) != null ? _a : PRIVACY_POLICY_URLS.en;
+      this.gateBack.textContent = c.goBackLabel;
+      this.gateAgree.textContent = c.agreeLabel;
     }
     showGate() {
       this.gateReturnFocus = document.activeElement;

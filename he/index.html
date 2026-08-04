@@ -57,21 +57,27 @@
      reserves its height before first paint; livekit-client is fetched only
      when a visitor actually clicks the orb. -->
 <link href="../css/voice-demo.css" rel="stylesheet"/>
-<!-- Voice demo — OFF on the public homepage during the staged recording
-     rollout. The controlled, unlisted staging page is the only one running it
-     while the recorded flow is validated end to end.
+<!-- Live voice demo, recorded. The controlled staging test passed, so the
+     recorded flow is now public.
 
-     The endpoint and keys stay here so switching back on is one word, not a
-     re-derivation. They are public by design: a Supabase PUBLISHABLE key and a
-     Cloudflare Turnstile SITE key, both shipped to every browser that loads
-     the widget. No secret belongs here.
+     `recordingConsentMode: 'required'` means a visitor is shown the server's
+     consent wording and must press the affirmative button before anything
+     happens at all — no microphone, no Turnstile, no session request, no
+     LiveKit. The wording itself is not here: it is fetched from the backend's
+     immutable catalog for the visitor's resolved language, and if it cannot be
+     loaded the demo fails closed rather than recording anyone silently.
 
-     `disabled` is also the value every other source can only ever move toward
-     — the URL parameter and the seenn:public-demo-mode meta are kill switches
-     that can never enable. -->
+     Both values below are public by design: a Supabase PUBLISHABLE key and a
+     Cloudflare Turnstile SITE key, shipped to every browser that loads the
+     widget. No secret belongs here.
+
+     KILL SWITCH — to turn the demo off site-wide without touching this block,
+     add to <head>:  <meta name="seenn:public-demo-mode" content="disabled">
+     A kill switch can only ever disable; it can never enable. -->
 <script>
   window.SEENN_VOICE_DEMO = {
-    publicDemoMode: 'disabled',
+    publicDemoMode: 'enabled',
+    recordingConsentMode: 'required',
     endpointBaseUrl: 'https://oonqpttzpamtxiifitvf.supabase.co',
     anonKey: 'sb_publishable_NvlifnKa0ZVG6p4mMZBJHQ_kNDpWup4',
     turnstileSiteKey: '0x4AAAAAAEEN9zjBnCHDnqNy'
@@ -456,7 +462,7 @@
      reading about it. Nothing loads and no microphone is touched until a
      deliberate click. -->
 <div class="hero-demo">
-<div class="svd-mount" data-seenn-voice-demo hidden></div>
+<div class="svd-mount" data-seenn-voice-demo></div>
 </div>
 </div>
 </div>
