@@ -1,12 +1,12 @@
 # Seenn
 
-> Seenn is an AI accounts-receivable agent for small and mid-sized businesses. Its AI coworker, Jess, contacts overdue clients by phone, WhatsApp, SMS, and email, follows your payment rules, handles disputes, records outcomes, and gets you paid faster — without adding staff. Serving the United States and Israel. Hebrew site at /he/.
+> Seenn is an AI accounts-receivable agent for small and mid-sized businesses. Its AI coworker, Jess, contacts overdue clients by phone, WhatsApp, and email, follows your payment rules, handles disputes, records outcomes, and gets you paid faster — without adding staff. Serving the United States and Israel. Hebrew site at /he/.
 
 Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started takes minutes: export your receivables from any ERP or accounting system, connect a phone/WhatsApp number, set your collection rules and escalation timing, and Jess starts contacting overdue clients automatically. Every interaction is logged to your dashboard.
 
 ## Product
 - [Seenn — AI Accounts Receivable Agent (home)](https://www.seenn.ai/): what Seenn is and how the AI agent Jess collects overdue invoices automatically
-- [AI Collections Software](https://www.seenn.ai/collection-software.html): how Seenn's AI collections software collects overdue invoices — phone calls first, then WhatsApp, SMS and email, plus dispute handling from your accounting system
+- [AI Collections Software](https://www.seenn.ai/collection-software.html): how Seenn's AI collections software collects overdue invoices — phone calls first, then WhatsApp and email, plus dispute handling from your accounting system
 - [WhatsApp Payment Reminders](https://www.seenn.ai/whatsapp-reminders.html): WhatsApp payment reminders that collect, not just remind — backed by real phone calls
 - [תוכנת גבייה אוטומטית — AI Collections Software (Hebrew)](https://www.seenn.ai/he/collection-software.html): Hebrew collections-software landing page
 - [תזכורת תשלום בוואטסאפ — WhatsApp Payment Reminders (Hebrew)](https://www.seenn.ai/he/whatsapp-reminders.html): Hebrew WhatsApp payment-reminders landing page
@@ -32,8 +32,8 @@ Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started t
 
 ## Key facts
 - Product: AI accounts-receivable / collections agent (the AI agent is named Jess)
-- Channels: phone (natural voice), WhatsApp, SMS, email
-- WhatsApp: official WhatsApp Business API — Seenn is an approved Meta Tech Provider, so messages come from a verified business number. Every reminder carries a payment link for the client's exact outstanding balance, Jess reads and answers incoming replies, and she falls back to SMS when a client is not on WhatsApp.
+- Channels: three — phone (natural voice), WhatsApp, email
+- WhatsApp: official WhatsApp Business API — Seenn is an approved Meta Tech Provider, so messages come from a verified business number. Every reminder carries a payment link for the client's exact outstanding balance, and Jess reads and answers incoming replies.
 - Capabilities: automated reminders, payment links, dispute handling, outcome logging, custom escalation rules
 - Integrations: connects with ERP and accounting systems (e.g. Priority, SAP, Hashavshevet)
 - Markets: United States, Israel

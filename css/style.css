@@ -1271,7 +1271,9 @@ body {
   padding: 0.9rem 1rem 0.5rem;
 }
 
-.mail-subject h4 {
+/* Was an <h4>. It is the subject line of an illustrated email, not a section
+   of this page, so it no longer belongs in the document outline. */
+.mail-subject__text {
   flex: 1;
   min-width: 0;
   font-family: 'Montserrat', sans-serif;
@@ -1608,7 +1610,9 @@ body {
   align-items: flex-start;
   justify-content: center;
   max-width: 48rem;
-  margin: 1.75rem auto 0;
+  /* Sits above the mockups now, so the "these are examples" line travels with
+     any thread lifted off this page. Spacing flipped to suit. */
+  margin: 0.25rem auto 1.5rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.78rem;
   line-height: 1.5;
