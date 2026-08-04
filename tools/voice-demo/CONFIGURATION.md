@@ -186,7 +186,7 @@ sentence contains that locale's label.
 3. **One** read-only `GET` to the catalog for that language. This is the only
    backend request permitted before acceptance.
 4. Anything wrong — non-2xx, unparseable, blank text, a policy version other
-   than the pinned `2026-08-03.2`, a locale that does not match the request —
+   than the pinned `2026-08-03.4`, a locale that does not match the request —
    and the gate **fails closed**: no dialog, no session, no microphone.
 5. The returned text is rendered verbatim into the dialog.
 6. On the affirmative button only: the session starts, carrying the receipt.
@@ -203,7 +203,7 @@ memory and consumed by exactly one session.
 
 ### Version pinning
 
-`CONSENT_POLICY_VERSION` in `src/consent.ts` is pinned to `2026-08-03.2`
+`CONSENT_POLICY_VERSION` in `src/consent.ts` is pinned to `2026-08-03.4`
 (audio **and** transcript). `2026-08-03.1` was recording-only and is retired; a
 test asserts it can never be submitted.
 

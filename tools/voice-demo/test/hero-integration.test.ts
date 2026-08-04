@@ -202,10 +202,36 @@ describe('card copy — an invitation, not a test surface', () => {
     }
   });
 
+  /**
+   * The unrecorded demo must never suggest otherwise.
+   *
+   * One string is exempt, deliberately: `err_capture_unavailable` is the
+   * failure shown when the agent never confirms it started recording, so it
+   * has to say "recording" to be honest. It is unreachable unless a page sets
+   * `recordingConsentMode: 'required'` — no deployed page does, and a separate
+   * test asserts that — because the capture handshake that can raise it is
+   * only armed on the consented path.
+   */
+  const RECORDING_COPY_EXEMPT = new Set(['err_capture_unavailable']);
+
   it('never implies the visitor is being recorded', () => {
     for (const locale of LOCALES) {
-      const all = Object.values(stringsFor(locale) as unknown as Record<string, string>).join(' ');
+      const strings = stringsFor(locale) as unknown as Record<string, string>;
+      const all = Object.entries(strings)
+        .filter(([key]) => !RECORDING_COPY_EXEMPT.has(key))
+        .map(([, value]) => value)
+        .join(' ');
       expect(/recorded|recording/i.test(all), locale).toBe(false);
+    }
+  });
+
+  it('the one exempt string exists and is the only one that mentions recording', () => {
+    for (const locale of LOCALES) {
+      const strings = stringsFor(locale) as unknown as Record<string, string>;
+      const mentions = Object.entries(strings)
+        .filter(([, value]) => /recorded|recording|הקלט|تسجيل/i.test(value))
+        .map(([key]) => key);
+      expect(mentions).toEqual(['err_capture_unavailable']);
     }
   });
 

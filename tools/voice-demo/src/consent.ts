@@ -38,7 +38,7 @@ export type RecordingConsentMode = 'disabled' | 'required';
  * .2 covers audio recording *and* transcription. .1 was recording-only and is
  * retired; no code path may submit it.
  */
-export const CONSENT_POLICY_VERSION = '2026-08-03.2';
+export const CONSENT_POLICY_VERSION = '2026-08-03.4';
 
 /** Chrome around the catalog's sentence. Never the sentence itself. */
 export interface ConsentStrings {

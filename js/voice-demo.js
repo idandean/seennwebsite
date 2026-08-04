@@ -18,6 +18,7 @@
     "verification_failed",
     "invalid_language",
     "consent_required",
+    "consent_policy_outdated",
     "invalid_request",
     "server_error"
   ];
@@ -215,7 +216,7 @@
   }
 
   // src/consent.ts
-  var CONSENT_POLICY_VERSION = "2026-08-03.2";
+  var CONSENT_POLICY_VERSION = "2026-08-03.4";
   var CONSENT_STRINGS = {
     en: {
       disclosure: "This demo is recorded and transcribed, then automatically deleted after 7 days",
@@ -580,6 +581,8 @@
     err_browser_unsupported: "This browser can\u2019t run the voice demo. Try Chrome, Edge or Safari.",
     err_network_error: "We couldn\u2019t reach the demo. Check your connection and try again.",
     err_contract_violation: "The demo replied with something we couldn\u2019t use. Our team has been notified.",
+    err_consent_policy_outdated: "The consent notice has been updated. Please read it again and press the button to continue.",
+    err_capture_unavailable: "We could not start the recording for this demo, so we stopped before your microphone was used. Please try again.",
     err_agent_unavailable: "The secretary didn\u2019t pick up. Please try again.",
     err_agent_lost: "The secretary dropped off the call. Please try again.",
     err_transport_failed: "We couldn\u2019t join the call.",
@@ -643,6 +646,8 @@
     err_browser_unsupported: "\u05D4\u05D3\u05E4\u05D3\u05E4\u05DF \u05D4\u05D6\u05D4 \u05DC\u05D0 \u05EA\u05D5\u05DE\u05DA \u05D1\u05D3\u05DE\u05D5 \u05D4\u05E7\u05D5\u05DC\u05D9. \u05E0\u05E1\u05D5 \u05DB\u05E8\u05D5\u05DD, \u05D0\u05D3\u05D2\u05F3 \u05D0\u05D5 \u05E1\u05E4\u05D0\u05E8\u05D9.",
     err_network_error: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D4\u05D2\u05D9\u05E2 \u05DC\u05D3\u05DE\u05D5. \u05D1\u05D3\u05E7\u05D5 \u05D0\u05EA \u05D4\u05D7\u05D9\u05D1\u05D5\u05E8 \u05D5\u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_contract_violation: "\u05D4\u05D3\u05DE\u05D5 \u05D4\u05D7\u05D6\u05D9\u05E8 \u05EA\u05E9\u05D5\u05D1\u05D4 \u05E9\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05E7\u05E8\u05D5\u05D0. \u05D4\u05E6\u05D5\u05D5\u05EA \u05E9\u05DC\u05E0\u05D5 \u05E2\u05D5\u05D3\u05DB\u05DF.",
+    err_consent_policy_outdated: "\u05D4\u05D5\u05D3\u05E2\u05EA \u05D4\u05D4\u05E1\u05DB\u05DE\u05D4 \u05E2\u05D5\u05D3\u05DB\u05E0\u05D4. \u05E7\u05E8\u05D0\u05D5 \u05D0\u05D5\u05EA\u05D4 \u05E9\u05D5\u05D1 \u05D5\u05DC\u05D7\u05E6\u05D5 \u05E2\u05DC \u05D4\u05DB\u05E4\u05EA\u05D5\u05E8 \u05DB\u05D3\u05D9 \u05DC\u05D4\u05DE\u05E9\u05D9\u05DA.",
+    err_capture_unavailable: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC \u05D0\u05EA \u05D4\u05D4\u05E7\u05DC\u05D8\u05D4 \u05DC\u05D4\u05D3\u05D2\u05DE\u05D4, \u05D5\u05DC\u05DB\u05DF \u05E2\u05E6\u05E8\u05E0\u05D5 \u05E2\u05D5\u05D3 \u05DC\u05E4\u05E0\u05D9 \u05E9\u05E0\u05E2\u05E9\u05D4 \u05E9\u05D9\u05DE\u05D5\u05E9 \u05D1\u05DE\u05D9\u05E7\u05E8\u05D5\u05E4\u05D5\u05DF. \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_agent_unavailable: "\u05D4\u05DE\u05D6\u05DB\u05D9\u05E8\u05D4 \u05DC\u05D0 \u05E2\u05E0\u05EA\u05D4. \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_agent_lost: "\u05D4\u05DE\u05D6\u05DB\u05D9\u05E8\u05D4 \u05D4\u05EA\u05E0\u05EA\u05E7\u05D4 \u05DE\u05D4\u05E9\u05D9\u05D7\u05D4. \u05E0\u05E1\u05D5 \u05E9\u05D5\u05D1.",
     err_transport_failed: "\u05DC\u05D0 \u05D4\u05E6\u05DC\u05D7\u05E0\u05D5 \u05DC\u05D4\u05E6\u05D8\u05E8\u05E3 \u05DC\u05E9\u05D9\u05D7\u05D4.",
@@ -706,6 +711,8 @@
     err_browser_unsupported: "\u0647\u0630\u0627 \u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0644\u0627 \u064A\u062F\u0639\u0645 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u062A\u064A. \u062C\u0631\u0651\u0628 Chrome \u0623\u0648 Edge \u0623\u0648 Safari.",
     err_network_error: "\u062A\u0639\u0630\u0651\u0631 \u0627\u0644\u0648\u0635\u0648\u0644 \u0625\u0644\u0649 \u0627\u0644\u0639\u0631\u0636. \u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u062A\u0635\u0627\u0644\u0643 \u0648\u062D\u0627\u0648\u0644 \u0645\u062C\u062F\u062F\u064B\u0627.",
     err_contract_violation: "\u0631\u062F\u0651 \u0627\u0644\u0639\u0631\u0636 \u0628\u0634\u064A\u0621 \u062A\u0639\u0630\u0651\u0631 \u0639\u0644\u064A\u0646\u0627 \u0642\u0631\u0627\u0621\u062A\u0647. \u062A\u0645 \u0625\u0628\u0644\u0627\u063A \u0641\u0631\u064A\u0642\u0646\u0627.",
+    err_consent_policy_outdated: "\u062A\u0645 \u062A\u062D\u062F\u064A\u062B \u0625\u0634\u0639\u0627\u0631 \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629. \u064A\u0631\u062C\u0649 \u0642\u0631\u0627\u0621\u062A\u0647 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649 \u0648\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u0632\u0631 \u0644\u0644\u0645\u062A\u0627\u0628\u0639\u0629.",
+    err_capture_unavailable: "\u062A\u0639\u0630\u0651\u0631 \u0628\u062F\u0621 \u062A\u0633\u062C\u064A\u0644 \u0647\u0630\u0627 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062A\u062C\u0631\u064A\u0628\u064A\u060C \u0644\u0630\u0644\u0643 \u062A\u0648\u0642\u0641\u0646\u0627 \u0642\u0628\u0644 \u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0627\u0644\u0645\u064A\u0643\u0631\u0648\u0641\u0648\u0646. \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
     err_agent_unavailable: "\u0644\u0645 \u062A\u0631\u062F\u0651 \u0627\u0644\u0633\u0643\u0631\u062A\u064A\u0631\u0629. \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
     err_agent_lost: "\u0627\u0646\u0642\u0637\u0639\u062A \u0627\u0644\u0633\u0643\u0631\u062A\u064A\u0631\u0629 \u0639\u0646 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629. \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
     err_transport_failed: "\u062A\u0639\u0630\u0651\u0631 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645 \u0625\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629.",
@@ -1043,6 +1050,17 @@
   }
 
   // src/transport.ts
+  var CAPTURE_TOPIC = "seenn.public_demo.capture";
+  var CAPTURE_MESSAGE_TYPE = "public_demo_capture_ready";
+  var CAPTURE_MESSAGE_VERSION = 1;
+  var CAPTURE_TIMEOUT_MS = 1e4;
+  function isCaptureReadyPayload(value) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const keys = Object.keys(value);
+    if (keys.length !== 2) return false;
+    const record = value;
+    return record["type"] === CAPTURE_MESSAGE_TYPE && record["version"] === CAPTURE_MESSAGE_VERSION;
+  }
   var TransportError = class extends Error {
     constructor(phase, cause) {
       var _a;
@@ -1099,8 +1117,15 @@
       rafId = requestAnimationFrame(tick);
     }
     return {
-      async connect({ url, token, microphone, audioElement }) {
-        var _a2, _b, _c, _d, _e, _f, _g, _h;
+      async connect({
+        url,
+        token,
+        microphone,
+        audioElement,
+        requireCaptureMarker,
+        captureTimeoutMs
+      }) {
+        var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
         const lk = await load(options.moduleUrl).catch((cause) => {
           logger.error("failed to load the audio engine", { module: safeUrl(options.moduleUrl) });
           throw new TransportError("module_load", cause);
@@ -1141,10 +1166,57 @@
         instance.on((_e = lk.RoomEvent["Reconnecting"]) != null ? _e : "reconnecting", () => events.onReconnecting());
         instance.on((_f = lk.RoomEvent["Reconnected"]) != null ? _f : "reconnected", () => events.onReconnected());
         instance.on((_g = lk.RoomEvent["Disconnected"]) != null ? _g : "disconnected", () => events.onDisconnected());
+        let captureSeen = false;
+        let onCapture = null;
+        let onCaptureFail = null;
+        if (requireCaptureMarker) {
+          const reliable = (_h = lk.DataPacket_Kind) == null ? void 0 : _h.RELIABLE;
+          instance.on((_i = lk.RoomEvent["DataReceived"]) != null ? _i : "dataReceived", (...args) => {
+            if (captureSeen) return;
+            const [payload, participant, kind, topic] = args;
+            if (!participant || !isAgentParticipant(participant)) return;
+            if (topic !== CAPTURE_TOPIC) return;
+            if (reliable !== void 0 && kind !== void 0 && kind !== reliable) return;
+            let parsed;
+            try {
+              parsed = JSON.parse(new TextDecoder().decode(payload));
+            } catch {
+              return;
+            }
+            if (!isCaptureReadyPayload(parsed)) return;
+            captureSeen = true;
+            onCapture == null ? void 0 : onCapture();
+          });
+          instance.on((_j = lk.RoomEvent["Disconnected"]) != null ? _j : "disconnected", () => {
+            if (!captureSeen) onCaptureFail == null ? void 0 : onCaptureFail("disconnected before the capture marker");
+          });
+        }
         try {
           await instance.connect(url, token);
         } catch (cause) {
           throw new TransportError("room_connect", cause);
+        }
+        if (requireCaptureMarker && !captureSeen) {
+          try {
+            await new Promise((resolve, reject) => {
+              const timer = setTimeout(() => {
+                reject(new Error("capture marker timed out"));
+              }, captureTimeoutMs != null ? captureTimeoutMs : CAPTURE_TIMEOUT_MS);
+              onCapture = () => {
+                clearTimeout(timer);
+                resolve();
+              };
+              onCaptureFail = (reason) => {
+                clearTimeout(timer);
+                reject(new Error(reason));
+              };
+            });
+          } catch (cause) {
+            throw new TransportError("capture_handshake", cause);
+          } finally {
+            onCapture = null;
+            onCaptureFail = null;
+          }
         }
         try {
           const audioTrack = microphone.getAudioTracks()[0];
@@ -1158,7 +1230,7 @@
         } catch (cause) {
           throw new TransportError("microphone_publish", cause);
         }
-        await ((_h = instance.startAudio) == null ? void 0 : _h.call(instance).catch(() => void 0));
+        await ((_k = instance.startAudio) == null ? void 0 : _k.call(instance).catch(() => void 0));
         startMetering(lk);
         events.onConnected();
         reportAgent();
@@ -2032,6 +2104,16 @@
         session = await this.obtainSession(attempt, resolvedLanguage, options.consent);
       } catch (cause) {
         if (stale()) return;
+        if (cause instanceof DemoRequestError && cause.code === "consent_policy_outdated") {
+          logger.error("consent policy is out of date; a fresh acceptance is required");
+          this.consentGate.revoke();
+          this.gateLanguage = null;
+          this.releaseMicrophone();
+          await this.teardownTransport();
+          this.clearTimers();
+          this.dispatch({ type: "ERROR", code: "consent_policy_outdated" });
+          return;
+        }
         this.handleRequestError(cause);
         return;
       }
@@ -2048,7 +2130,12 @@
           url: session.livekitUrl,
           token: session.token,
           microphone,
-          audioElement: this.audioElement
+          audioElement: this.audioElement,
+          // Only the recorded path waits for the agent's capture marker. On the
+          // unrecorded demo this is false and the connect sequence is exactly
+          // what it has always been — today's agent sends no marker, so arming
+          // this unconditionally would break the live demo.
+          requireCaptureMarker: options.consent !== void 0
         });
       } catch (cause) {
         if (stale()) return;
@@ -2057,7 +2144,9 @@
           phase: this.lastTransportPhase,
           cause: cause instanceof TransportError ? cause.causeName : cause == null ? void 0 : cause.name
         });
-        this.fail("transport_failed");
+        this.fail(
+          this.lastTransportPhase === "capture_handshake" ? "capture_unavailable" : "transport_failed"
+        );
         return;
       }
       if (stale()) {

@@ -47,6 +47,9 @@ export type ClientErrorCode =
   | 'network_error'
   | 'contract_violation'
   | 'transport_failed'
+  /** The agent never confirmed it was recording, so we stopped before the
+   *  microphone was published. Only reachable on the consented path. */
+  | 'capture_unavailable'
   | 'reconnect_failed'
   | 'consent_declined'
   | 'session_expired_before_start';

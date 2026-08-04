@@ -111,6 +111,10 @@ export interface Strings {
   err_browser_unsupported: string;
   err_network_error: string;
   err_contract_violation: string;
+  /** The consent wording moved on; a fresh acceptance is required. */
+  err_consent_policy_outdated: string;
+  /** The capture handshake never completed; nothing was recorded. */
+  err_capture_unavailable: string;
   err_agent_unavailable: string;
   err_agent_lost: string;
   err_transport_failed: string;
@@ -189,6 +193,10 @@ const en: Strings = {
   err_browser_unsupported: 'This browser can’t run the voice demo. Try Chrome, Edge or Safari.',
   err_network_error: 'We couldn’t reach the demo. Check your connection and try again.',
   err_contract_violation: 'The demo replied with something we couldn’t use. Our team has been notified.',
+  err_consent_policy_outdated:
+    'The consent notice has been updated. Please read it again and press the button to continue.',
+  err_capture_unavailable:
+    'We could not start the recording for this demo, so we stopped before your microphone was used. Please try again.',
   err_agent_unavailable: 'The secretary didn’t pick up. Please try again.',
   err_agent_lost: 'The secretary dropped off the call. Please try again.',
   err_transport_failed: 'We couldn’t join the call.',
@@ -268,6 +276,10 @@ const he: Strings = {
   err_browser_unsupported: 'הדפדפן הזה לא תומך בדמו הקולי. נסו כרום, אדג׳ או ספארי.',
   err_network_error: 'לא הצלחנו להגיע לדמו. בדקו את החיבור ונסו שוב.',
   err_contract_violation: 'הדמו החזיר תשובה שלא הצלחנו לקרוא. הצוות שלנו עודכן.',
+  err_consent_policy_outdated:
+    'הודעת ההסכמה עודכנה. קראו אותה שוב ולחצו על הכפתור כדי להמשיך.',
+  err_capture_unavailable:
+    'לא הצלחנו להתחיל את ההקלטה להדגמה, ולכן עצרנו עוד לפני שנעשה שימוש במיקרופון. נסו שוב.',
   err_agent_unavailable: 'המזכירה לא ענתה. נסו שוב.',
   err_agent_lost: 'המזכירה התנתקה מהשיחה. נסו שוב.',
   err_transport_failed: 'לא הצלחנו להצטרף לשיחה.',
@@ -347,6 +359,10 @@ const ar: Strings = {
   err_browser_unsupported: 'هذا المتصفح لا يدعم العرض الصوتي. جرّب Chrome أو Edge أو Safari.',
   err_network_error: 'تعذّر الوصول إلى العرض. تحقق من اتصالك وحاول مجددًا.',
   err_contract_violation: 'ردّ العرض بشيء تعذّر علينا قراءته. تم إبلاغ فريقنا.',
+  err_consent_policy_outdated:
+    'تم تحديث إشعار الموافقة. يرجى قراءته مرة أخرى والضغط على الزر للمتابعة.',
+  err_capture_unavailable:
+    'تعذّر بدء تسجيل هذا العرض التجريبي، لذلك توقفنا قبل استخدام الميكروفون. حاول مرة أخرى.',
   err_agent_unavailable: 'لم تردّ السكرتيرة. حاول مرة أخرى.',
   err_agent_lost: 'انقطعت السكرتيرة عن المكالمة. حاول مرة أخرى.',
   err_transport_failed: 'تعذّر الانضمام إلى المكالمة.',

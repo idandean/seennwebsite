@@ -36,6 +36,7 @@ export type DemoErrorCode =
   | 'verification_failed'
   | 'invalid_language'
   | 'consent_required'
+  | 'consent_policy_outdated'
   | 'invalid_request'
   | 'server_error';
 
@@ -47,6 +48,7 @@ const KNOWN_ERROR_CODES: readonly string[] = [
   'verification_failed',
   'invalid_language',
   'consent_required',
+  'consent_policy_outdated',
   'invalid_request',
   'server_error',
 ];

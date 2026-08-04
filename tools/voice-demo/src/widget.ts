@@ -917,6 +917,23 @@ export class VoiceDemoWidget {
       session = await this.obtainSession(attempt, resolvedLanguage, options.consent);
     } catch (cause) {
       if (stale()) return;
+
+      // The catalog moved under us between the dialog and the POST. The
+      // acceptance we hold is for wording that is no longer current, so it is
+      // void: drop it, release the microphone, and make the visitor read the
+      // new sentence and press the button again. Silently retrying with a
+      // bumped version would be recording an agreement nobody gave.
+      if (cause instanceof DemoRequestError && cause.code === 'consent_policy_outdated') {
+        logger.error('consent policy is out of date; a fresh acceptance is required');
+        this.consentGate.revoke();
+        this.gateLanguage = null;
+        this.releaseMicrophone();
+        await this.teardownTransport();
+        this.clearTimers();
+        this.dispatch({ type: 'ERROR', code: 'consent_policy_outdated' });
+        return;
+      }
+
       this.handleRequestError(cause);
       return;
     }
@@ -938,6 +955,11 @@ export class VoiceDemoWidget {
         token: session.token,
         microphone,
         audioElement: this.audioElement,
+        // Only the recorded path waits for the agent's capture marker. On the
+        // unrecorded demo this is false and the connect sequence is exactly
+        // what it has always been — today's agent sends no marker, so arming
+        // this unconditionally would break the live demo.
+        requireCaptureMarker: options.consent !== undefined,
       });
     } catch (cause) {
       if (stale()) return;
@@ -947,7 +969,12 @@ export class VoiceDemoWidget {
         phase: this.lastTransportPhase,
         cause: cause instanceof TransportError ? cause.causeName : (cause as Error)?.name,
       });
-      this.fail('transport_failed');
+      // The handshake failing means the recorder never confirmed. Saying
+       // "that didn't connect" would be wrong: the room connected fine, and
+       // the reason we stopped is precisely that nothing was recording.
+      this.fail(
+        this.lastTransportPhase === 'capture_handshake' ? 'capture_unavailable' : 'transport_failed',
+      );
       return;
     }
 

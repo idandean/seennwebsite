@@ -295,7 +295,7 @@ Resolved since the last revision: recording (no), `amount`/`balance_month`
 
 ---
 
-## 6. Recording consent — policy 2026-08-03.2
+## 6. Recording consent — policy 2026-08-03.4
 
 Supersedes §3's server-mid-request model for the website demo. §3 remains for
 the case where the backend wants to demand consent inside a session response;
@@ -306,7 +306,7 @@ it is still unused.
 ```
 GET {endpointBaseUrl}/functions/v1/public-voice-demo-consent
       ?locale=en|he|ar
-      &policy_version=2026-08-03.2
+      &policy_version=2026-08-03.4
 Headers: apikey: <publishable key>
 ```
 
@@ -314,7 +314,7 @@ Read-only, `credentials: 'omit'`, no body. Expected `200`:
 
 ```jsonc
 {
-  "policy_version": "2026-08-03.2",
+  "policy_version": "2026-08-03.4",
   "locale": "he",
   "text": "…the exact approved sentence for this locale…"
 }
@@ -324,7 +324,7 @@ The widget **fails closed** — no dialog, no session, no microphone — on any 
 
 - non-2xx, a network error, or a response that is not an object
 - `text` absent or blank
-- `policy_version` absent, or **not exactly** `2026-08-03.2`
+- `policy_version` absent, or **not exactly** `2026-08-03.4`
 - `locale` absent, not one of `en|he|ar`, or **not equal to the requested one**
 
 The rows must be immutable per `(policy_version, locale)`. The widget renders
@@ -340,7 +340,7 @@ other consent-related field anywhere in the body:
   "language": "he",
   "turnstile_token": "…",
   "consent": {
-    "policy_version": "2026-08-03.2",
+    "policy_version": "2026-08-03.4",
     "locale": "he",
     "accepted_at": "2026-08-04T09:15:22.481Z"
   }
@@ -366,3 +366,62 @@ other consent-related field anywhere in the body:
 
 Until all five are confirmed, `recordingConsentMode` stays `'disabled'` on
 every page including staging.
+
+---
+
+## 7. Recording-ready handshake (agent contract)
+
+On the consented path the browser **connects to the room without publishing a
+microphone** and waits. The visitor's voice does not reach the room until the
+agent has said it is recording. Until then the local track exists but is not
+published, and the widget shows "connecting", never "listening".
+
+### What the agent must send
+
+```
+topic:    seenn.public_demo.capture
+delivery: RELIABLE          (a lossy marker is ignored — it is a promise, not a hint)
+payload:  {"type":"public_demo_capture_ready","version":1}
+```
+
+Send it **once, after the recorder is actually running**, from the agent
+participant. The browser accepts it only if all of the following hold:
+
+| Check | Rejected when |
+|---|---|
+| sender | absent, local, or not the agent participant |
+| topic | anything other than the exact string above |
+| delivery | `LOSSY` |
+| payload | not valid JSON |
+| payload shape | **any key other than exactly `type` and `version`** |
+| values | `type` differs, or `version` is not the number `1` |
+
+Extra fields are a rejection, not something to ignore: a message we do not
+recognise exactly is not authority to open a microphone.
+
+### Ordering guarantees on the browser side
+
+- The `RoomEvent.DataReceived` listener is registered **before** `room.connect`,
+  so a marker fired while `connect()` is still awaiting is not missed.
+- Repeat markers are harmless; the track publishes once.
+- `listening` is shown only after publication resolves.
+
+### Failure
+
+No marker within the timeout (10s default), or the room disconnecting first,
+tears the attempt down: the microphone track is stopped, the room is
+disconnected, and a localized *recording-preparation* error is shown —
+distinct from a connection failure, because the room connected fine and the
+reason we stopped is precisely that nothing was recording.
+
+**The agent must not record before sending the marker, and must not expect
+audio before it.** There is a window, by design, in which the agent is in the
+room and the visitor is silent.
+
+## 8. `consent_policy_outdated`
+
+If the catalog moves between the dialog and the session POST, reject the
+request with `consent_policy_outdated`. The browser then voids the acceptance
+it holds, releases the microphone, and requires the visitor to read the new
+sentence and press the button again. It never retries with a bumped version on
+the visitor's behalf.

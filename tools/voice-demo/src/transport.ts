@@ -32,6 +32,47 @@ export interface ConnectOptions {
   microphone: MediaStream;
   /** Element unlocked during the click gesture — iOS Safari needs this one. */
   audioElement: HTMLAudioElement;
+  /**
+   * Hold the microphone back until the agent says it is recording.
+   *
+   * Set only when the visitor accepted a recording consent. On the
+   * unrecorded demo this stays false and the connect path is byte-for-byte
+   * what it has always been — today's live agent sends no marker, so making
+   * this unconditional would break the running demo.
+   */
+  requireCaptureMarker?: boolean;
+  /** How long the agent has to announce capture before we give up. */
+  captureTimeoutMs?: number;
+}
+
+/**
+ * The agent's "I am recording, you may speak now" marker.
+ *
+ * Exact strings on purpose. This is the contract that stops a visitor's voice
+ * reaching the room before the recorder is running — a near-miss (right topic,
+ * wrong version) has to fail closed rather than nearly work.
+ */
+export const CAPTURE_TOPIC = 'seenn.public_demo.capture';
+export const CAPTURE_MESSAGE_TYPE = 'public_demo_capture_ready';
+export const CAPTURE_MESSAGE_VERSION = 1;
+export const CAPTURE_TIMEOUT_MS = 10_000;
+
+/**
+ * Recognises the marker and nothing else.
+ *
+ * Exported for its own tests: every rejection below is a case where a
+ * microphone must stay unpublished, so each one is worth asserting directly.
+ */
+export function isCaptureReadyPayload(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const keys = Object.keys(value as Record<string, unknown>);
+  // Exactly two fields. An unexpected extra means this is not the message we
+  // agreed on, and we do not guess at a sender's intent about recording.
+  if (keys.length !== 2) return false;
+  const record = value as Record<string, unknown>;
+  return (
+    record['type'] === CAPTURE_MESSAGE_TYPE && record['version'] === CAPTURE_MESSAGE_VERSION
+  );
 }
 
 export interface VoiceTransport {
@@ -40,7 +81,11 @@ export interface VoiceTransport {
 }
 
 /** Which leg of `connect()` failed. */
-export type TransportPhase = 'module_load' | 'room_connect' | 'microphone_publish';
+export type TransportPhase =
+  | 'module_load'
+  | 'room_connect'
+  | 'capture_handshake'
+  | 'microphone_publish';
 
 /**
  * Carries the phase so a failure is actionable without a repro.
@@ -75,6 +120,8 @@ interface LiveKitModule {
   /** `Source` matters: the participant token is scoped to Microphone only. */
   Track: { Kind: { Audio: string }; Source: { Microphone: string } };
   LocalAudioTrack?: new (track: MediaStreamTrack) => unknown;
+  /** RELIABLE vs LOSSY. A capture marker delivered lossily is not a promise. */
+  DataPacket_Kind?: { RELIABLE?: unknown; LOSSY?: unknown };
 }
 
 interface LiveKitRoom {
@@ -171,7 +218,14 @@ export function createLiveKitTransport(
   }
 
   return {
-    async connect({ url, token, microphone, audioElement }: ConnectOptions): Promise<void> {
+    async connect({
+      url,
+      token,
+      microphone,
+      audioElement,
+      requireCaptureMarker,
+      captureTimeoutMs,
+    }: ConnectOptions): Promise<void> {
       // --- Phase 1: module load ---------------------------------------------
       const lk = await load(options.moduleUrl).catch((cause: unknown) => {
         logger.error('failed to load the audio engine', { module: safeUrl(options.moduleUrl) });
@@ -222,11 +276,87 @@ export function createLiveKitTransport(
       instance.on(lk.RoomEvent['Reconnected'] ?? 'reconnected', () => events.onReconnected());
       instance.on(lk.RoomEvent['Disconnected'] ?? 'disconnected', () => events.onDisconnected());
 
+      // --- Capture handshake listener ---------------------------------------
+      // Registered BEFORE connect, deliberately. The agent can be in the room
+      // already and fire the marker inside connect()'s own await; a listener
+      // attached afterwards would miss it and time out with everything working.
+      let captureSeen = false;
+      let onCapture: (() => void) | null = null;
+      let onCaptureFail: ((reason: string) => void) | null = null;
+
+      if (requireCaptureMarker) {
+        const reliable = lk.DataPacket_Kind?.RELIABLE;
+
+        instance.on(lk.RoomEvent['DataReceived'] ?? 'dataReceived', (...args: unknown[]) => {
+          if (captureSeen) return;
+
+          const [payload, participant, kind, topic] = args as [
+            Uint8Array | undefined,
+            RemoteParticipant | undefined,
+            unknown,
+            string | undefined,
+          ];
+
+          // Sender: must be the remote agent. A packet from another visitor,
+          // or one with no attributed sender at all, cannot authorise a
+          // microphone.
+          if (!participant || !isAgentParticipant(participant)) return;
+
+          // Topic and delivery guarantee, both exact.
+          if (topic !== CAPTURE_TOPIC) return;
+          if (reliable !== undefined && kind !== undefined && kind !== reliable) return;
+
+          let parsed: unknown;
+          try {
+            parsed = JSON.parse(new TextDecoder().decode(payload));
+          } catch {
+            return; // malformed: not our marker
+          }
+          if (!isCaptureReadyPayload(parsed)) return;
+
+          captureSeen = true;
+          onCapture?.();
+        });
+
+        // A room that drops before the marker must not leave us waiting for a
+        // packet that can no longer arrive.
+        instance.on(lk.RoomEvent['Disconnected'] ?? 'disconnected', () => {
+          if (!captureSeen) onCaptureFail?.('disconnected before the capture marker');
+        });
+      }
+
       // --- Phase 2: room connection -----------------------------------------
+      // No microphone is published here. On the recorded path the local track
+      // stays unpublished until the agent has confirmed it is recording.
       try {
         await instance.connect(url, token);
       } catch (cause) {
         throw new TransportError('room_connect', cause);
+      }
+
+      // --- Phase 2b: wait for the agent to say it is recording ---------------
+      if (requireCaptureMarker && !captureSeen) {
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const timer = setTimeout(() => {
+              reject(new Error('capture marker timed out'));
+            }, captureTimeoutMs ?? CAPTURE_TIMEOUT_MS);
+
+            onCapture = (): void => {
+              clearTimeout(timer);
+              resolve();
+            };
+            onCaptureFail = (reason: string): void => {
+              clearTimeout(timer);
+              reject(new Error(reason));
+            };
+          });
+        } catch (cause) {
+          throw new TransportError('capture_handshake', cause);
+        } finally {
+          onCapture = null;
+          onCaptureFail = null;
+        }
       }
 
       // --- Phase 3: microphone publication ----------------------------------

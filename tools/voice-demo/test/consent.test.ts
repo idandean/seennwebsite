@@ -1,5 +1,5 @@
 /**
- * Pre-flight recording consent, policy 2026-08-03.2 (audio + transcript).
+ * Pre-flight recording consent, policy 2026-08-03.4 (audio + transcript).
  *
  * The load-bearing assertions are negative: before a visitor accepts, the only
  * thing that may leave the browser is the read-only catalog GET. No
@@ -27,6 +27,8 @@ import type { ConnectOptions, TransportEvents, VoiceTransport } from '../src/tra
 import type { TurnstileProvider } from '../src/turnstile';
 
 const RETIRED_POLICY = '2026-08-03.1';
+/** Every superseded version. None may be rendered or submitted. */
+const SUPERSEDED = ['2026-08-03.1', '2026-08-03.2', '2026-08-03.3'];
 
 /** Exactly the sentences the catalog is required to serve. */
 const WORDING: Record<DemoLocale, string> = {
@@ -61,6 +63,8 @@ interface HarnessOptions {
   /** Overrides the catalog row the stub serves. */
   catalog?: Partial<{ policy_version: string; locale: string; text: string }> | null;
   catalogStatus?: number;
+  /** Makes the session POST reject with this server error code. */
+  sessionError?: string;
 }
 
 /** Every external surface the widget could reach, each one counted. */
@@ -156,12 +160,77 @@ beforeEach(() => {
 
 describe('policy version', () => {
   it('is the audio-plus-transcript policy', () => {
-    expect(CONSENT_POLICY_VERSION).toBe('2026-08-03.2');
+    expect(CONSENT_POLICY_VERSION).toBe('2026-08-03.4');
   });
 
-  it('the retired recording-only policy appears nowhere in the module', () => {
+  it('no superseded policy appears anywhere in the module', () => {
     const blob = JSON.stringify({ CONSENT_STRINGS, CONSENT_POLICY_VERSION });
-    expect(blob).not.toContain(RETIRED_POLICY);
+    for (const old of SUPERSEDED) expect(blob).not.toContain(old);
+  });
+
+  it.each(SUPERSEDED)('a catalog serving %s is refused', (old) => {
+    const row = { policy_version: old, locale: 'en', text: 'anything' };
+    expect(readCatalogEntry(row, 'en', CONSENT_POLICY_VERSION).status).toBe('failed');
+  });
+
+  it.each(SUPERSEDED)('%s cannot be approved even if presented', (old) => {
+    const gate = new ConsentGate('required');
+    gate.present({ policyVersion: old, locale: 'en', text: 'anything' });
+    expect(gate.approve()).toBeNull();
+    expect(gate.approved).toBe(false);
+  });
+});
+
+describe('a superseded policy is rejected end to end', () => {
+  it.each(SUPERSEDED)('%s from the catalog opens no dialog and sends nothing', async (old) => {
+    const h = harness({ catalog: { policy_version: old } });
+    const host = mount(config({ recordingConsentMode: 'required' }), h.deps);
+
+    await pressStart(host);
+    await new Promise((r) => setTimeout(r, 30));
+
+    expect(q(host, '.svd__gate').hidden).toBe(true);
+    expect(h.sessionCalls).toHaveLength(0);
+    expect(h.getUserMedia).not.toHaveBeenCalled();
+  });
+});
+
+describe('consent_policy_outdated forces a fresh acceptance', () => {
+  /**
+   * Asserted on the gate itself rather than by pressing start a second time.
+   * "Approval cleared" is the property that matters: once it is false, the
+   * only route back to a session runs through openGate() again — a fresh
+   * catalog fetch and a fresh click — which the suite above already pins down.
+   */
+  it('voids the held approval and never retries on its own', async () => {
+    const h = harness({ sessionError: 'consent_policy_outdated' });
+    const host = mount(config({ recordingConsentMode: 'required' }), h.deps);
+    const widget = (host as unknown as { __widget?: unknown }).__widget;
+    void widget;
+
+    await pressStart(host);
+    q<HTMLButtonElement>(host, '.svd__gate-agree').click();
+    await vi.waitFor(() => expect(h.sessionCalls).toHaveLength(1));
+
+    // The POST was rejected. Nothing may quietly try again with a bumped
+    // version — that would be recording an agreement nobody gave.
+    await new Promise((r) => setTimeout(r, 80));
+    expect(h.sessionCalls).toHaveLength(1);
+    expect(h.catalogCalls).toHaveLength(1);
+    expect(q(host, '.svd__gate').hidden).toBe(true);
+  });
+
+  it('the gate holds nothing after being revoked', () => {
+    const gate = new ConsentGate('required');
+    gate.present({ policyVersion: CONSENT_POLICY_VERSION, locale: 'en', text: WORDING.en });
+    gate.approve();
+    expect(gate.approved).toBe(true);
+
+    gate.revoke();
+    expect(gate.approved).toBe(false);
+    expect(gate.pending).toBeNull();
+    // and cannot be re-approved without a freshly presented row
+    expect(gate.approve()).toBeNull();
   });
 });
 
@@ -355,7 +424,7 @@ describe('what acceptance submits', () => {
     const consent = body['consent'] as Record<string, unknown>;
 
     expect(Object.keys(consent).sort()).toEqual(['accepted_at', 'locale', 'policy_version']);
-    expect(consent['policy_version']).toBe('2026-08-03.2');
+    expect(consent['policy_version']).toBe('2026-08-03.4');
     expect(consent['locale']).toBe('en');
     expect(String(consent['accepted_at'])).toMatch(/^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/);
   });
