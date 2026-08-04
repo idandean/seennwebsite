@@ -53,10 +53,11 @@
     turnstileSiteKey: '0x4AAAAAAEEN9zjBnCHDnqNy',
 
     // ------------------------------------------------------------------
-    // Recording consent — WIRED, DELIBERATELY OFF.
+    // Recording consent — ON, on this page only.
     //
-    // Flip to 'required' ONLY once Codex has confirmed all four are live on
-    // staging:
+    // Staged rollout: the public homepages are switched off entirely while
+    // the recorded flow is validated here end to end. Confirmed live on
+    // staging before this was turned on:
     //   1. the consent catalog endpoint, serving policy 2026-08-03.4
     //      at /functions/v1/public-voice-demo-consent for en/he/ar
     //   2. the schema migration that stores the acceptance
@@ -64,11 +65,11 @@
     //      within 7 days — the sentence promises this in three languages
     //   4. an agent build that records and transcribes
     //
-    // Turning this on earlier tells visitors they are being recorded when
-    // they are not, or promises a deletion nothing performs. Either is worse
-    // than shipping the demo without it.
+    // If any of the four is not actually live, the gate fails closed: the
+    // catalog GET returns nothing usable and no dialog opens at all, so a
+    // visitor is never told they are being recorded when they are not.
     // ------------------------------------------------------------------
-    recordingConsentMode: 'disabled'
+    recordingConsentMode: 'required'
   };
 </script>
 <script defer src="/js/voice-demo.js"></script>

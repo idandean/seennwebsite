@@ -52,10 +52,17 @@ beforeEach(() => {
   });
 });
 
-describe('activation on both homepages', () => {
-  it.each(HOMEPAGES)('%s carries the working configuration', (page) => {
+/**
+ * Staged recording rollout: the demo runs on the unlisted staging page only
+ * while the recorded flow is validated end to end. Both homepages are off
+ * and their mounts hidden.
+ */
+describe('the public homepages are switched off', () => {
+  it.each(HOMEPAGES)('%s keeps the vetted values but stays disabled', (page) => {
     const inline = inlineConfigOf(read(page));
-    expect(inline.publicDemoMode).toBe('enabled');
+    // Off, but not gutted: the endpoint and keys stay so switching back on
+    // is one word rather than a re-derivation.
+    expect(inline.publicDemoMode).toBe('disabled');
     expect(inline.endpointBaseUrl).toBe(LIVE.endpointBaseUrl);
     expect(inline.anonKey).toBe(LIVE.anonKey);
     expect(inline.turnstileSiteKey).toBe(LIVE.turnstileSiteKey);
@@ -74,7 +81,9 @@ describe('activation on both homepages', () => {
   it.each(HOMEPAGES)('%s reuses the staging page connection values', (page) => {
     const home = inlineConfigOf(read(page));
     const staging = inlineConfigOf(read('voice-demo-staging.html'));
-    for (const key of ['publicDemoMode', 'endpointBaseUrl', 'anonKey', 'turnstileSiteKey'] as const) {
+    // publicDemoMode is deliberately absent: staging runs, the homepages do
+    // not. What must never diverge is where a page would point if it did.
+    for (const key of ['endpointBaseUrl', 'anonKey', 'turnstileSiteKey'] as const) {
       expect(home[key]).toEqual(staging[key]);
     }
   });
@@ -91,20 +100,23 @@ describe('activation on both homepages', () => {
     expect(resolveConfig({ inline }).recordingConsentMode).toBe('disabled');
   });
 
-  it('the staging page is prepared but likewise switched off', () => {
+  it('the staging page is the one place recording is on', () => {
     const inline = inlineConfigOf(read('voice-demo-staging.html'));
-    expect(resolveConfig({ inline }).recordingConsentMode).toBe('disabled');
-  });
-
-  it.each(HOMEPAGES)('%s resolves to a runnable widget', (page) => {
-    const config = resolveConfig({ inline: inlineConfigOf(read(page)) });
+    const config = resolveConfig({ inline });
     expect(config.publicDemoMode).toBe('enabled');
-    expect(unavailableReason(config)).toBeNull();
+    expect(config.recordingConsentMode).toBe('required');
   });
 
-  it.each(HOMEPAGES)('%s no longer ships the mount hidden', (page) => {
-    expect(read(page)).toMatch(/data-seenn-voice-demo(?!\s+hidden)/);
-    expect(read(page)).not.toMatch(/data-seenn-voice-demo\s+hidden/);
+  it.each(HOMEPAGES)('%s resolves to a widget that will not run', (page) => {
+    const config = resolveConfig({ inline: inlineConfigOf(read(page)) });
+    expect(config.publicDemoMode).toBe('disabled');
+    expect(unavailableReason(config)).toBe('flag_disabled');
+  });
+
+  it.each(HOMEPAGES)('%s ships the mount hidden', (page) => {
+    // Belt and braces. A disabled widget renders nothing anyway; `hidden`
+    // means a misconfiguration leaves an empty slot, not a dead orb.
+    expect(read(page)).toMatch(/data-seenn-voice-demo\s+hidden/);
   });
 
   it.each(HOMEPAGES)('%s loads the config before the bundle', (page) => {

@@ -49,17 +49,21 @@
      reserves its height before first paint; livekit-client is fetched only
      when a visitor actually clicks the orb. -->
 <link href="css/voice-demo.css" rel="stylesheet"/>
-<!-- Live voice demo. Same public values already proven on the controlled
-     staging page: a Supabase PUBLISHABLE key and a Cloudflare Turnstile SITE
-     key, both public by design and shipped to every browser that loads the
-     widget. No secret belongs here.
+<!-- Voice demo — OFF on the public homepage during the staged recording
+     rollout. The controlled, unlisted staging page is the only one running it
+     while the recorded flow is validated end to end.
 
-     KILL SWITCH — to turn the demo off site-wide without touching this block,
-     add to <head>:  <meta name="seenn:public-demo-mode" content="disabled">
-     A kill switch can only ever disable; it can never enable. -->
+     The endpoint and keys stay here so switching back on is one word, not a
+     re-derivation. They are public by design: a Supabase PUBLISHABLE key and a
+     Cloudflare Turnstile SITE key, both shipped to every browser that loads
+     the widget. No secret belongs here.
+
+     `disabled` is also the value every other source can only ever move toward
+     — the URL parameter and the seenn:public-demo-mode meta are kill switches
+     that can never enable. -->
 <script>
   window.SEENN_VOICE_DEMO = {
-    publicDemoMode: 'enabled',
+    publicDemoMode: 'disabled',
     endpointBaseUrl: 'https://oonqpttzpamtxiifitvf.supabase.co',
     anonKey: 'sb_publishable_NvlifnKa0ZVG6p4mMZBJHQ_kNDpWup4',
     turnstileSiteKey: '0x4AAAAAAEEN9zjBnCHDnqNy'
@@ -414,7 +418,7 @@
      reading about it. Nothing loads and no microphone is touched until a
      deliberate click. -->
 <div class="hero-demo">
-<div class="svd-mount" data-seenn-voice-demo></div>
+<div class="svd-mount" data-seenn-voice-demo hidden></div>
 </div>
 </div>
 </div>
