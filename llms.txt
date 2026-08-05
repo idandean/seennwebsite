@@ -30,6 +30,11 @@ Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started t
 - [תנאי תשלום שוטף + 30 / 60 / 90](https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html)
 - [ניהול תזרים מזומנים לעסק קטן](https://www.seenn.ai/he/blog/cash-flow-management-small-business.html)
 
+## Comparisons
+- [Seenn vs HighRadius](https://www.seenn.ai/alternatives/highradius.html): HighRadius is a full office-of-the-CFO suite for large enterprises; Seenn is a collections-only AI agent for smaller finance teams that places the calls itself
+- [Seenn vs Chaser](https://www.seenn.ai/alternatives/chaser.html): both automate email and voice calls; Seenn adds official WhatsApp Business messaging, a Hebrew-speaking agent, and Priority/Hashavshevet integrations
+- [Seenn vs Upflow](https://www.seenn.ai/alternatives/upflow.html): Upflow is a financial relationship management platform; Seenn is an AI agent that phones overdue clients and follows up on WhatsApp and email
+
 ## Key facts
 - Product: AI accounts-receivable / collections agent (the AI agent is named Jess)
 - Channels: three — phone (natural voice), WhatsApp, email

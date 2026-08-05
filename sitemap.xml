@@ -243,4 +243,30 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
+  <!-- Comparison / alternative pages -->
+  <url>
+    <loc>https://www.seenn.ai/alternatives/highradius.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/alternatives/highradius.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/alternatives/highradius.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/alternatives/chaser.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/alternatives/chaser.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/alternatives/chaser.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/alternatives/upflow.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/alternatives/upflow.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/alternatives/upflow.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
