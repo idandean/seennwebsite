@@ -204,6 +204,12 @@ const form = document.getElementById('contactForm');
 form.addEventListener('submit', function(e) {
   e.preventDefault();
 
+  // One submission at a time; the token also carries the one-shot guard for
+  // the Google Ads conversion fired on success below.
+  const leads = window.SeennLeads;
+  const lead = leads ? leads.begin('contact') : null;
+  if (leads && !lead) return;
+
   const formData = new FormData(form);
   const object = Object.fromEntries(formData);
   const json = JSON.stringify(object);
@@ -231,6 +237,8 @@ form.addEventListener('submit', function(e) {
                   language: (document.documentElement.lang || 'en')
               });
           }
+          // ...and the same confirmed lead as a Google Ads conversion.
+          if (leads) leads.reportConversion(lead);
           alert(translations[currentLang].successMessage);
           form.reset();
       } else {
@@ -245,6 +253,7 @@ form.addEventListener('submit', function(e) {
   .then(function() {
       button.textContent = translations[currentLang].sendMessage;
       button.disabled = false;
+      if (leads) leads.end(lead);
   });
 });
 </script>

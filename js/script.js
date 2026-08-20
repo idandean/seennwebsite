@@ -751,6 +751,57 @@ function closeDemoModal() {
     document.body.style.overflow = 'auto'; // Restore scrolling
 }
 
+/* =========================================================================
+   Lead forms: submission bookkeeping + the Google Ads conversion.
+
+   Every lead form on the site (the demo modal below, plus the contact forms
+   in contact.html and he/contact.html) funnels through here so that one
+   successfully created lead reports exactly one "Submit lead form"
+   conversion to Google Ads.
+
+   begin() hands back a token and refuses a second token while a request for
+   the same form is still on the wire, so a double click — or an Enter press
+   that slips past the disabled button — cannot open a second submission.
+   reportConversion() burns its token, so a success path that somehow runs
+   twice still only fires once. end() releases the form when the request
+   settles, which lets a genuine second lead be reported later.
+
+   The Google Ads destination (AW-18397476304) rides on the existing gtag.js
+   instance already loaded in every page head; this file must never load a
+   second Google tag. GA4's generate_lead event is emitted separately at each
+   call site and is deliberately left untouched.
+   ========================================================================= */
+window.SeennLeads = (function () {
+    var SEND_TO = 'AW-18397476304/ifXfCJvI-OMcENDrzMRE';
+    var inFlight = {};
+
+    function begin(formName) {
+        if (inFlight[formName]) return null;
+        inFlight[formName] = true;
+        return { form: formName, reported: false };
+    }
+
+    function end(token) {
+        if (token) inFlight[token.form] = false;
+    }
+
+    // Fires only on a confirmed successful submission. Returns whether the
+    // conversion actually went out, which the tests assert on.
+    function reportConversion(token) {
+        if (!token || token.reported) return false;
+        token.reported = true;
+        if (typeof window.gtag !== 'function') return false;
+        window.gtag('event', 'conversion', {
+            send_to: SEND_TO,
+            value: 1.0,
+            currency: 'ILS',
+        });
+        return true;
+    }
+
+    return { SEND_TO: SEND_TO, begin: begin, end: end, reportConversion: reportConversion };
+})();
+
 // Handle Demo Form Submission
 async function handleDemoSubmit(event) {
     event.preventDefault();
@@ -759,6 +810,11 @@ async function handleDemoSubmit(event) {
     const submitBtn = document.getElementById('demoSubmitBtn');
     const messageDiv = document.getElementById('demoFormMessage');
     const currentLang = window.currentLanguage || 'en';
+
+    // One submission per form at a time; the token also carries the
+    // one-shot guard for the Google Ads conversion below.
+    const lead = window.SeennLeads.begin('demo');
+    if (!lead) return;
 
     // Show loading state
     submitBtn.disabled = true;
@@ -782,6 +838,8 @@ async function handleDemoSubmit(event) {
                     language: (document.documentElement.lang || 'en')
                 });
             }
+            // ...and the same confirmed lead as a Google Ads conversion.
+            window.SeennLeads.reportConversion(lead);
             // Success message (localized, English fallback)
             messageDiv.textContent = (translations[currentLang] && translations[currentLang].demoSuccess) || '🎉 Thank you! Your demo request has been received. We\'ll contact you shortly!';
             messageDiv.style.backgroundColor = '#d4edda';
@@ -811,6 +869,7 @@ async function handleDemoSubmit(event) {
         // Restore button state
         submitBtn.disabled = false;
         submitBtn.textContent = translations[currentLang].requestDemo;
+        window.SeennLeads.end(lead);
     }
 }
 
