@@ -535,7 +535,7 @@
     return value === "en" || value === "he" || value === "ar";
   }
   var en = {
-    heroEyebrow: "Talk to Jess \u2014 live",
+    heroEyebrow: "Talk to Shira \u2014 live",
     durationBadge: "~2 min",
     startButton: "Talk to the AI Collection Agent",
     sessionMeta: "~2 min  \xB7  Microphone required",
@@ -600,7 +600,7 @@
     err_language_unavailable: "We could not choose the opening language. Please try again."
   };
   var he = {
-    heroEyebrow: "\u05D2\u05F3\u05E1 \u2014 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9",
+    heroEyebrow: "\u05E9\u05D9\u05E8\u05D4 \u2014 \u05D1\u05E9\u05D9\u05D3\u05D5\u05E8 \u05D7\u05D9",
     durationBadge: "~2 \u05D3\u05E7\u05F3",
     startButton: "\u05D3\u05D1\u05E8\u05D5 \u05E2\u05DD \u05E1\u05D5\u05DB\u05DF \u05D4\u05D2\u05D1\u05D9\u05D9\u05D4 \u05D4\u05D7\u05DB\u05DD",
     sessionMeta: "~2 \u05D3\u05E7\u05F3  \xB7  \u05E0\u05D3\u05E8\u05E9 \u05DE\u05D9\u05E7\u05E8\u05D5\u05E4\u05D5\u05DF",
