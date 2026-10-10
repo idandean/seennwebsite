@@ -424,7 +424,7 @@ body {
 }
 
 /* =========================================================
-   Channels — the three ways Jess reaches an overdue client.
+   Channels — the three ways Shira reaches an overdue client.
    Two surfaces share one vocabulary: a "Channels" menu in the
    main nav, and the showcase it points at (#channels).
    Box directions are logical throughout, so the RTL page (/he/)
@@ -574,15 +574,18 @@ body {
   scroll-margin-top: 5.5rem;
 }
 
-/* Borrowed from the Jess fold below so the two sections read as one family. */
-.chan-decor {
+/* The same lavender squares sit behind this section and the Shira fold below,
+   so the two read as one family. */
+.chan-decor,
+.agent-decor {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
-.chan-decor span {
+.chan-decor span,
+.agent-decor span {
   position: absolute;
   display: block;
   background-color: rgba(230, 220, 240, 0.42);
@@ -600,6 +603,19 @@ body {
    the copy rather than beside it. */
 @media (max-width: 1279px) {
   .chan-decor { display: none; }
+}
+
+/* Shira fold. Only level with the video and the bullet list: the heading and
+   subtitle above them run nearly full width, so that band has no margin.
+   Logical insets mirror the layout on the RTL page, as the grid does. */
+.agent-decor span:nth-child(1) { top: 36%; inset-inline-start: 2%; width: 130px; height: 100px; }
+.agent-decor span:nth-child(2) { top: 70%; inset-inline-start: 3%; width: 104px; height: 82px; border-radius: 18px; }
+.agent-decor span:nth-child(3) { top: 48%; inset-inline-end: 2%; width: 100px; height: 80px; border-radius: 16px; }
+
+/* The fold's grid is max-w-6xl (1152px): below 1536px each side margin is
+   under 192px, too tight to keep a square clear of the video and the list. */
+@media (max-width: 1535px) {
+  .agent-decor { display: none; }
 }
 
 .chan-head {
@@ -1622,7 +1638,7 @@ body {
 
 .chan-note svg { width: 14px; height: 14px; flex: none; margin-top: 0.2rem; fill: currentColor; }
 
-/* a small badge that lets the existing Jess bullet flag the official channel
+/* a small badge that lets the existing Shira bullet flag the official channel
    without rewriting the line it sits on */
 .wa-badge {
   display: inline-flex;
