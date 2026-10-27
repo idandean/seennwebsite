@@ -618,6 +618,30 @@ body {
   .agent-decor { display: none; }
 }
 
+/* Hebrew explainer video fold: the same squares, level with the video. The
+   video and its cards are max-w-3xl (768px), so from 1280px each side margin
+   is 256px+, which keeps a square clear of them; below that, drop them. */
+.video-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.video-decor span {
+  position: absolute;
+  display: block;
+  background-color: rgba(230, 220, 240, 0.42);
+  border-radius: 20px;
+}
+.video-decor span:nth-child(1) { top: 30%; inset-inline-start: 4%; width: 130px; height: 100px; }
+.video-decor span:nth-child(2) { top: 64%; inset-inline-start: 6%; width: 104px; height: 82px; border-radius: 18px; }
+.video-decor span:nth-child(3) { top: 44%; inset-inline-end: 4%; width: 112px; height: 88px; border-radius: 16px; }
+.video-section > .container { position: relative; z-index: 1; }
+
+@media (max-width: 1279px) {
+  .video-decor { display: none; }
+}
+
 .chan-head {
   max-width: 50rem;
   margin: 0 auto 1.5rem;

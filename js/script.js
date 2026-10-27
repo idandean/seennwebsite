@@ -38,8 +38,6 @@ const translations = {
         requestDemoBtn: "Request a Demo",
         jessProduct: "Shira - AI Accounts Receivable Agent",
         jessProductDesc: "Recover overdue payments on autopilot",
-        michaelProduct: "Michael - AI Receptionist",
-        michaelProductDesc: "Coming soon",
 
         // Hero section
         heroTitle: "Stop Chasing Payments. Your AI Accounts Receivable Agent Collects Automatically.",
@@ -130,7 +128,7 @@ const translations = {
         howItWorksTitle: "How It Works",
         howItWorksSubtitle: "Four steps. Lightning-fast setup. Zero learning curve.",
         step0Title: "Connect in Minutes",
-        step0Desc: "Export your client data from any ERP or invoicing system as an Excel file and upload it to Seenn. Get a dedicated phone number or use your own, with WhatsApp Business integration. No complex setup required.",
+        step0Desc: "Connect Priority, SAP, Hashavshevet or iCount/Rivhit directly, or upload an Excel export from any ERP or invoicing system. Get a dedicated phone number or use your own, with WhatsApp Business integration. No complex setup required.",
         step1Title: "Set Your Payment Rules",
         step1Desc: "Define your payment terms, grace periods, and escalation policies. Clean and organize your client data directly in Seenn \u2014 easier and faster than your ERP. All your work is saved.",
         step2Title: "Shira Reaches Out Across 3 Channels",
@@ -145,7 +143,7 @@ const translations = {
         // Agents section
         agentsSubtitle: "AI-Powered Revenue Recovery",
         agentsTitle: "AI agents that recover payments and capture leads around the clock",
-        agentsDesc: "Shira handles accounts receivable on autopilot. Add Michael for 24/7 lead capture and never miss another opportunity.",
+        agentsDesc: "Shira handles accounts receivable on autopilot, from the first reminder to the recorded payment.",
         specializedExperts: "Two AI agents built for revenue growth",
 
         // Meet your team
@@ -157,15 +155,6 @@ const translations = {
         feature3: "Fully customizable escalation rules",
         feature4: "Professional tone that preserves client relationships",
 
-        // Michael section
-        meetMichael: "Meet Michael",
-        michaelSubtitle: "Your AI receptionist that works while you sleep. Every call answered. Every lead captured. 24/7.",
-        neverMissLead: "Never Miss a Lead:",
-        neverMissLeadDesc: "Captures every inquiry \u2014 even at 2 AM on a Sunday.",
-        availability247: "24/7 Availability:",
-        availability247Desc: "Professional, on-brand reception every single time.",
-        smartCallRouting: "Smart Call Routing:",
-        smartCallRoutingDesc: "Qualifies leads, answers FAQs, and books appointments automatically.",
 
         // Social proof
         trustedBy: "Trusted by businesses across the US and Israel",
@@ -186,7 +175,8 @@ const translations = {
         intgSubtitle: "Seenn plugs straight into the tools you already run \u2014 no rip-and-replace, no manual exports.",
         intgHashavshevet: "Hashavshevet",
         intgRivhit: "Rivhit",
-        intgMore: "\u2026and more. Custom integrations & API available.",
+        intgMore: "Also connects to Oracle, Microsoft Dynamics, QuickBooks, Xero and more on request, or upload an Excel file from any system. Custom integrations and API for enterprise.",
+        intgLink: "See all integrations \u2192",
         metaPartner: "Approved Meta Tech Provider",
         dataPrivacy: "No Data Shared with Third Parties",
 
@@ -235,6 +225,8 @@ const translations = {
         email: "Email *",
         company: "Company *",
         phoneNumber: "Phone Number",
+        accountingSystem: "Accounting system / ERP",
+        accountingSystemPlaceholder: "e.g. Priority, SAP, Oracle, QuickBooks, or Excel",
         preferredDateTime: "Preferred Date & Time",
         dateTimePlaceholder: "e.g., Tuesday, 2pm EST",
         additionalNotes: "Additional Notes",
@@ -333,7 +325,6 @@ const translations = {
         footerTagline: "AI-powered accounts receivable. Get paid faster, preserve relationships.",
         product: "Products",
         collectionsAgent: "Shira - AI AR Agent",
-        afterHoursAgent: "Michael - AI Receptionist (Coming Soon)",
         company: "Company",
         legal: "Legal",
         privacy: "Privacy Policy",
@@ -353,8 +344,6 @@ const translations = {
         requestDemoBtn: "\u05D1\u05E7\u05E9\u05D5 \u05D4\u05D3\u05D2\u05DE\u05D4",
         jessProduct: "שירה - \u05E1\u05D5\u05DB\u05E0\u05EA \u05D2\u05D1\u05D9\u05D9\u05D4 \u05D1\u05D1\u05D9\u05E0\u05D4 \u05DE\u05DC\u05D0\u05DB\u05D5\u05EA\u05D9\u05EA",
         jessProductDesc: "\u05D2\u05D1\u05D9\u05D9\u05EA \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05D1\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8 \u05DE\u05DC\u05D0",
-        michaelProduct: "\u05DE\u05D9\u05D9\u05E7\u05DC - \u05E4\u05E7\u05D9\u05D3 AI",
-        michaelProductDesc: "\u05D1\u05E7\u05E8\u05D5\u05D1",
 
         // Hero section
         heroTitle: "\u05EA\u05E4\u05E1\u05D9\u05E7\u05D5 \u05DC\u05E8\u05D3\u05D5\u05E3 \u05D0\u05D7\u05E8\u05D9 \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u2014 \u05EA\u05D5\u05DB\u05E0\u05EA \u05D2\u05D1\u05D9\u05D9\u05D4 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05E2\u05DD \u05E1\u05D5\u05DB\u05DF AI",
@@ -445,7 +434,7 @@ const translations = {
         howItWorksTitle: "\u05D0\u05D9\u05DA \u05D6\u05D4 \u05E2\u05D5\u05D1\u05D3",
         howItWorksSubtitle: "\u05D0\u05E8\u05D1\u05E2\u05D4 \u05E6\u05E2\u05D3\u05D9\u05DD. \u05D4\u05E7\u05DE\u05D4 \u05DE\u05D4\u05D9\u05E8\u05D4. \u05D0\u05E4\u05E1 \u05E2\u05E7\u05D5\u05DE\u05EA \u05DC\u05DE\u05D9\u05D3\u05D4.",
         step0Title: "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5 \u05EA\u05D5\u05DA \u05D3\u05E7\u05D5\u05EA",
-        step0Desc: "\u05D9\u05D9\u05E6\u05D0\u05D5 \u05D0\u05EA \u05E0\u05EA\u05D5\u05E0\u05D9 \u05D4\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA \u05DE\u05DB\u05DC \u05EA\u05D5\u05DB\u05E0\u05EA ERP \u05D0\u05D5 \u05D4\u05E0\u05D4\u05DC\u05EA \u05D7\u05E9\u05D1\u05D5\u05E0\u05D5\u05EA \u05DB\u05E7\u05D5\u05D1\u05E5 \u05D0\u05E7\u05E1\u05DC \u05D5\u05D4\u05E2\u05DC\u05D5 \u05DC-Seenn. \u05E7\u05D1\u05DC\u05D5 \u05DE\u05E1\u05E4\u05E8 \u05D8\u05DC\u05E4\u05D5\u05DF \u05D9\u05D9\u05E2\u05D5\u05D3\u05D9 \u05D0\u05D5 \u05D4\u05E9\u05EA\u05DE\u05E9\u05D5 \u05D1\u05DE\u05E1\u05E4\u05E8 \u05E9\u05DC\u05DB\u05DD, \u05E2\u05DD \u05D0\u05D9\u05E0\u05D8\u05D2\u05E8\u05E6\u05D9\u05D9\u05EA WhatsApp Business. \u05D1\u05DC\u05D9 \u05D4\u05D2\u05D3\u05E8\u05D4 \u05DE\u05E1\u05D5\u05D1\u05DB\u05EA.",
+        step0Desc: "חברו ישירות את פריוריטי, SAP, חשבשבת או iCount/ריווחית, או העלו קובץ אקסל מכל תוכנת ERP או הנהלת חשבונות. קבלו מספר טלפון ייעודי או השתמשו במספר שלכם, עם אינטגרציית WhatsApp Business. בלי הגדרה מסובכת.",
         step1Title: "\u05D4\u05D2\u05D3\u05D9\u05E8\u05D5 \u05D0\u05EA \u05D4\u05DB\u05DC\u05DC\u05D9\u05DD",
         step1Desc: "\u05D4\u05D2\u05D3\u05D9\u05E8\u05D5 \u05EA\u05E0\u05D0\u05D9 \u05EA\u05E9\u05DC\u05D5\u05DD, \u05EA\u05E7\u05D5\u05E4\u05D5\u05EA \u05D7\u05E1\u05D3 \u05D5\u05DE\u05D3\u05D9\u05E0\u05D9\u05D5\u05EA \u05D4\u05E1\u05DC\u05DE\u05D4. \u05E0\u05E7\u05D5 \u05D5\u05E1\u05D3\u05E8\u05D5 \u05D0\u05EA \u05E0\u05EA\u05D5\u05E0\u05D9 \u05D4\u05DC\u05E7\u05D5\u05D7\u05D5\u05EA \u05D9\u05E9\u05D9\u05E8\u05D5\u05EA \u05D1-Seenn \u2014 \u05E7\u05DC \u05D5\u05DE\u05D4\u05D9\u05E8 \u05D9\u05D5\u05EA\u05E8 \u05DE\u05D4-ERP. \u05DB\u05DC \u05D4\u05E2\u05D1\u05D5\u05D3\u05D4 \u05E0\u05E9\u05DE\u05E8\u05EA.",
         step2Title: "שירה \u05E4\u05D5\u05E0\u05D4 \u05D1-3 \u05E2\u05E8\u05D5\u05E6\u05D9\u05DD",
@@ -457,20 +446,11 @@ const translations = {
         buildWorkforce: "\u05DE\u05D5\u05DB\u05E0\u05D9\u05DD \u05DC\u05D2\u05D1\u05D9\u05D9\u05D4 \u05E2\u05DC \u05D8\u05D9\u05D9\u05E1 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9?",
         talkToUs: "\u05D3\u05D1\u05E8\u05D5 \u05D0\u05D9\u05EA\u05E0\u05D5",
 
-        // Michael section
-        meetMichael: "\u05D4\u05DB\u05D9\u05E8\u05D5 \u05D0\u05EA \u05DE\u05D9\u05D9\u05E7\u05DC",
-        michaelSubtitle: "\u05E4\u05E7\u05D9\u05D3 \u05D4-AI \u05E9\u05DC\u05DB\u05DD \u05E9\u05E2\u05D5\u05D1\u05D3 \u05D2\u05DD \u05DB\u05E9\u05D0\u05EA\u05DD \u05D9\u05E9\u05E0\u05D9\u05DD. \u05DB\u05DC \u05E9\u05D9\u05D7\u05D4 \u05E0\u05E2\u05E0\u05D9\u05EA. \u05DB\u05DC \u05DC\u05D9\u05D3 \u05E0\u05EA\u05E4\u05E1. 24/7.",
-        neverMissLead: "\u05D0\u05E3 \u05E4\u05E2\u05DD \u05DC\u05D0 \u05DE\u05E4\u05E1\u05E4\u05E1\u05D9\u05DD \u05DC\u05D9\u05D3:",
-        neverMissLeadDesc: "\u05EA\u05D5\u05E4\u05E1 \u05DB\u05DC \u05E4\u05E0\u05D9\u05D9\u05D4 \u2014 \u05D2\u05DD \u05D1\u05E9\u05EA\u05D9\u05D9\u05DD \u05D1\u05DC\u05D9\u05DC\u05D4 \u05D1\u05D9\u05D5\u05DD \u05E8\u05D0\u05E9\u05D5\u05DF.",
-        availability247: "\u05D6\u05DE\u05D9\u05E0\u05D5\u05EA 24/7:",
-        availability247Desc: "\u05E7\u05D1\u05DC\u05EA \u05E4\u05E0\u05D9\u05DD \u05DE\u05E7\u05E6\u05D5\u05E2\u05D9\u05EA \u05D5\u05DE\u05DE\u05D5\u05EA\u05D2\u05EA, \u05DB\u05DC \u05E4\u05E2\u05DD \u05DE\u05D7\u05D3\u05E9.",
-        smartCallRouting: "\u05E0\u05D9\u05EA\u05D5\u05D1 \u05E9\u05D9\u05D7\u05D5\u05EA \u05D7\u05DB\u05DD:",
-        smartCallRoutingDesc: "\u05DE\u05E1\u05E0\u05DF \u05DC\u05D9\u05D3\u05D9\u05DD, \u05E2\u05D5\u05E0\u05D4 \u05E2\u05DC \u05E9\u05D0\u05DC\u05D5\u05EA \u05D5\u05E7\u05D5\u05D1\u05E2 \u05E4\u05D2\u05D9\u05E9\u05D5\u05EA \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA.",
 
         // Agents section
         agentsSubtitle: "\u05D2\u05D1\u05D9\u05D9\u05EA \u05D4\u05DB\u05E0\u05E1\u05D5\u05EA \u05DE\u05D5\u05E0\u05E2\u05EA \u05D1-AI",
         agentsTitle: "\u05E1\u05D5\u05DB\u05E0\u05D9 AI \u05E9\u05D2\u05D5\u05D1\u05D9\u05DD \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05D5\u05EA\u05D5\u05E4\u05E1\u05D9\u05DD \u05DC\u05D9\u05D3\u05D9\u05DD \u05DE\u05E1\u05D1\u05D9\u05D1 \u05DC\u05E9\u05E2\u05D5\u05DF",
-        agentsDesc: "שירה \u05DE\u05D8\u05E4\u05DC\u05EA \u05D1\u05D2\u05D1\u05D9\u05D9\u05D4 \u05D1\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8. \u05D4\u05D5\u05E1\u05D9\u05E4\u05D5 \u05D0\u05EA \u05DE\u05D9\u05D9\u05E7\u05DC \u05DC\u05EA\u05E4\u05D9\u05E1\u05EA \u05DC\u05D9\u05D3\u05D9\u05DD 24/7 \u05D5\u05DC\u05D0 \u05EA\u05E4\u05E1\u05E4\u05E1\u05D5 \u05D0\u05E3 \u05D4\u05D6\u05D3\u05DE\u05E0\u05D5\u05EA.",
+        agentsDesc: "שירה מטפלת בגבייה באופן אוטומטי, מהתזכורת הראשונה ועד שהתשלום נרשם.",
         specializedExperts: "\u05E9\u05E0\u05D9 \u05E1\u05D5\u05DB\u05E0\u05D9 AI \u05E9\u05E0\u05D1\u05E0\u05D5 \u05DC\u05D4\u05D2\u05D3\u05DC\u05EA \u05D4\u05DB\u05E0\u05E1\u05D5\u05EA",
 
         // Meet your team
@@ -501,7 +481,8 @@ const translations = {
         intgSubtitle: "Seenn \u05de\u05ea\u05d7\u05d1\u05e8 \u05d9\u05e9\u05d9\u05e8\u05d5\u05ea \u05dc\u05de\u05e2\u05e8\u05db\u05d5\u05ea \u05e9\u05db\u05d1\u05e8 \u05e2\u05d5\u05d1\u05d3\u05d9\u05dd \u05d0\u05d9\u05ea\u05df \u2014 \u05d1\u05dc\u05d9 \u05d4\u05d7\u05dc\u05e4\u05ea \u05de\u05e2\u05e8\u05db\u05ea \u05d5\u05d1\u05dc\u05d9 \u05d9\u05d9\u05e6\u05d5\u05d0 \u05d9\u05d3\u05e0\u05d9.",
         intgHashavshevet: "\u05d7\u05e9\u05d1\u05e9\u05d1\u05ea",
         intgRivhit: "\u05e8\u05d5\u05d5\u05d7\u05d9\u05ea",
-        intgMore: "\u2026\u05d5\u05e2\u05d5\u05d3. \u05d0\u05d9\u05e0\u05d8\u05d2\u05e8\u05e6\u05d9\u05d5\u05ea \u05de\u05d5\u05ea\u05d0\u05de\u05d5\u05ea \u05d5-API \u05d6\u05de\u05d9\u05e0\u05d9\u05dd.",
+        intgMore: "מתחברת גם ל-Oracle, Microsoft Dynamics, Morning (חשבונית ירוקה) ומערכות נוספות לפי בקשה, או העלו קובץ אקסל מכל מערכת. אינטגרציות מותאמות ו-API לארגונים.",
+        intgLink: "לכל האינטגרציות \u2190",
         metaPartner: "\u05E1\u05E4\u05E7 \u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 \u05DE\u05D0\u05D5\u05E9\u05E8 \u05E9\u05DC Meta",
         dataPrivacy: "\u05D0\u05E0\u05D7\u05E0\u05D5 \u05DC\u05D0 \u05DE\u05E9\u05EA\u05E4\u05D9\u05DD \u05DE\u05D9\u05D3\u05E2 \u05E2\u05DD \u05E6\u05D3\u05D3\u05D9\u05DD \u05E9\u05DC\u05D9\u05E9\u05D9\u05D9\u05DD",
 
@@ -550,6 +531,8 @@ const translations = {
         email: "\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC *",
         company: "\u05D7\u05D1\u05E8\u05D4 *",
         phoneNumber: "\u05DE\u05E1\u05E4\u05E8 \u05D8\u05DC\u05E4\u05D5\u05DF",
+        accountingSystem: "מערכת הנהלת חשבונות / ERP",
+        accountingSystemPlaceholder: "לדוגמה: חשבשבת, פריוריטי, SAP, Oracle או אקסל",
         preferredDateTime: "\u05EA\u05D0\u05E8\u05D9\u05DA \u05D5\u05E9\u05E2\u05D4 \u05DE\u05D5\u05E2\u05D3\u05E4\u05D9\u05DD",
         dateTimePlaceholder: "\u05DC\u05DE\u05E9\u05DC: \u05D9\u05D5\u05DD \u05E9\u05DC\u05D9\u05E9\u05D9, 14:00",
         additionalNotes: "\u05D4\u05E2\u05E8\u05D5\u05EA \u05E0\u05D5\u05E1\u05E4\u05D5\u05EA",
@@ -648,7 +631,6 @@ const translations = {
         footerTagline: "\u05D2\u05D1\u05D9\u05D9\u05D4 \u05D7\u05DB\u05DE\u05D4 \u05E2\u05DD AI. \u05E7\u05D1\u05DC\u05D5 \u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05DE\u05D4\u05E8 \u05D9\u05D5\u05EA\u05E8, \u05E9\u05DE\u05E8\u05D5 \u05E2\u05DC \u05D9\u05D7\u05E1\u05D9\u05DD.",
         product: "\u05DE\u05D5\u05E6\u05E8\u05D9\u05DD",
         collectionsAgent: "שירה - \u05E1\u05D5\u05DB\u05E0\u05EA \u05D2\u05D1\u05D9\u05D9\u05D4 AI",
-        afterHoursAgent: "\u05DE\u05D9\u05D9\u05E7\u05DC - \u05E4\u05E7\u05D9\u05D3 AI (\u05D1\u05E7\u05E8\u05D5\u05D1)",
         company: "\u05D7\u05D1\u05E8\u05D4",
         legal: "\u05DE\u05E9\u05E4\u05D8\u05D9",
         privacy: "\u05DE\u05D3\u05D9\u05E0\u05D9\u05D5\u05EA \u05E4\u05E8\u05D8\u05D9\u05D5\u05EA",

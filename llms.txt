@@ -2,14 +2,16 @@
 
 > Seenn is an AI accounts-receivable agent for small and mid-sized businesses. Its AI coworker, Shira, contacts overdue clients by phone, WhatsApp, and email, follows your payment rules, handles disputes, records outcomes, and gets you paid faster — without adding staff. Serving the United States and Israel. Hebrew site at /he/.
 
-Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started takes minutes: export your receivables from any ERP or accounting system, connect a phone/WhatsApp number, set your collection rules and escalation timing, and Shira starts contacting overdue clients automatically. Every interaction is logged to your dashboard.
+Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started takes minutes: connect your accounting system (ready-made integrations with Priority, SAP, Hashavshevet and iCount/Rivhit; Oracle, Microsoft Dynamics, QuickBooks, Xero and others connected on request; custom integrations or API for enterprise) or upload an Excel export from any system, connect a phone/WhatsApp number, set your collection rules and escalation timing, and Shira starts contacting overdue clients automatically. Every interaction is logged to your dashboard.
 
 ## Product
 - [Seenn — AI Accounts Receivable Agent (home)](https://www.seenn.ai/): what Seenn is and how the AI agent Shira collects overdue invoices automatically
 - [AI Collections Software](https://www.seenn.ai/collection-software.html): how Seenn's AI collections software collects overdue invoices — phone calls first, then WhatsApp and email, plus dispute handling from your accounting system
 - [WhatsApp Payment Reminders](https://www.seenn.ai/whatsapp-reminders.html): WhatsApp payment reminders that collect, not just remind — backed by real phone calls
+- [Accounting & ERP Integrations](https://www.seenn.ai/integrations.html): the three ways to connect — ready-made integrations, integrations on request (Oracle, Microsoft Dynamics, QuickBooks, Xero and more), or Excel upload from any system
 - [תוכנת גבייה אוטומטית — AI Collections Software (Hebrew)](https://www.seenn.ai/he/collection-software.html): Hebrew collections-software landing page
 - [תזכורת תשלום בוואטסאפ — WhatsApp Payment Reminders (Hebrew)](https://www.seenn.ai/he/whatsapp-reminders.html): Hebrew WhatsApp payment-reminders landing page
+- [אינטגרציה לחשבשבת, פריוריטי, SAP וריווחית — Integrations (Hebrew)](https://www.seenn.ai/he/integrations.html): Hebrew integrations page
 - [About Seenn](https://www.seenn.ai/about.html): the company and why we built an AI collections agent
 - [Contact / Request a Demo](https://www.seenn.ai/contact.html): reach the team or book a demo
 - Pricing: custom plans built around your receivables volume — request a demo from any page
@@ -39,8 +41,10 @@ Seenn is an approved Meta Tech Provider for WhatsApp Business. Getting started t
 - Product: AI accounts-receivable / collections agent (the AI agent is named Shira)
 - Channels: three — phone (natural voice), WhatsApp, email
 - WhatsApp: official WhatsApp Business API — Seenn is an approved Meta Tech Provider, so messages come from a verified business number. Every reminder carries a payment link for the client's exact outstanding balance, and Shira reads and answers incoming replies.
-- Capabilities: automated reminders, payment links, dispute handling, outcome logging, custom escalation rules
-- Integrations: connects with ERP and accounting systems (e.g. Priority, SAP, Hashavshevet)
+- Capabilities: automated reminders, payment links, dispute handling, outcome logging, custom escalation rules, AR aging and collections reporting
+- AR data and reporting: dashboard with total receivables and overdue amounts, aging by day ranges or by month (matching each customer’s own data), amounts falling due in the coming months, collections by month, refusals flagged, and every call, message, promise to pay and dispute logged
+- Learning: Shira learns each client’s own customers’ payment behavior to collect better for that client only; the data is never shared or used for anyone else
+- Integrations: ready-made integrations with Priority, SAP, Hashavshevet and iCount/Rivhit; Oracle (NetSuite, Fusion Cloud ERP), Microsoft Dynamics 365, Sage, Odoo, QuickBooks, Xero and others connected on request; Excel upload from any system; custom integrations and API for enterprise
 - Markets: United States, Israel
 - Languages: English (https://www.seenn.ai/), Hebrew (https://www.seenn.ai/he/)
-- Contact: hello@seenn.ai
+- Contact: hello@seenn.ai · phone and WhatsApp (Israel): +972-55-931-1784
