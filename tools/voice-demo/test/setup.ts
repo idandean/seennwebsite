@@ -8,8 +8,11 @@
  * is about keeping the test output readable, not about hiding a failure: the
  * `does not log the token` test still asserts on real console output.
  */
-Object.defineProperty(HTMLMediaElement.prototype, 'play', {
-  configurable: true,
-  writable: true,
-  value: () => Promise.resolve(),
-});
+// Suites that opt into `@vitest-environment node` have no DOM at all.
+if (typeof HTMLMediaElement !== 'undefined') {
+  Object.defineProperty(HTMLMediaElement.prototype, 'play', {
+    configurable: true,
+    writable: true,
+    value: () => Promise.resolve(),
+  });
+}

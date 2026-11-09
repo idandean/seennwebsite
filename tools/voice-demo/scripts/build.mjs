@@ -75,7 +75,41 @@ const apiResult = await build({
   metafile: true,
 });
 
+// Markdown content negotiation for AI agents. Same shape as the function
+// above: ESM and .mjs. `vercel build` runs both as Node.js functions, so its
+// default export takes Node's (req, res) as well as a Web Request. It is not
+// part of the voice demo; it lives in this toolchain because this is the
+// repository's only build-and-test setup.
+const agentBanner = `/**
+ * GENERATED FILE — DO NOT EDIT.
+ *
+ * Built from tools/voice-demo/src/api/agent-markdown.ts by
+ * tools/voice-demo/scripts/build.mjs. Edit the TypeScript source and re-run
+ * \`npm run build\` in tools/voice-demo.
+ *
+ * vercel.json sends a request here only when its Accept header names
+ * text/markdown. The Markdown itself is the static /index.md and
+ * /developers.md, fetched at request time, so editing those needs no rebuild.
+ */`;
+const agentOutfile = path.resolve(root, '../../api/agent-markdown.mjs');
+const agentResult = await build({
+  entryPoints: [path.resolve(root, 'src/api/agent-markdown.ts')],
+  outfile: agentOutfile,
+  bundle: true,
+  format: 'esm',
+  target: ['es2022'],
+  platform: 'neutral',
+  minify: false,
+  sourcemap: false,
+  legalComments: 'none',
+  banner: { js: agentBanner },
+  logLevel: 'info',
+  metafile: true,
+});
+
 const bytes = Object.values(result.metafile.outputs)[0]?.bytes ?? 0;
 const apiBytes = Object.values(apiResult.metafile.outputs)[0]?.bytes ?? 0;
+const agentBytes = Object.values(agentResult.metafile.outputs)[0]?.bytes ?? 0;
 console.log(`voice-demo: ${(bytes / 1024).toFixed(1)} kB → js/voice-demo.js`);
 console.log(`voice-demo-language: ${(apiBytes / 1024).toFixed(1)} kB → api/voice-demo-language.mjs`);
+console.log(`agent-markdown: ${(agentBytes / 1024).toFixed(1)} kB → api/agent-markdown.mjs`);

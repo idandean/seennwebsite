@@ -15,5 +15,52 @@
       "destination": "https://www.seenn.ai/:path*",
       "permanent": true
     }
+  ],
+  "routes": [
+    {
+      "src": "^/$",
+      "has": [{ "type": "header", "key": "accept", "value": ".*[Tt][Ee][Xx][Tt]/[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn].*" }],
+      "dest": "/api/agent-markdown?seenn_page=home"
+    },
+    {
+      "src": "^/developers\\.html$",
+      "has": [{ "type": "header", "key": "accept", "value": ".*[Tt][Ee][Xx][Tt]/[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn].*" }],
+      "dest": "/api/agent-markdown?seenn_page=developers"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "header", "key": "accept", "value": ".*[Tt][Ee][Xx][Tt]/[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn].*" }],
+      "destination": "/api/agent-markdown?seenn_missing=1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/",
+      "headers": [{ "key": "Vary", "value": "Accept" }]
+    },
+    {
+      "source": "/",
+      "missing": [{ "type": "header", "key": "accept", "value": ".*[Tt][Ee][Xx][Tt]/[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn].*" }],
+      "headers": [{ "key": "Link", "value": "</index.md>; rel=\"alternate\"; type=\"text/markdown\"" }]
+    },
+    {
+      "source": "/developers.html",
+      "headers": [{ "key": "Vary", "value": "Accept" }]
+    },
+    {
+      "source": "/developers.html",
+      "missing": [{ "type": "header", "key": "accept", "value": ".*[Tt][Ee][Xx][Tt]/[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn].*" }],
+      "headers": [{ "key": "Link", "value": "</developers.md>; rel=\"alternate\"; type=\"text/markdown\"" }]
+    },
+    {
+      "source": "/index.md",
+      "headers": [{ "key": "Link", "value": "<https://www.seenn.ai/>; rel=\"canonical\"" }]
+    },
+    {
+      "source": "/developers.md",
+      "headers": [{ "key": "Link", "value": "<https://www.seenn.ai/developers.html>; rel=\"canonical\"" }]
+    }
   ]
 }

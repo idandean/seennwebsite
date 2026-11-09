@@ -5,7 +5,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.seenn.ai/</loc>
-    <lastmod>2026-10-27</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
+    <lastmod>2026-11-09</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/" />
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/" />
     <changefreq>weekly</changefreq>
@@ -93,6 +93,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/integrations.html" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- Developers & API (English only) -->
+  <url>
+    <loc>https://www.seenn.ai/developers.html</loc>
+    <lastmod>2026-11-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.seenn.ai/developers.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/developers.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <!-- About -->
