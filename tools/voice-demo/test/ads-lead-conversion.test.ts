@@ -31,8 +31,11 @@ const SEND_TO = 'AW-18397476304/ifXfCJvI-OMcENDrzMRE';
 
 interface LeadToken {
   form: string;
+  id: string;
   reported: boolean;
 }
+
+type Host = { gtag?: unknown; oaiq?: unknown };
 
 interface SeennLeads {
   SEND_TO: string;
@@ -46,7 +49,7 @@ interface SeennLeads {
  * drag in the page's DOM, so only the self-contained assignment is lifted —
  * verbatim, which is the point: a change to it changes these tests' subject.
  */
-function loadSeennLeads(host: { gtag?: unknown }): SeennLeads {
+function loadSeennLeads(host: Host): SeennLeads {
   const match = SCRIPT_JS.match(/window\.SeennLeads\s*=\s*\(function \(\)\s*\{[\s\S]*?\n\}\)\(\);/);
   if (!match) throw new Error('no window.SeennLeads assignment found in js/script.js');
   const factory = Function('window', `"use strict"; ${match[0]} return window.SeennLeads;`);
@@ -71,7 +74,7 @@ function contactSuccessBranch(html: string): string {
 }
 
 describe('SeennLeads helper', () => {
-  let host: { gtag?: unknown };
+  let host: Host;
   let leads: SeennLeads;
   let gtag: ReturnType<typeof vi.fn>;
 
@@ -141,6 +144,92 @@ describe('SeennLeads helper', () => {
   it('stays silent, and does not throw, when gtag is blocked or absent', () => {
     delete host.gtag;
     expect(() => leads.reportConversion(leads.begin('contact'))).not.toThrow();
+  });
+});
+
+describe('ChatGPT ads lead (OpenAI Measurement Pixel)', () => {
+  let host: Host;
+  let leads: SeennLeads;
+  let gtag: ReturnType<typeof vi.fn>;
+  let oaiq: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    gtag = vi.fn();
+    oaiq = vi.fn();
+    host = { gtag, oaiq };
+    leads = loadSeennLeads(host);
+  });
+
+  it('sends one lead_created per confirmed lead, keyed by that lead', () => {
+    const token = leads.begin('demo');
+    leads.reportConversion(token);
+    leads.reportConversion(token);
+
+    expect(oaiq).toHaveBeenCalledTimes(1);
+    expect(oaiq).toHaveBeenCalledWith(
+      'measure',
+      'lead_created',
+      { type: 'customer_action' },
+      { event_id: token?.id },
+    );
+  });
+
+  it('gives every lead its own event_id, so OpenAI never folds two leads into one', () => {
+    const first = leads.begin('contact');
+    leads.reportConversion(first);
+    leads.end(first);
+    const second = leads.begin('contact');
+    leads.reportConversion(second);
+
+    const ids = oaiq.mock.calls.map((call) => (call[3] as { event_id: string }).event_id);
+    expect(ids).toHaveLength(2);
+    expect(ids[0]).toMatch(/^contact-/);
+    expect(ids[0]).not.toBe(ids[1]);
+  });
+
+  it('still reports the lead to ChatGPT when the Google tag is blocked', () => {
+    delete host.gtag;
+    leads.reportConversion(leads.begin('demo'));
+    expect(oaiq).toHaveBeenCalledTimes(1);
+  });
+
+  it('still reports to Google, and does not throw, when the pixel throws', () => {
+    host.oaiq = () => {
+      throw new Error('pixel exploded');
+    };
+    let sent = false;
+    expect(() => {
+      sent = leads.reportConversion(leads.begin('demo'));
+    }).not.toThrow();
+    expect(sent).toBe(true);
+    expect(gtag).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends nothing without a token, and stays quiet when the pixel is absent', () => {
+    expect(leads.reportConversion(null)).toBe(false);
+    expect(oaiq).not.toHaveBeenCalled();
+
+    delete host.oaiq;
+    expect(() => leads.reportConversion(leads.begin('contact'))).not.toThrow();
+  });
+
+  it('measures lead_created in the shared helper and nowhere else', () => {
+    const helper = SCRIPT_JS.match(
+      /window\.SeennLeads\s*=\s*\(function \(\)\s*\{[\s\S]*?\n\}\)\(\);/,
+    );
+    expect(SCRIPT_JS.match(/'lead_created'/g)).toHaveLength(1);
+    expect(helper?.[0]).toContain("'lead_created'");
+    expect(CONTACT_EN).not.toContain('lead_created');
+    expect(CONTACT_HE).not.toContain('lead_created');
+  });
+
+  it('loads the pixel SDK from OpenAI once, from js/script.js only', () => {
+    expect(SCRIPT_JS.match(/bzrcdn\.openai\.com\/sdk\/oaiq\.min\.js/g)).toHaveLength(1);
+    // The Pixel ID Ads Manager issued for www.seenn.ai.
+    expect(SCRIPT_JS).toContain("var OPENAI_PIXEL_ID = 'Xe92xhf6SHebGah2EKoQdk';");
+    for (const page of ['index.html', 'he/index.html', 'contact.html', 'he/contact.html']) {
+      expect(read(page)).not.toContain('oaiq.min.js');
+    }
   });
 });
 

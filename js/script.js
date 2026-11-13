@@ -1,3 +1,40 @@
+/* =========================================================================
+   ChatGPT ads: the OpenAI Measurement Pixel.
+   https://developers.openai.com/ads/measurement-pixel
+
+   This file is loaded synchronously near the top of every page's <head>,
+   which is where OpenAI asks for the snippet. Once loaded, the SDK takes the
+   `oppref` click ID off a ChatGPT ad's landing URL and keeps it in a
+   first-party __oppref cookie (30 days), so a lead sent from a later page is
+   still credited to the ad. The lead itself is reported by
+   SeennLeads.reportConversion() further down.
+
+   OPENAI_PIXEL_ID comes from Ads Manager -> Conversions -> Data Source.
+   Add ?oaiq_debug=1 to any page URL to log the Pixel's activity in the
+   browser console; ordinary visitors never get debug logging.
+   ========================================================================= */
+(function () {
+    var OPENAI_PIXEL_ID = 'Xe92xhf6SHebGah2EKoQdk';
+
+    (function (w, d, s, u) {
+        if (w.oaiq) return;
+        var q = function () {
+            q.q.push(arguments);
+        };
+        q.q = [];
+        w.oaiq = q;
+        var js = d.createElement(s);
+        js.async = true;
+        js.src = u;
+        var f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(js, f);
+    })(window, document, 'script', 'https://bzrcdn.openai.com/sdk/oaiq.min.js');
+
+    var config = { pixelId: OPENAI_PIXEL_ID };
+    if (/[?&]oaiq_debug=1(&|$)/.test(window.location.search)) config.debug = true;
+    window.oaiq('init', config);
+})();
+
 tailwind.config = {
     darkMode: "class",
     theme: {
@@ -734,12 +771,14 @@ function closeDemoModal() {
 }
 
 /* =========================================================================
-   Lead forms: submission bookkeeping + the Google Ads conversion.
+   Lead forms: submission bookkeeping + the Google Ads and ChatGPT ads
+   conversions.
 
    Every lead form on the site (the demo modal below, plus the contact forms
    in contact.html and he/contact.html) funnels through here so that one
    successfully created lead reports exactly one "Submit lead form"
-   conversion to Google Ads.
+   conversion to Google Ads and exactly one lead_created event to ChatGPT ads
+   (the OpenAI Measurement Pixel loaded at the top of this file).
 
    begin() hands back a token and refuses a second token while a request for
    the same form is still on the wire, so a double click — or an Enter press
@@ -760,18 +799,38 @@ window.SeennLeads = (function () {
     function begin(formName) {
         if (inFlight[formName]) return null;
         inFlight[formName] = true;
-        return { form: formName, reported: false };
+        return {
+            form: formName,
+            // One per lead. ChatGPT ads keeps the first event it receives with
+            // a given event_id and drops repeats; a server-side copy of the
+            // same lead would reuse this id to be deduplicated against it.
+            id: formName + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10),
+            reported: false,
+        };
     }
 
     function end(token) {
         if (token) inFlight[token.form] = false;
     }
 
+    // lead_created is OpenAI's standard event for "a user submits a lead form
+    // or requests contact". It does not depend on the Google tag, and it is
+    // never allowed to throw into a form's success path.
+    function reportChatGptLead(token) {
+        if (typeof window.oaiq !== 'function') return;
+        try {
+            window.oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: token.id });
+        } catch (e) {
+            // Measurement must never cost the visitor their thank-you message.
+        }
+    }
+
     // Fires only on a confirmed successful submission. Returns whether the
-    // conversion actually went out, which the tests assert on.
+    // Google Ads conversion actually went out, which the tests assert on.
     function reportConversion(token) {
         if (!token || token.reported) return false;
         token.reported = true;
+        reportChatGptLead(token);
         if (typeof window.gtag !== 'function') return false;
         window.gtag('event', 'conversion', {
             send_to: SEND_TO,
