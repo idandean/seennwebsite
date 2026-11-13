@@ -1117,7 +1117,7 @@ document.querySelectorAll('.faq-toggle').forEach(function(btn) {
 
 <!-- Demo Modal -->
 <div id="demoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 9999; overflow-y: auto;">
-<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem;" onclick="event.target === this && closeDemoModal()">
+<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem;" onmousedown="demoBackdropMouseDown(event)" onclick="demoBackdropClick(event)">
 <div style="background-color: rgba(245, 240, 232, 0.98); border-radius: 1rem; padding: 2.5rem; max-width: 500px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
 <button onclick="closeDemoModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #333; font-family: 'Montserrat', sans-serif;">&times;</button>
 <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: #111; font-family: 'Montserrat', sans-serif;" data-i18n="bookDemo">Book a Demo</h2>

@@ -770,6 +770,23 @@ function closeDemoModal() {
     document.body.style.overflow = 'auto'; // Restore scrolling
 }
 
+// Clicking the dark backdrop around the card closes the modal, but only when
+// the press also started on the backdrop. Selecting text in a field and
+// letting go outside the card fires the click on the backdrop as well, which
+// used to close the modal and throw away the half-filled form. (mousedown
+// also fires for a tap on touch screens, just before its click.)
+var demoBackdropPressed = false;
+
+function demoBackdropMouseDown(event) {
+    demoBackdropPressed = event.target === event.currentTarget;
+}
+
+function demoBackdropClick(event) {
+    var close = demoBackdropPressed && event.target === event.currentTarget;
+    demoBackdropPressed = false;
+    if (close) closeDemoModal();
+}
+
 /* =========================================================================
    Lead forms: submission bookkeeping + the Google Ads and ChatGPT ads
    conversions.
