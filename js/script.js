@@ -860,6 +860,169 @@ window.SeennLeads = (function () {
     return { SEND_TO: SEND_TO, begin: begin, end: end, reportConversion: reportConversion };
 })();
 
+/* =========================================================================
+   Lead source: where each lead came from, written into the lead email.
+
+   Web3Forms emails only what is in the form, so on its own a lead arrives
+   with no hint of whether it came from a ChatGPT ad, a Google search or a
+   bookmark. On every page load this notes how the visit arrived, but only
+   when it arrived from outside the site (a tagged link, or another site's
+   referrer). Clicks between our own pages and plain direct visits leave the
+   last outside arrival in place, for up to 30 days. Each lead form adds
+   fields() to its submission just before sending.
+
+   "ChatGPT ad click" is a yes when the visitor landed from a ChatGPT ad in
+   the last 30 days: either this code saw ChatGPT's `oppref` click ID (or our
+   utm_source=chatgpt&utm_medium=cpc tracking parameters) on a landing URL,
+   or the OpenAI Pixel's own __oppref cookie is present. The click ID's value
+   is never put in the email.
+
+   Everything is wrapped so that a blocked or full localStorage can never
+   cost the visitor their submission.
+   ========================================================================= */
+window.SeennLeadSource = (function (window) {
+    var STORE_KEY = 'seenn_lead_source';
+    var MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+    var TAGS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'oppref'];
+
+    function bareHost(url) {
+        try {
+            return new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function isChatGptAdTag(source, medium) {
+        return /chatgpt/i.test(source) && /^(cpc|paid)$/i.test(medium);
+    }
+
+    function fresh(at, now) {
+        return typeof at === 'number' && now - at >= 0 && now - at < MAX_AGE_MS;
+    }
+
+    function load(now) {
+        var saved = {};
+        try {
+            saved = JSON.parse(window.localStorage.getItem(STORE_KEY)) || {};
+        } catch (e) {
+            saved = {};
+        }
+        return {
+            visit: saved.visit && fresh(saved.visit.at, now) ? saved.visit : null,
+            adClickAt: fresh(saved.adClickAt, now) ? saved.adClickAt : null,
+        };
+    }
+
+    function save(state) {
+        try {
+            window.localStorage.setItem(STORE_KEY, JSON.stringify(state));
+        } catch (e) {
+            // Private mode or blocked storage: this page still knows its own arrival.
+        }
+    }
+
+    // How this page load arrived, or null for a click within the site or a
+    // direct visit (typed address, bookmark, or a link that sent no referrer).
+    function arrival(now) {
+        var loc = window.location;
+        var params = new URLSearchParams(loc.search || '');
+        var tagged = TAGS.some(function (tag) { return params.has(tag); });
+        var referrer = (window.document && window.document.referrer) || '';
+        var fromHost = bareHost(referrer);
+        var fromOutside = fromHost !== '' && fromHost !== bareHost(loc.href);
+        if (!tagged && !fromOutside) return null;
+
+        var source = params.get('utm_source') || '';
+        var medium = params.get('utm_medium') || '';
+        var adClick = !!params.get('oppref') || isChatGptAdTag(source, medium);
+        params.delete('oppref');
+        var query = params.toString();
+
+        return {
+            at: now,
+            landing: (loc.pathname + (query ? '?' + query : '')).slice(0, 300),
+            referrer: referrer.replace(/^https?:\/\//, '').slice(0, 200),
+            source: source.slice(0, 100),
+            medium: medium.slice(0, 100),
+            gclid: params.has('gclid'),
+            adClick: adClick,
+        };
+    }
+
+    var state = load(Date.now());
+    try {
+        var visit = arrival(Date.now());
+        if (visit) {
+            state.visit = visit;
+            if (visit.adClick) state.adClickAt = visit.at;
+            save(state);
+        }
+    } catch (e) {
+        // Never let bookkeeping break the page.
+    }
+
+    function when(at) {
+        var date = new Date(at);
+        try {
+            return date.toLocaleString('en-GB', {
+                timeZone: 'Asia/Jerusalem',
+                day: 'numeric', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit',
+            }) + ' Israel time';
+        } catch (e) {
+            return date.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+        }
+    }
+
+    function pixelSawAdClick() {
+        try {
+            return /(?:^|;\s*)__oppref=[^;]/.test(window.document.cookie || '');
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function describe(visit) {
+        if (!visit) return 'Direct visit or unknown';
+        if (visit.adClick) return 'ChatGPT ad';
+        if (visit.gclid) return 'Google ad';
+        if (visit.source) return visit.source + (visit.medium ? ' / ' + visit.medium : '');
+        var host = bareHost('https://' + visit.referrer);
+        return host ? 'From ' + host : 'Tagged link, source not named';
+    }
+
+    // Field name -> value, as they should read in the lead email.
+    function fields() {
+        var visit = state.visit;
+        var adClick = 'No';
+        if (state.adClickAt) adClick = 'Yes, ' + when(state.adClickAt);
+        else if (pixelSawAdClick()) adClick = 'Yes';
+
+        return {
+            'Lead source': describe(visit),
+            'ChatGPT ad click': adClick,
+            'Landing page': visit ? visit.landing + ' (' + when(visit.at) + ')' : '(not recorded)',
+            'Referring site': (visit && visit.referrer) || '(none)',
+            'Form page': (window.location && window.location.pathname) || '',
+        };
+    }
+
+    // Adds the fields to a lead form's FormData just before it is sent.
+    function addTo(formData) {
+        try {
+            var values = fields();
+            Object.keys(values).forEach(function (name) {
+                formData.set(name, values[name]);
+            });
+        } catch (e) {
+            // The lead matters more than knowing where it came from.
+        }
+    }
+
+    return { fields: fields, addTo: addTo };
+})(window);
+
 // Handle Demo Form Submission
 async function handleDemoSubmit(event) {
     event.preventDefault();
@@ -881,6 +1044,8 @@ async function handleDemoSubmit(event) {
 
     try {
         const formData = new FormData(form);
+        // Where the visitor came from, so the lead email says so.
+        if (window.SeennLeadSource) window.SeennLeadSource.addTo(formData);
         const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
             body: formData

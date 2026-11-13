@@ -221,6 +221,8 @@ form.addEventListener('submit', function(e) {
   if (leads && !lead) return;
 
   const formData = new FormData(form);
+  // Where the visitor came from, so the lead email says so.
+  if (window.SeennLeadSource) window.SeennLeadSource.addTo(formData);
   const object = Object.fromEntries(formData);
   const json = JSON.stringify(object);
 
