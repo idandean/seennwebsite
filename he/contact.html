@@ -150,6 +150,8 @@
 שליחת הודעה
 </button>
 </div>
+
+<div id="contactFormMessage" role="status" aria-live="polite" style="display: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-family: 'Montserrat', sans-serif;"></div>
 </div>
 </form>
 
@@ -210,9 +212,23 @@
 
 <script>
 const form = document.getElementById('contactForm');
+const messageBox = document.getElementById('contactFormMessage');
+
+// The result is shown on the page instead of in an alert(): an alert froze
+// the page, so the ChatGPT ads Pixel could not send the lead until the
+// visitor clicked OK.
+function showContactMessage(ok, text) {
+  messageBox.textContent = text;
+  messageBox.style.backgroundColor = ok ? '#d4edda' : '#f8d7da';
+  messageBox.style.color = ok ? '#155724' : '#721c24';
+  messageBox.style.border = '1px solid ' + (ok ? '#c3e6cb' : '#f5c6cb');
+  messageBox.style.display = 'block';
+  messageBox.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
 
 form.addEventListener('submit', function(e) {
   e.preventDefault();
+  messageBox.style.display = 'none';
 
   // One submission at a time; the token also carries the one-shot guard for
   // the Google Ads conversion fired on success below.
@@ -240,26 +256,29 @@ form.addEventListener('submit', function(e) {
       body: json
   })
   .then(async (response) => {
-      let json = await response.json();
-      if (response.status == 200) {
+      const result = await response.json().catch(() => null);
+      // Only Web3Forms' own {"success": true} means the message was
+      // delivered; an HTTP 200 without it is not a lead.
+      if (response.ok && result && result.success === true) {
           if (typeof gtag === 'function') {
               gtag('event', 'generate_lead', {
                   form: 'contact',
                   language: (document.documentElement.lang || 'en')
               });
           }
-          // ...and the same confirmed lead as a Google Ads conversion.
-          if (leads) leads.reportConversion(lead);
-          alert("✅ תודה! ההודעה נשלחה בהצלחה. נחזור אליכם בקרוב!");
+          // ...and the same confirmed lead as a Google Ads conversion and a
+          // ChatGPT ads lead, with the submitted values for matching.
+          if (leads) leads.reportConversion(lead, object);
+          showContactMessage(true, "✅ תודה! ההודעה נשלחה בהצלחה. נחזור אליכם בקרוב!");
           form.reset();
       } else {
           console.log(response);
-          alert("❌ משהו השתבש. אנא נסו שוב או פנו אלינו ישירות במייל hello@seenn.ai");
+          showContactMessage(false, "❌ משהו השתבש. אנא נסו שוב או פנו אלינו ישירות במייל hello@seenn.ai");
       }
   })
   .catch(error => {
       console.log(error);
-      alert("❌ משהו השתבש. אנא נסו שוב או פנו אלינו ישירות במייל hello@seenn.ai");
+      showContactMessage(false, "❌ משהו השתבש. אנא נסו שוב או פנו אלינו ישירות במייל hello@seenn.ai");
   })
   .then(function() {
       button.textContent = "שליחת הודעה";

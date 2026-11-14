@@ -15,6 +15,7 @@
  * everything, so that is asserted too.
  */
 
+import { createHash, webcrypto } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -35,13 +36,13 @@ interface LeadToken {
   reported: boolean;
 }
 
-type Host = { gtag?: unknown; oaiq?: unknown };
+type Host = { gtag?: unknown; oaiq?: unknown; crypto?: unknown };
 
 interface SeennLeads {
   SEND_TO: string;
   begin(formName: string): LeadToken | null;
   end(token: LeadToken | null): void;
-  reportConversion(token: LeadToken | null): boolean;
+  reportConversion(token: LeadToken | null, fields?: Record<string, string>): boolean;
 }
 
 /**
@@ -65,9 +66,9 @@ function demoSuccessBranch(): string {
   return handler.slice(start, end);
 }
 
-/** The body of the `if (response.status == 200) { ... }` branch of a contact page. */
+/** The body of the confirmed-success branch of a contact page. */
 function contactSuccessBranch(html: string): string {
-  const start = html.indexOf('if (response.status == 200) {');
+  const start = html.indexOf('if (response.ok && result && result.success === true) {');
   const end = html.indexOf('\n      } else {', start);
   if (start < 0 || end < 0) throw new Error('could not locate the contact success branch');
   return html.slice(start, end);
@@ -233,6 +234,123 @@ describe('ChatGPT ads lead (OpenAI Measurement Pixel)', () => {
   });
 });
 
+describe('ChatGPT ads lead: hashed identifiers for matching', () => {
+  const sha = (value: string) => createHash('sha256').update(value, 'utf8').digest('hex');
+  const measured = (oaiq: ReturnType<typeof vi.fn>) =>
+    oaiq.mock.calls.filter((call) => call[0] === 'measure' && call[1] === 'lead_created');
+  const sentUser = (oaiq: ReturnType<typeof vi.fn>) =>
+    (oaiq.mock.calls.find((call) => call[0] === 'init')?.[1] as { user: Record<string, string> } | undefined)?.user;
+
+  let host: Host;
+  let leads: SeennLeads;
+  let gtag: ReturnType<typeof vi.fn>;
+  let oaiq: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    gtag = vi.fn();
+    oaiq = vi.fn();
+    host = { gtag, oaiq, crypto: webcrypto };
+    leads = loadSeennLeads(host);
+  });
+
+  async function report(fields: Record<string, string>) {
+    const token = leads.begin('demo');
+    const googleSent = leads.reportConversion(token, fields);
+    await vi.waitFor(() => expect(measured(oaiq)).toHaveLength(1));
+    return { token, googleSent };
+  }
+
+  it('sends hashed email, phone and name with the lead, init first', async () => {
+    const { token } = await report({
+      firstName: 'Mary Jane',
+      lastName: "O'Connor",
+      email: '  Dana.Levi@Example.COM ',
+      phone: '050-123-4567',
+      message: 'never hashed',
+    });
+
+    expect(oaiq.mock.calls.map((call) => call[0])).toEqual(['init', 'measure']);
+    expect(sentUser(oaiq)).toEqual({
+      email_sha256: sha('dana.levi@example.com'),
+      phone_number_sha256: sha('972501234567'),
+      first_name_sha256: sha('maryjane'),
+      last_name_sha256: sha('oconnor'),
+    });
+    expect(oaiq).toHaveBeenLastCalledWith('measure', 'lead_created', { type: 'customer_action' }, { event_id: token?.id });
+  });
+
+  it('never hands the Pixel a raw value', async () => {
+    await report({ name: 'דנה לוי', email: 'dana@example.com', phone: '+972 50-123-4567' });
+    const sent = JSON.stringify(oaiq.mock.calls);
+    expect(sent).not.toContain('dana@example.com');
+    expect(sent).not.toContain('דנה');
+    expect(sent).not.toContain('50-123');
+  });
+
+  it('splits the demo form\'s single full-name field, keeping Hebrew as typed', async () => {
+    await report({ name: '  דנה  לוי כהן ', email: 'x@example.com' });
+    expect(sentUser(oaiq)).toMatchObject({ first_name_sha256: sha('דנה'), last_name_sha256: sha('לויכהן') });
+  });
+
+  it.each([
+    ['050-123-4567', '972501234567'],
+    ['0501234567', '972501234567'],
+    ['+972 50-123-4567', '972501234567'],
+    ['00972501234567', '972501234567'],
+    ['(03) 123-4567', '97231234567'],
+    ['+1 (415) 555-2671', '14155552671'],
+  ])('normalises the phone %s the way OpenAI asks (%s)', async (typed, normalised) => {
+    await report({ email: 'x@example.com', phone: typed });
+    expect(sentUser(oaiq)?.phone_number_sha256).toBe(sha(normalised));
+  });
+
+  it.each(['12', 'call me', '+'])('drops a phone that cannot be a real number (%s) and keeps the rest', async (typed) => {
+    await report({ email: 'x@example.com', phone: typed });
+    expect(sentUser(oaiq)).toEqual({ email_sha256: sha('x@example.com') });
+  });
+
+  it('sends the lead without init when nothing usable was typed', async () => {
+    await report({ email: '   ', phone: '', name: '' });
+    expect(oaiq.mock.calls.map((call) => call[0])).toEqual(['measure']);
+  });
+
+  it('keeps the Google Ads conversion immediate while the hashing runs', async () => {
+    const { googleSent } = await report({ email: 'x@example.com' });
+    expect(googleSent).toBe(true);
+    expect(gtag).toHaveBeenCalledTimes(1);
+  });
+
+  it('still sends the lead, once, when init throws', async () => {
+    host.oaiq = vi.fn((command: string) => {
+      if (command === 'init') throw new Error('bad user data');
+    });
+    oaiq = host.oaiq as ReturnType<typeof vi.fn>;
+    await report({ email: 'x@example.com' });
+    expect(measured(oaiq)).toHaveLength(1);
+  });
+
+  it('falls back to a plain lead, sent at once, without Web Crypto', () => {
+    delete host.crypto;
+    leads.reportConversion(leads.begin('demo'), { email: 'x@example.com' });
+    expect(oaiq.mock.calls.map((call) => call[0])).toEqual(['measure']);
+  });
+
+  it('falls back to a plain lead when hashing fails', async () => {
+    host.crypto = { subtle: { digest: () => Promise.reject(new Error('no digest')) } };
+    await report({ email: 'x@example.com' });
+    expect(oaiq.mock.calls.map((call) => call[0])).toEqual(['measure']);
+  });
+
+  it('reports one lead per submission even with fields', async () => {
+    const token = leads.begin('contact');
+    leads.reportConversion(token, { email: 'x@example.com' });
+    leads.reportConversion(token, { email: 'x@example.com' });
+    await vi.waitFor(() => expect(measured(oaiq)).toHaveLength(1));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(measured(oaiq)).toHaveLength(1);
+  });
+});
+
 describe('lead form submit handlers', () => {
   const BRANCHES: ReadonlyArray<readonly [string, () => string]> = [
     ['demo modal (js/script.js)', demoSuccessBranch],
@@ -241,7 +359,13 @@ describe('lead form submit handlers', () => {
   ];
 
   it.each(BRANCHES)('%s reports the conversion on success', (_name, branch) => {
-    expect(branch()).toMatch(/reportConversion\(lead\)/);
+    expect(branch()).toMatch(/reportConversion\(lead\b/);
+  });
+
+  it.each(BRANCHES)('%s hands the submitted values over for ChatGPT ads matching', (_name, branch) => {
+    // The values must come from the submitted data, not the form fields,
+    // which are cleared by form.reset() right after.
+    expect(branch()).toMatch(/reportConversion\(lead, (Object\.fromEntries\(formData\)|object)\)/);
   });
 
   it.each(BRANCHES)('%s still emits the GA4 generate_lead event', (_name, branch) => {
@@ -262,7 +386,18 @@ describe('lead form submit handlers', () => {
   it.each(SOURCES)('%s reports the conversion nowhere else', (_name, source) => {
     // One call site per file: the success branch. Nothing on load, on click,
     // on a validation failure, or in an error handler.
-    expect(source.match(/reportConversion\(lead\)/g)).toHaveLength(1);
+    expect(source.match(/reportConversion\(lead\b/g)).toHaveLength(1);
+  });
+
+  it.each([
+    ['contact.html', CONTACT_EN],
+    ['he/contact.html', CONTACT_HE],
+  ])('%s counts a lead only when Web3Forms says success, and shows the result without alert()', (_name, html) => {
+    expect(html).not.toContain('response.status == 200');
+    expect(html).toContain('if (response.ok && result && result.success === true) {');
+    const handler = html.slice(html.indexOf("form.addEventListener('submit'"));
+    expect(handler).not.toMatch(/\balert\(/);
+    expect(html).toContain('id="contactFormMessage"');
   });
 
   it('routes every conversion through the shared helper', () => {

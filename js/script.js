@@ -830,24 +830,114 @@ window.SeennLeads = (function () {
         if (token) inFlight[token.form] = false;
     }
 
+    /* ---- Hashed identifiers for ChatGPT ads matching ----------------------
+       OpenAI matches a lead to an ad by the oppref click ID and, when that is
+       missing or not enough, by SHA-256 hashes of the lead's email, phone and
+       name ("Send user data" in the Measurement Pixel docs). The Pixel's own
+       automatic matching reads the form fields only when it sends its batch,
+       about a second after lead_created, and the forms are cleared before
+       then. So the values are taken from the submitted form data here, hashed
+       in the browser, and handed to the Pixel with oaiq('init', { user })
+       just before lead_created. Raw values never leave the page. */
+
+    function sha256Hex(value) {
+        return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then(function (buffer) {
+            return Array.from(new Uint8Array(buffer), function (b) {
+                return b.toString(16).padStart(2, '0');
+            }).join('');
+        });
+    }
+
+    // OpenAI: digits only, with the country calling code, no leading + or
+    // zeros. Israeli local numbers (050-1234567, 03-1234567) get 972 in
+    // place of their leading 0. Anything else that isn't 8-15 digits is dropped.
+    function normalizePhone(raw) {
+        var digits = String(raw || '').replace(/[\s().\-]/g, '');
+        if (/^\+/.test(digits)) digits = digits.slice(1);
+        else if (/^00/.test(digits)) digits = digits.slice(2);
+        else if (/^0[2-9]\d{7,8}$/.test(digits)) digits = '972' + digits.slice(1);
+        digits = digits.replace(/^0+/, '');
+        return /^\d{8,15}$/.test(digits) ? digits : '';
+    }
+
+    // OpenAI: lowercase, no whitespace or ASCII punctuation; Hebrew and other
+    // non-ASCII letters are kept as typed.
+    function normalizeName(raw) {
+        return String(raw || '').toLowerCase().replace(/[\s!-\/:-@\[-`{-~]/g, '');
+    }
+
+    function hashedUser(fields) {
+        var first = fields.firstName;
+        var last = fields.lastName;
+        if (first === undefined && last === undefined && fields.name) {
+            // The demo form has a single full-name field.
+            var parts = String(fields.name).trim().split(/\s+/);
+            first = parts.shift();
+            last = parts.join(' ');
+        }
+        var wanted = {
+            email_sha256: String(fields.email || '').trim().toLowerCase(),
+            phone_number_sha256: normalizePhone(fields.phone),
+            first_name_sha256: normalizeName(first),
+            last_name_sha256: normalizeName(last),
+        };
+        var user = {};
+        return Promise.all(Object.keys(wanted).filter(function (key) {
+            return wanted[key] !== '';
+        }).map(function (key) {
+            return sha256Hex(wanted[key]).then(function (hash) {
+                user[key] = hash;
+            });
+        })).then(function () {
+            return user;
+        });
+    }
+
     // lead_created is OpenAI's standard event for "a user submits a lead form
     // or requests contact". It does not depend on the Google tag, and it is
-    // never allowed to throw into a form's success path.
-    function reportChatGptLead(token) {
+    // never allowed to throw into a form's success path. With the submitted
+    // fields it goes out a few milliseconds later, once they are hashed.
+    function reportChatGptLead(token, fields) {
         if (typeof window.oaiq !== 'function') return;
+
+        function send(user) {
+            if (user && Object.keys(user).length > 0) {
+                try {
+                    window.oaiq('init', { user: user });
+                } catch (e) {
+                    // Matching data is a bonus; the lead itself still goes out.
+                }
+            }
+            try {
+                window.oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: token.id });
+            } catch (e) {
+                // Measurement must never cost the visitor their thank-you message.
+            }
+        }
+
+        var canHash = !!(fields && window.crypto && window.crypto.subtle && typeof TextEncoder === 'function');
+        if (!canHash) {
+            send(null);
+            return;
+        }
         try {
-            window.oaiq('measure', 'lead_created', { type: 'customer_action' }, { event_id: token.id });
+            hashedUser(fields).then(send, function () {
+                send(null);
+            });
         } catch (e) {
-            // Measurement must never cost the visitor their thank-you message.
+            send(null);
         }
     }
 
-    // Fires only on a confirmed successful submission. Returns whether the
-    // Google Ads conversion actually went out, which the tests assert on.
-    function reportConversion(token) {
+    // Fires only on a confirmed successful submission. `fields` is the
+    // submitted form data as a plain object (name/firstName/lastName, email,
+    // phone); it is used only to build the hashed identifiers above. Returns
+    // whether the Google Ads conversion actually went out, which the tests
+    // assert on.
+    function reportConversion(token, fields) {
         if (!token || token.reported) return false;
         token.reported = true;
-        reportChatGptLead(token);
+        reportChatGptLead(token, fields);
         if (typeof window.gtag !== 'function') return false;
         window.gtag('event', 'conversion', {
             send_to: SEND_TO,
@@ -1061,8 +1151,10 @@ async function handleDemoSubmit(event) {
                     language: (document.documentElement.lang || 'en')
                 });
             }
-            // ...and the same confirmed lead as a Google Ads conversion.
-            window.SeennLeads.reportConversion(lead);
+            // ...and the same confirmed lead as a Google Ads conversion and a
+            // ChatGPT ads lead. The submitted values go along for matching,
+            // since form.reset() below empties the fields straight away.
+            window.SeennLeads.reportConversion(lead, Object.fromEntries(formData));
             // Success message (localized, English fallback)
             messageDiv.textContent = (translations[currentLang] && translations[currentLang].demoSuccess) || '🎉 Thank you! Your demo request has been received. We\'ll contact you shortly!';
             messageDiv.style.backgroundColor = '#d4edda';
