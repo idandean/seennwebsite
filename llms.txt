@@ -46,6 +46,12 @@ Key facts:
 - [תוכנת גבייה אוטומטית — AI Collections Software (Hebrew)](https://www.seenn.ai/he/collection-software.html): Hebrew collections-software landing page
 - [תזכורת תשלום בוואטסאפ — WhatsApp Payment Reminders (Hebrew)](https://www.seenn.ai/he/whatsapp-reminders.html): Hebrew WhatsApp payment-reminders landing page
 - [אינטגרציה לחשבשבת, פריוריטי, SAP וריווחית — Integrations (Hebrew)](https://www.seenn.ai/he/integrations.html): Hebrew integrations page
+- [סוכן גבייה AI — AI Collection Agent (Hebrew)](https://www.seenn.ai/he/ai-collection-agent.html): what an AI collection agent is, how Shira works across phone, WhatsApp and email, and how it compares with reminder software, a collections employee and a collection agency
+- [סוכן גבייה קולי — AI Voice Collection Agent (Hebrew)](https://www.seenn.ai/he/voice-collection-agent.html): Shira calls overdue customers in a natural voice, handles objections, sends a payment link during the call and hands off to a person when needed
+- [סוכן גבייה בוואטסאפ — WhatsApp Collection Agent (Hebrew)](https://www.seenn.ai/he/whatsapp-collection-agent.html): a two-way collection conversation on the official WhatsApp Business API: replies, invoices, account statements, receipts and payment links
+- [סוכן גבייה לפריוריטי — Priority ERP collections (Hebrew)](https://www.seenn.ai/he/priority-collection.html): ready-made Priority integration: Shira works the open balances and sends invoices, account statements and receipts from Priority
+- [סוכן גבייה ל-SAP — SAP collections (Hebrew)](https://www.seenn.ai/he/sap-collection.html): ready-made SAP integration: Shira applies your collection policy to every open account
+- [גבייה מחשבשבת — Hashavshevet collections (Hebrew)](https://www.seenn.ai/he/hashavshevet-collection.html): ready-made Hashavshevet integration for Israeli small and mid-sized businesses
 - [About Seenn](https://www.seenn.ai/about.html): the company and why we built an AI collections agent
 - [Contact / Request a Demo](https://www.seenn.ai/contact.html): reach the team or book a demo
 - [Pricing](https://www.seenn.ai/#pricing): custom plans built around your receivables volume — request a demo from any page
