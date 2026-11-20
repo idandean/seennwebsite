@@ -16,14 +16,14 @@ There are four ways in, from an Excel upload that takes minutes to a custom conn
 
 | How you connect | Systems | Best for |
 | --- | --- | --- |
-| Ready-made integration | Priority, SAP, Hashavshevet, iCount/Rivhit | Teams on these systems who want Shira to pull and send documents in the middle of a conversation |
+| Ready-made integration | Priority, SAP, Hashavshevet, iCount/Rivhit | Teams on these systems who want Jess to pull and send documents in the middle of a conversation |
 | Integration on request | Oracle NetSuite, Oracle Fusion Cloud ERP, Microsoft Dynamics 365, Sage, Odoo, QuickBooks, Xero, Morning (Green Invoice), EZcount, SUMIT and more | Teams on another system who want a direct connection |
 | Excel upload | Any system that exports to Excel | Starting today, with no connection at all |
 | Custom integration or API | In-house ERPs, several entities on different systems, custom workflows | Enterprise finance teams with specific requirements |
 
 ## What does Seenn do with the data?
 
-Seenn works your open receivables: who owes what, since when, and on which invoice. From there Shira contacts overdue clients by phone, WhatsApp and email, and keeps the record straight.
+Seenn works your open receivables: who owes what, since when, and on which invoice. From there Jess contacts overdue clients by phone, WhatsApp and email, and keeps the record straight.
 
 - With a ready-made integration, she pulls invoices, receipts and ledger cards from your system and sends them inside the conversation.
 - Every call, message, promise to pay and dispute is logged to your Seenn dashboard.
@@ -72,7 +72,7 @@ Seenn has ready-made integrations with Priority, SAP, Hashavshevet and iCount/Ri
 
 ### Can I use Seenn without an integration?
 
-Yes. Export your open receivables from any accounting or ERP system as an Excel file and upload it to Seenn. Setup takes minutes, and Shira starts working your overdue accounts by phone, WhatsApp and email.
+Yes. Export your open receivables from any accounting or ERP system as an Excel file and upload it to Seenn. Setup takes minutes, and Jess starts working your overdue accounts by phone, WhatsApp and email.
 
 ### Can AI agents read seenn.ai as Markdown?
 

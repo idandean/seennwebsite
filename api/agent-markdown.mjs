@@ -108,11 +108,11 @@ var NOT_FOUND_MARKDOWN = `# Page not found (404)
 
 There is no page at this address on seenn.ai. The link may be out of date, or the address may contain a typo.
 
-Seenn is an AI accounts-receivable agent: its agent, Shira, phones, WhatsApps and emails overdue clients and collects the payment.
+Seenn is an AI accounts-receivable agent: its agent, Jess, phones, WhatsApps and emails overdue clients and collects the payment.
 
 ## Where to go instead
 
-- [Seenn homepage](${SITE}/): what Seenn is and how Shira collects (send \`Accept: text/markdown\` for Markdown)
+- [Seenn homepage](${SITE}/): what Seenn is and how Jess collects (send \`Accept: text/markdown\` for Markdown)
 - [llms.txt](${SITE}/llms.txt): when to use Seenn, how to engage, and every key page
 - [Developer and API resources](${SITE}/developers.html): integrations, API access and machine-readable files
 - [Sitemap](${SITE}/sitemap.xml): every page on the site

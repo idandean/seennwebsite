@@ -185,8 +185,9 @@ describe('Markdown twins', () => {
 
   it.each(Object.values(PAGES).map((p) => p.markdownPath))('%s: follows the site copy rules', (mdPath) => {
     const markdown = read(mdPath.slice(1));
-    expect(markdown).toContain('Shira');
-    expect(markdown).not.toMatch(/\bJess\b/);
+    // English copy names the agent Jess; the Hebrew site calls her Shira (שירה).
+    expect(markdown).toContain('Jess');
+    expect(markdown).not.toMatch(/\bShira\b/);
     expect(markdown).not.toMatch(/receptionist|Michael/i);
     expect(markdown).not.toContain('60%');
     // The Israeli line stays off English pages until there is a US number.
@@ -269,7 +270,7 @@ describe('developer page (developers.html + developers.md)', () => {
     const text = norm(doc.body.textContent!);
     expect(text).toContain('no self-serve API key, public SDK or published endpoint reference today');
     expect(text).toContain('Seenn does not publish an MCP server, SDK or command-line tool');
-    expect(text).not.toMatch(/\bJess\b|\+972/);
+    expect(text).not.toMatch(/\bShira\b|\+972/);
   });
 });
 
@@ -355,7 +356,9 @@ describe('llms.txt (https://llmstxt.org)', () => {
   });
 
   it('keeps the positioning rules', () => {
-    expect(text).not.toMatch(/\bJess\b|receptionist|60%/i);
+    expect(text).not.toMatch(/receptionist|60%/i);
+    // One agent, two names: Jess in English, Shira (שירה) in Hebrew. Say so, so AI engines see one product.
+    expect(text).toContain('Jess (called Shira, שירה, on the Hebrew site)');
   });
 });
 

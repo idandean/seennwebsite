@@ -132,7 +132,7 @@ export interface Strings {
 }
 
 const en: Strings = {
-  heroEyebrow: 'Talk to Shira — live',
+  heroEyebrow: 'Talk to Jess — live',
   durationBadge: '~2 min',
   startButton: 'Talk to the AI Collection Agent',
   sessionMeta: '~2 min  ·  Microphone required',

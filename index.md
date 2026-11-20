@@ -1,6 +1,6 @@
 # Seenn: AI Accounts Receivable Agent
 
-> Seenn is an AI accounts-receivable agent that collects overdue invoices end to end. Its AI agent, Shira, phones overdue clients in a natural voice, follows up on WhatsApp and email, handles disputes, sends payment links and records every outcome, under your brand and your rules.
+> Seenn is an AI accounts-receivable agent that collects overdue invoices end to end. Its AI agent, Jess, phones overdue clients in a natural voice, follows up on WhatsApp and email, handles disputes, sends payment links and records every outcome, under your brand and your rules.
 
 This is the Markdown version of https://www.seenn.ai/. Hebrew site: https://www.seenn.ai/he/. When to use Seenn, and how to engage: https://www.seenn.ai/llms.txt.
 
@@ -14,7 +14,7 @@ Your AI agent calls overdue clients, follows your rules, and improves your cash 
 
 ## How does Seenn reach clients who owe you money?
 
-Seenn's AI agent, Shira, reaches every overdue client on the channels they actually answer: a natural-voice phone call, official WhatsApp Business, and email. She answers replies, closes the loop when the money lands, and decides when to make contact again. The phone call is the difference: almost no other collections tool places a real one.
+Seenn's AI agent, Jess, reaches every overdue client on the channels they actually answer: a natural-voice phone call, official WhatsApp Business, and email. She answers replies, closes the loop when the money lands, and decides when to make contact again. The phone call is the difference: almost no other collections tool places a real one.
 
 ### Phone call
 
@@ -49,13 +49,13 @@ More: [WhatsApp payment reminders](https://www.seenn.ai/whatsapp-reminders.html)
 - **Excel upload:** from any accounting or ERP system.
 - **Custom integrations and API** for enterprise teams.
 
-With a direct integration, Shira pulls and sends the documents herself: "resend the invoice" gets the invoice, "I already paid" gets the receipt or account statement, and "what do I owe?" gets an up-to-date ledger card.
+With a direct integration, Jess pulls and sends the documents herself: "resend the invoice" gets the invoice, "I already paid" gets the receipt or account statement, and "what do I owe?" gets an up-to-date ledger card.
 
 More: [Accounting and ERP integrations](https://www.seenn.ai/integrations.html) · [Developer and API resources](https://www.seenn.ai/developers.html)
 
-## Meet Shira: your AI AR agent
+## Meet Jess: your AI AR agent
 
-More than reminders: Shira calls and messages, sends payment links, handles disputes, and records every outcome, so you don't have to.
+More than reminders: Jess calls and messages, sends payment links, handles disputes, and records every outcome, so you don't have to.
 
 - **Phone reminders:** natural voice calls that follow your rules. See [AI collections software](https://www.seenn.ai/collection-software.html).
 - **WhatsApp:** a payment link for the exact balance, so clients pay in one tap. Official WhatsApp Business.
@@ -67,7 +67,7 @@ More than reminders: Shira calls and messages, sends payment links, handles disp
 
 1. **Connect in minutes.** Connect Priority, SAP, Hashavshevet or iCount/Rivhit directly, or upload an Excel export from any ERP or invoicing system. Get a dedicated phone number or use your own, with WhatsApp Business integration.
 2. **Set your payment rules.** Define your payment terms, grace periods and escalation policies. Clean and organise your client data directly in Seenn.
-3. **Shira reaches out across 3 channels.** When invoices go overdue, Shira contacts your clients by phone, WhatsApp and email, persistently but professionally.
+3. **Jess reaches out across 3 channels.** When invoices go overdue, Jess contacts your clients by phone, WhatsApp and email, persistently but professionally.
 4. **Get paid faster.** No more uncomfortable payment conversations. Focus on growing your business while Seenn handles your receivables.
 
 ## One dashboard. Full visibility. Total control.
@@ -84,7 +84,7 @@ Every call, message and payment becomes live AR data your finance team can act o
 - **What's been collected:** collections month by month, and which accounts are still open.
 - **Every outcome on record:** each call, message, promise to pay and dispute is logged.
 - **Refusals flagged:** which clients refused to pay, so you step in only where you're needed.
-- **Learns how your clients pay:** Shira learns each client's payment behaviour to collect better for you. That data stays yours and is never shared.
+- **Learns how your clients pay:** Jess learns each client's payment behaviour to collect better for you. That data stays yours and is never shared.
 
 ## Pricing
 
@@ -100,23 +100,23 @@ Every business collects differently. Tell us about your receivables volume and w
 
 ### What is Seenn?
 
-Seenn is an AI-powered accounts receivable platform that helps businesses get paid faster. The platform deploys AI agents, including Shira, your AR agent, that call overdue clients using natural-sounding voice, send reminders via WhatsApp and email, and follow your custom payment rules and escalation policies. Businesses using Seenn report up to 40% improvement in payment recovery, 40% better cash flow, and save over 10 hours a week on AR tasks.
+Seenn is an AI-powered accounts receivable platform that helps businesses get paid faster. The platform deploys AI agents, including Jess, your AR agent, that call overdue clients using natural-sounding voice, send reminders via WhatsApp and email, and follow your custom payment rules and escalation policies. Businesses using Seenn report up to 40% improvement in payment recovery, 40% better cash flow, and save over 10 hours a week on AR tasks.
 
 ### How long does it take to set up Seenn?
 
-Getting started with Seenn takes just minutes. Upload an Excel export from any ERP or accounting system and you're ready, or connect Priority, SAP, Hashavshevet or iCount/Rivhit directly in days. Oracle, Microsoft Dynamics, QuickBooks, Xero and other systems are connected on request, and enterprise teams can get a custom integration. You get a dedicated phone number, or use your own, with WhatsApp Business integration. Define your payment terms, grace periods, and escalation rules, and Shira begins working immediately.
+Getting started with Seenn takes just minutes. Upload an Excel export from any ERP or accounting system and you're ready, or connect Priority, SAP, Hashavshevet or iCount/Rivhit directly in days. Oracle, Microsoft Dynamics, QuickBooks, Xero and other systems are connected on request, and enterprise teams can get a custom integration. You get a dedicated phone number, or use your own, with WhatsApp Business integration. Define your payment terms, grace periods, and escalation rules, and Jess begins working immediately.
 
 ### How much does Seenn improve payment recovery?
 
 Businesses using Seenn see up to 40% improvement in payment recovery rates and approximately 40% better cash flow. These results come from consistent, multi-channel follow-ups: the AI agent contacts every overdue client on time, every time, across phone, WhatsApp, and email.
 
-### Who is Shira?
+### Who is Jess?
 
-Shira is Seenn's AI accounts receivable agent. She handles the entire payment reminder process, from phone calls with natural-sounding voice to WhatsApp messages and email follow-ups. Shira follows your specific payment rules, grace periods, and escalation policies, maintaining professional client relationships while ensuring timely payment recovery. She works 24/7 and handles every overdue account without manual intervention.
+Jess is Seenn's AI accounts receivable agent. She handles the entire payment reminder process, from phone calls with natural-sounding voice to WhatsApp messages and email follow-ups. Jess follows your specific payment rules, grace periods, and escalation policies, maintaining professional client relationships while ensuring timely payment recovery. She works 24/7 and handles every overdue account without manual intervention.
 
 ### What financial data and AR reports does Seenn give me?
 
-Seenn's dashboard shows your total receivables and overdue amounts, aging by day ranges or by month, matching how your data is organised, what falls due in the coming months, and what was collected each month. Every call, message, promise to pay and dispute is logged, and Shira learns each client's payment behaviour to collect better for you. That data stays yours alone.
+Seenn's dashboard shows your total receivables and overdue amounts, aging by day ranges or by month, matching how your data is organised, what falls due in the coming months, and what was collected each month. Every call, message, promise to pay and dispute is logged, and Jess learns each client's payment behaviour to collect better for you. That data stays yours alone.
 
 ### Who is Seenn best for?
 
@@ -128,7 +128,7 @@ Three: phone calls with a natural AI voice, WhatsApp messages with direct paymen
 
 ### Does Seenn send WhatsApp payment reminders?
 
-Yes. Seenn sends payment reminders over the official WhatsApp Business API (Seenn is an approved Meta Tech Provider), and every message carries a payment link for the client's exact outstanding balance. Shira also reads and answers incoming WhatsApp replies: she resolves simple disputes and sends the invoice, account statement or receipt on request.
+Yes. Seenn sends payment reminders over the official WhatsApp Business API (Seenn is an approved Meta Tech Provider), and every message carries a payment link for the client's exact outstanding balance. Jess also reads and answers incoming WhatsApp replies: she resolves simple disputes and sends the invoice, account statement or receipt on request.
 
 ### How does Seenn protect client data?
 

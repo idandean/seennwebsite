@@ -535,7 +535,7 @@
     return value === "en" || value === "he" || value === "ar";
   }
   var en = {
-    heroEyebrow: "Talk to Shira \u2014 live",
+    heroEyebrow: "Talk to Jess \u2014 live",
     durationBadge: "~2 min",
     startButton: "Talk to the AI Collection Agent",
     sessionMeta: "~2 min  \xB7  Microphone required",

@@ -73,7 +73,7 @@ const translations = {
         login: "Log in",
         getStarted: "Get Started",
         requestDemoBtn: "Request a Demo",
-        jessProduct: "Shira - AI Accounts Receivable Agent",
+        jessProduct: "Jess - AI Accounts Receivable Agent",
         jessProductDesc: "Recover overdue payments on autopilot",
 
         // Hero section
@@ -82,9 +82,9 @@ const translations = {
         startTrial: "Start Your Free Trial",
         seeDemo: "See a Demo",
 
-        // Shira section
-        sayHelloJess: "Meet Shira",
-        jessSubtitle: "More than reminders: Shira calls and messages, sends payment links, handles disputes, and records every outcome back to your system \u2014 so you don't have to.",
+        // Jess section
+        sayHelloJess: "Meet Jess",
+        jessSubtitle: "More than reminders: Jess calls and messages, sends payment links, handles disputes, and records every outcome back to your system \u2014 so you don't have to.",
         phoneReminders: "Phone reminders:",
         phoneDesc: "Natural voice calls that follow your rules.",
         whatsappSms: "WhatsApp:",
@@ -103,9 +103,9 @@ const translations = {
         chanPhoneSub: "Natural-voice calls that follow your rules",
         chanWaSub: "Payment links, and she answers replies",
         chanMailSub: "On-brand follow-up, logged to your system",
-        heroChanLabel: "Shira collects on",
+        heroChanLabel: "Jess collects on",
         chanTitle: "How does Seenn reach clients who owe you money?",
-        chanAnswer: "Seenn's AI agent, Shira, reaches every overdue client on the channels they actually answer: a natural-voice phone call, official WhatsApp Business, and email \u2014 answering replies, closing the loop when the money lands, and deciding herself when to make contact again.",
+        chanAnswer: "Seenn's AI agent, Jess, reaches every overdue client on the channels they actually answer: a natural-voice phone call, official WhatsApp Business, and email \u2014 answering replies, closing the loop when the money lands, and deciding herself when to make contact again.",
         chanFloatLabel: "Outcome",
         chanPhoneH: "A real phone call \u2014 the channel almost no competitor will make",
         chanPhone1: "She calls in a natural voice, under your brand and your rules \u2014 and handles the answers instead of leaving a voicemail.",
@@ -115,9 +115,9 @@ const translations = {
         chanPhone5: "When a call genuinely needs a person, she transfers it to you \u2014 but she is built to close it herself.",
         chanCallLabel: "Outbound call",
         chanCallStatus: "INV500000954 \u00b7 $4,830.00",
-        chanCallJess: "Shira",
+        chanCallJess: "Jess",
         chanCallClient: "Bayside Foods",
-        chanCallSaid1: "Hi, this is Shira calling from Northwind Supplies about invoice INV500000954 \u2014 $4,830.00, fourteen days past due.",
+        chanCallSaid1: "Hi, this is Jess calling from Northwind Supplies about invoice INV500000954 \u2014 $4,830.00, fourteen days past due.",
         chanCallSaid2: "I don't think we ever received that one.",
         chanCallSaid3: "No problem \u2014 I'm sending it to you on WhatsApp right now with a payment link. Can you settle it this week?",
         chanCallSaid4: "Thursday works. Send it over.",
@@ -132,7 +132,7 @@ const translations = {
         chanWaOnline: "online",
         chanToday: "Today",
         waBadge: "Official WhatsApp Business",
-        chanWaM1: "Hi Harborline Logistics \u2014 Shira here from Northwind Supplies.",
+        chanWaM1: "Hi Harborline Logistics \u2014 Jess here from Northwind Supplies.",
         chanWaM2: "Invoice INV500000967 \u00b7 $6,240.00 \u00b7 due 12 July 2026",
         chanWaM3: "It's still showing as open on our side. You can settle it here:",
         chanWaM4: "Which months does this cover?",
@@ -141,7 +141,7 @@ const translations = {
         chanWaM7: "Thank you \u2014 I've matched the transfer to INV500000967 and closed it. Receipt attached.",
         chanWaInput: "Type a message",
         chanFloatWa: "Paid \u00b7 INV500000967 closed",
-        chanWaCap: "One thread, start to finish: the reminder, the client's question, the invoice, the payment and the receipt \u2014 all handled by Shira.",
+        chanWaCap: "One thread, start to finish: the reminder, the client's question, the invoice, the payment and the receipt \u2014 all handled by Jess.",
         chanMailH: "Email: the follow-up that never forgets",
         chanMail1: "Personalised follow-ups under your brand, on the schedule and tone you set.",
         chanMail2: "She can attach what the client asked for \u2014 the invoice or a receipt \u2014 and add a payment link.",
@@ -155,10 +155,10 @@ const translations = {
         chanMailBtn: "Pay invoice",
         chanMailReplyName: "Dana Levi \u00b7 Meridian Interiors",
         chanMailReplyText: "Paid this morning by transfer \u2014 can you send a receipt?",
-        chanMailAnswered: "Shira replied and attached the receipt \u00b7 11:41",
+        chanMailAnswered: "Jess replied and attached the receipt \u00b7 11:41",
         chanMailReply: "Reply",
         chanMailForward: "Forward",
-        chanMailCap: "Sent under your own brand \u2014 and Shira reads the reply that comes back.",
+        chanMailCap: "Sent under your own brand \u2014 and Jess reads the reply that comes back.",
         chanNote: "Illustrated with example companies and invoice numbers. Seenn never publishes a real customer's name, number or payment link \u2014 every message goes out from your own business number and brand.",
 
         // How it works
@@ -168,8 +168,8 @@ const translations = {
         step0Desc: "Connect Priority, SAP, Hashavshevet or iCount/Rivhit directly, or upload an Excel export from any ERP or invoicing system. Get a dedicated phone number or use your own, with WhatsApp Business integration. No complex setup required.",
         step1Title: "Set Your Payment Rules",
         step1Desc: "Define your payment terms, grace periods, and escalation policies. Clean and organize your client data directly in Seenn \u2014 easier and faster than your ERP. All your work is saved.",
-        step2Title: "Shira Reaches Out Across 3 Channels",
-        step2Desc: "When invoices go overdue, Shira contacts your clients via phone, WhatsApp, and email. She follows up persistently but professionally \u2014 so you never have to pick up the phone yourself.",
+        step2Title: "Jess Reaches Out Across 3 Channels",
+        step2Desc: "When invoices go overdue, Jess contacts your clients via phone, WhatsApp, and email. She follows up persistently but professionally \u2014 so you never have to pick up the phone yourself.",
         step3Title: "Watch Payments Roll In",
         step3Desc: "40% more recoveries. 40% better cash flow. Zero uncomfortable conversations. That\u2019s the Seenn effect.",
         stepPayTitle: "One-Tap Payment Links Close the Loop",
@@ -180,7 +180,7 @@ const translations = {
         // Agents section
         agentsSubtitle: "AI-Powered Revenue Recovery",
         agentsTitle: "AI agents that recover payments and capture leads around the clock",
-        agentsDesc: "Shira handles accounts receivable on autopilot, from the first reminder to the recorded payment.",
+        agentsDesc: "Jess handles accounts receivable on autopilot, from the first reminder to the recorded payment.",
         specializedExperts: "Two AI agents built for revenue growth",
 
         // Meet your team
@@ -361,7 +361,7 @@ const translations = {
         // Footer
         footerTagline: "AI-powered accounts receivable. Get paid faster, preserve relationships.",
         product: "Products",
-        collectionsAgent: "Shira - AI AR Agent",
+        collectionsAgent: "Jess - AI AR Agent",
         company: "Company",
         legal: "Legal",
         privacy: "Privacy Policy",
