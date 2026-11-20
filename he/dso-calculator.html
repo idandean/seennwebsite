@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" style="scroll-behavior: smooth;">
+<head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B5T6RW2PE6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B5T6RW2PE6');
+</script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>מחשבון ימי לקוחות (DSO): חישוב, נוסחה ודוגמה | Seenn</title>
+<meta name="description" content="מחשבון ימי לקוחות (DSO) חינמי: הזינו יתרת לקוחות ומכירות באשראי וקבלו כמה ימים לוקח ללקוחות לשלם. כולל נוסחה, דוגמה ודרכים לקצר את ימי הלקוחות.">
+<link rel="canonical" href="https://www.seenn.ai/he/dso-calculator.html">
+<link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/dso-calculator.html">
+<link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/he/dso-calculator.html">
+
+<!-- Open Graph -->
+<meta property="og:title" content="מחשבון ימי לקוחות (DSO): חישוב, נוסחה ודוגמה | Seenn">
+<meta property="og:description" content="כמה ימים לוקח ללקוחות שלכם לשלם? מחשבון ימי לקוחות, הנוסחה, דוגמה, ואיך משווים לתנאי התשלום.">
+<meta property="og:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
+<meta property="og:url" content="https://www.seenn.ai/he/dso-calculator.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="Seenn">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="מחשבון ימי לקוחות (DSO): חישוב, נוסחה ודוגמה | Seenn">
+<meta name="twitter:description" content="כמה ימים לוקח ללקוחות שלכם לשלם? מחשבון ימי לקוחות, הנוסחה, דוגמה, ואיך משווים לתנאי התשלום.">
+<meta name="twitter:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
+
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="192x192" href="/images/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
+
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>
+  body, h1, h2, h3, h4, h5, h6, p, a, span, li, button, strong, em, label, input, textarea, summary, th, td, figure, div, pre, select, output {
+    font-family: 'Heebo', 'Montserrat', sans-serif !important;
+  }
+  .material-icons { font-family: 'Material Icons' !important; }
+  .cs-faq details { border-bottom: 1px solid #e2ddcf; }
+  .cs-faq summary { cursor: pointer; list-style: none; padding: 1.1rem 0; font-weight: 700; color: #16233b; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .cs-faq summary::-webkit-details-marker { display: none; }
+  .cs-faq summary::after { content: '+'; color: #A88F2F; font-weight: 700; flex: 0 0 auto; }
+  .cs-faq details[open] summary::after { content: '\2013'; }
+  .cs-faq p { padding: 0 0 1.1rem; color: #3A4257; line-height: 1.7; }
+  .cs-list li { margin-bottom: 0.6rem; }
+  .lp-table-wrap { overflow-x: auto; border: 1px solid #e2ddcf; border-radius: 1rem; background: rgba(255,255,255,0.6); }
+  .lp-table { border-collapse: collapse; min-width: 560px; }
+  .lp-table thead th { background: #EDE6D6; }
+  .lp-table .lp-hl { background: rgba(201, 181, 85, 0.16); }
+  .lp-chat { margin: 0 0 0.5rem; padding: 1rem; border-radius: 1.25rem; background: #fff; border: 1px solid #e2ddcf; box-shadow: 0 10px 30px rgba(22,35,59,0.06); }
+  .lp-chat--whatsapp { background: #EFEAE2; }
+  .lp-chat-head { font-size: 0.8rem; font-weight: 700; color: #6b6553; margin-bottom: 0.75rem; }
+  .lp-msg { max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 1rem; margin-bottom: 0.55rem; line-height: 1.6; color: #16233b; font-size: 0.98rem; }
+  .lp-msg--agent { background: #F5F0E8; margin-inline-start: auto; }
+  .lp-chat--whatsapp .lp-msg--agent { background: #D9FDD3; }
+  .lp-msg--client { background: #fff; margin-inline-end: auto; border: 1px solid #e2ddcf; }
+  .lp-who { display: block; font-size: 0.75rem; font-weight: 700; color: #A88F2F; margin-bottom: 0.15rem; }
+  .lp-file { display: inline-block; margin-top: 0.35rem; padding: 0.15rem 0.55rem; border-radius: 0.5rem; background: rgba(22,35,59,0.07); font-size: 0.82rem; direction: ltr; }
+  .lp-result { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #d6cfbd; font-size: 0.9rem; font-weight: 700; color: #16233b; }
+  .lp-tpl { border: 1px solid #e2ddcf; border-radius: 1rem; background: #fff; margin: 0 0 1rem; overflow: hidden; }
+  .lp-tpl-head { display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem; background: #EDE6D6; }
+  .lp-tpl-label { font-weight: 700; color: #16233b; flex: 1 1 auto; }
+  .lp-tpl-chan { font-size: .75rem; font-weight: 700; color: #6b6553; background: rgba(255,255,255,.7); border-radius: 999px; padding: .1rem .6rem; }
+  .lp-copy { font-size: .85rem; font-weight: 700; color: #16233b; background: #C9B555; border-radius: .5rem; padding: .3rem .8rem; }
+  .lp-copy:hover { background: #BFA34A; }
+  .lp-tpl-body { white-space: pre-wrap; font-family: inherit; font-size: 1rem; line-height: 1.7; color: #16233b; padding: .9rem; margin: 0; }
+  .lp-calc { display: grid; gap: .9rem; padding: 1.25rem; border: 1px solid #e2ddcf; border-radius: 1rem; background: #fff; margin: 0 0 1rem; }
+  .lp-calc label { display: grid; gap: .35rem; font-weight: 600; color: #16233b; }
+  .lp-calc input, .lp-calc select { border: 1px solid #d6cfbd; border-radius: .6rem; padding: .55rem .7rem; font-size: 1rem; background: #fff; }
+  .lp-calc-btn { justify-self: start; font-weight: 700; color: #000; background: #C9B555; border-radius: .6rem; padding: .6rem 1.2rem; }
+  .lp-calc-btn:hover { background: #BFA34A; }
+  .lp-calc-out { font-size: 1.15rem; color: #16233b; }
+  .lp-calc-alt { display: block; font-size: .95rem; color: #3A4257; margin-top: .35rem; }
+  .lp-calc-alt:empty { display: none; }
+
+</style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script src="/js/script.js"></script>
+<link href="/css/style.css" rel="stylesheet"/>
+
+<!-- JSON-LD Structured Data (generated, validated before deploy) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "מחשבון ימי לקוחות (DSO): חישוב, נוסחה ודוגמה | Seenn",
+  "url": "https://www.seenn.ai/he/dso-calculator.html",
+  "description": "מחשבון ימי לקוחות (DSO) חינמי: הזינו יתרת לקוחות ומכירות באשראי וקבלו כמה ימים לוקח ללקוחות לשלם. כולל נוסחה, דוגמה ודרכים לקצר את ימי הלקוחות.",
+  "inLanguage": "he",
+  "datePublished": "2026-11-20",
+  "dateModified": "2026-11-20",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Seenn",
+    "url": "https://www.seenn.ai"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Seenn",
+    "url": "https://www.seenn.ai"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "מחשבון ימי לקוחות (DSO): כמה זמן לוקח ללקוחות לשלם?",
+  "description": "מחשבון ימי לקוחות (DSO) חינמי: הזינו יתרת לקוחות ומכירות באשראי וקבלו כמה ימים לוקח ללקוחות לשלם. כולל נוסחה, דוגמה ודרכים לקצר את ימי הלקוחות.",
+  "inLanguage": "he",
+  "url": "https://www.seenn.ai/he/dso-calculator.html",
+  "mainEntityOfPage": "https://www.seenn.ai/he/dso-calculator.html",
+  "image": "https://www.seenn.ai/images/hero-aurora-mountains.png",
+  "datePublished": "2026-11-20",
+  "dateModified": "2026-11-20",
+  "author": {
+    "@type": "Organization",
+    "name": "Seenn Team",
+    "url": "https://www.seenn.ai"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Seenn",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.seenn.ai/images/seenn-logo.png"
+    }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "דף הבית",
+      "item": "https://www.seenn.ai/he/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מחשבון ימי לקוחות",
+      "item": "https://www.seenn.ai/he/dso-calculator.html"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה DSO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DSO, או Days Sales Outstanding, הוא השם באנגלית לימי לקוחות: מספר הימים הממוצע שעובר ממכירה באשראי ועד שהלקוח משלם. הוא אחד המדדים הפשוטים ביותר למהירות הגבייה בעסק."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מחשבים ימי לקוחות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מחלקים את יתרת הלקוחות בסוף התקופה במכירות באשראי באותה תקופה, ומכפילים במספר הימים בתקופה. לדוגמה: יתרה של 600,000 ₪, מכירות של 900,000 ₪ ברבעון של 90 ימים, נותנות 60 ימי לקוחות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה נחשב DSO טוב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אין מספר אחד שנכון לכל עסק. ההשוואה השימושית היא מול תנאי התשלום שלכם: בשוטף+60, למשל, לקוחות שמשלמים בדיוק בזמן נותנים בערך 75 ימי לקוחות, כי סופרים מסוף החודש. תוצאה גבוהה בהרבה מזה מעידה על איחורים. חשוב לא פחות לעקוב אחרי המגמה מחודש לחודש."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם לחשב עם מע״מ או בלי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "העיקר שיהיה עקבי. יתרת הלקוחות כוללת בדרך כלל מע״מ, ודוח המכירות לרוב לא. אם משאירים את הפער, התוצאה תצא גבוהה מהמציאות, ולכן מוסיפים מע״מ למכירות או מורידים אותו מהיתרה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין ימי לקוחות לדוח גיול?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ימי לקוחות הם מספר ממוצע אחד שמראה כמה מהר הלקוחות משלמים באופן כללי. דוח גיול מפרק את החובות לפי הוותק שלהם ולפי לקוח, ומראה איפה בדיוק נמצא הכסף התקוע. כדאי להשתמש בשניהם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מורידים את ימי הלקוחות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מתחילים במעקב לפני מועד הפירעון, ממשיכים בעקביות, ומתקשרים כשהחוב מתארך. שולחים חשבוניות וכרטסות מיד כשהלקוח מבקש, מצרפים קישור לתשלום לכל תזכורת, ורושמים כל הבטחת תשלום. שירה של Seenn עושה את כל אלה אוטומטית."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div id="root">
+<header class="backdrop-blur-sm sticky top-0 z-50" style="background-color: rgba(245, 240, 232, 0.95);">
+<nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center">
+<a href="/he/"><img src="/images/seenn-logo.webp" alt="Seenn לוגו" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" /></a>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/index.html#pricing">תמחור</a>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/blog/">בלוג</a>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/about.html">אודות</a>
+<a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/contact.html">צור קשר</a>
+</div>
+<div class="hidden md:flex items-center" style="gap: 0.85rem;">
+<a class="hidden lg:inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors" style="font-family: 'Montserrat', sans-serif;" href="tel:+972559311784" onclick="if(typeof gtag==='function')gtag('event','click_to_call',{link_location:'header'})"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" style="width: 13px; height: 13px;"><path d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"/></svg><span dir="ltr">055-931-1784</span></a>
+<a class="text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors" style="font-family: 'Montserrat', sans-serif;" href="https://app.seenn.ai/auth/login">התחברות</a>
+<a class="px-3.5 py-1.5 text-[13px] font-semibold text-black bg-[#C9B555] rounded-lg hover:bg-[#BFA34A] transition-colors" style="font-family: 'Montserrat', sans-serif;" href="/he/contact.html">בקשו הדגמה</a>
+<a href="/" class="px-2.5 py-1 text-xs font-medium text-gray-500 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">English</a>
+</div>
+<button id="mobileMenuBtn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-gray-800 hover:bg-gray-200 transition-colors" onclick="toggleMobileMenu()">
+<svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+<svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+</button>
+</div>
+<div id="mobileMenu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg" style="background-color: rgba(245, 240, 232, 0.98);">
+<div class="px-4 py-4 space-y-3">
+<a href="/he/index.html#pricing" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;">תמחור</a>
+<a href="/he/blog/" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;">בלוג</a>
+<a href="/he/about.html" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;">אודות</a>
+<a href="/he/contact.html" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;">צור קשר</a>
+<a href="tel:+972559311784" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;" onclick="if(typeof gtag==='function')gtag('event','click_to_call',{link_location:'mobile_menu'})">טלפון: <span dir="ltr">055-931-1784</span></a>
+<a href="https://app.seenn.ai/auth/login" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;">התחברות</a>
+<a href="/he/contact.html" class="block px-4 py-3 text-center font-medium text-black bg-[#C9B555] rounded-lg" style="font-family: 'Montserrat', sans-serif;">בקשו הדגמה</a>
+<a href="/" class="block w-full px-4 py-2 text-center font-medium text-gray-800 border border-gray-300 rounded-lg" style="font-family: 'Montserrat', sans-serif;">English</a>
+</div>
+</div>
+</nav>
+</header>
+
+<main>
+<section class="relative pt-16 sm:pt-24 pb-24 sm:pb-28 text-white overflow-hidden" style="min-height: 46vh; background-image: url('/images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="container mx-auto px-6 lg:px-8 text-center relative">
+<nav aria-label="breadcrumb" class="text-sm text-gray-200 mb-4">
+<a href="/he/" class="hover:text-white">דף הבית</a> <span class="mx-1">›</span> <span>מחשבון ימי לקוחות</span>
+</nav>
+<h1 class="text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4 px-2">מחשבון ימי לקוחות (DSO): כמה זמן לוקח ללקוחות לשלם?</h1>
+<p class="text-sm sm:text-base md:text-lg max-w-3xl mx-auto mb-6 sm:mb-8 text-gray-200 px-4">הזינו את יתרת הלקוחות ואת המכירות באשראי, וקבלו מיד כמה ימים בממוצע לוקח ללקוחות שלכם לשלם. בהמשך: הנוסחה, דוגמה מחושבת, איך להשוות את התוצאה לתנאי התשלום שלכם, ואיך מקצרים אותה.</p>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4">
+<a class="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium text-black bg-[#C9B555] rounded-lg hover:bg-[#BFA34A] transition-colors text-center" href="/he/contact.html">בקשו הדגמה</a>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full overflow-hidden" style="line-height: 0;">
+<svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 80px;"><path d="M0,50 C150,80 350,0 600,50 C850,100 1050,30 1200,50 L1200,120 L0,120 Z" fill="#F5F0E8"></path></svg>
+</div>
+</section>
+
+<section class="py-16 md:py-20" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">מה זה ימי לקוחות (DSO)?</h2>
+<p class="text-lg text-gray-700 leading-relaxed">ימי לקוחות, או DSO (Days Sales Outstanding), הם מספר הימים הממוצע שעובר ממכירה באשראי ועד שהלקוח משלם. הנוסחה: יתרת לקוחות ÷ מכירות באשראי בתקופה × מספר הימים בתקופה. ככל שהמספר נמוך יותר, הכסף נכנס מהר יותר. כדי לדעת אם התוצאה טובה, השוו אותה לתנאי התשלום שאתם נותנים ללקוחות.</p>
+</div>
+</section>
+
+<section class="py-12 md:py-14" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">מחשבון ימי לקוחות</h2>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">הזינו את יתרת הלקוחות הפתוחה בסוף התקופה ואת סך המכירות באשראי באותה תקופה, ובחרו את אורך התקופה.</p>
+<form class="lp-calc" data-calc="dso" data-err="הזינו סכומים גדולים מאפס." data-unit="ימים" onsubmit="return false">
+<label>יתרת לקוחות פתוחה בסוף התקופה (₪)<input type="number" min="0" step="any" name="ar" inputmode="decimal" required></label>
+<label>מכירות באשראי בתקופה (₪)<input type="number" min="0" step="any" name="sales" inputmode="decimal" required></label>
+<label>אורך התקופה<select name="days"><option value="30">חודש (30 ימים)</option><option value="90" selected>רבעון (90 ימים)</option><option value="365">שנה (365 ימים)</option></select></label>
+<button type="submit" class="lp-calc-btn">חשבו</button>
+<output class="lp-calc-out" aria-live="polite"><span class="lp-calc-k">ימי לקוחות (DSO):</span> <strong class="lp-calc-v">—</strong></output>
+</form>
+<p class="text-sm text-gray-500 mb-4">החישוב מתבצע בדפדפן שלכם בלבד. הסכומים שתזינו לא נשמרים ולא נשלחים.</p>
+<p class="text-lg text-gray-700 leading-relaxed mb-4"><strong>מאיפה לוקחים את המספרים?</strong> את יתרת הלקוחות אפשר למצוא במאזן הבוחן או בדוח הגיול של מערכת הנהלת החשבונות. את המכירות באשראי מוציאים מדוח המכירות של אותה תקופה, בלי מכירות במזומן. הקפידו ששני המספרים עקביים לגבי מע״מ: יתרת הלקוחות כוללת בדרך כלל מע״מ, ודוח המכירות לרוב לא. אם צריך, התאימו אחד מהם, אחרת התוצאה תצא גבוהה מהמציאות.</p>
+</div>
+</section>
+<section class="py-12 md:py-14" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">איך מחשבים ימי לקוחות? הנוסחה</h2>
+<p class="text-lg text-gray-700 leading-relaxed mb-4"><strong>ימי לקוחות = (יתרת לקוחות ÷ מכירות באשראי בתקופה) × מספר הימים בתקופה</strong></p>
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
+<li><strong>יתרת לקוחות:</strong> כל מה שהלקוחות חייבים לכם בסוף התקופה, גם מה שעוד לא הגיע מועדו וגם מה שבאיחור.</li>
+<li><strong>מכירות באשראי:</strong> המכירות שבהן הלקוח לא שילם במקום, אלא קיבל תנאי תשלום.</li>
+<li><strong>מספר הימים:</strong> 30 לחודש, 90 לרבעון או 365 לשנה. חשוב שהמכירות יהיו של אותה תקופה בדיוק.</li>
+</ul>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">ההיגיון פשוט: אם היתרה הפתוחה שווה למכירות של חודשיים, הלקוחות משלמים בממוצע בערך חודשיים אחרי המכירה.</p>
+</div>
+</section>
+<section class="py-12 md:py-14" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">דוגמה לחישוב ימי לקוחות</h2>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">לדוגמה בלבד, במספרים עגולים: עסק מכר באשראי ב-900,000 ₪ ברבעון (90 ימים), ובסוף הרבעון יתרת הלקוחות הפתוחה שלו היא 600,000 ₪.</p>
+<div class="lp-table-wrap mb-4"><table class="lp-table w-full text-start"><thead><tr><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">נתון</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">ערך</th></tr></thead><tbody>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">יתרת לקוחות בסוף הרבעון</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">600,000 ₪</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">מכירות באשראי ברבעון</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">900,000 ₪</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">ימים בתקופה</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">90</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">החישוב</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">600,000 ÷ 900,000 × 90</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">ימי לקוחות</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">60 ימים</td></tr>
+</tbody></table></div>
+<p class="text-sm text-gray-500 mb-4">המספרים להמחשה בלבד, ואינם מייצגים ענף או עסק מסוים.</p>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">כלומר, בממוצע עוברים כ-60 ימים ממכירה ועד שהכסף נכנס. אם העסק נותן ללקוחות שוטף+30, זה סימן שהרבה חשבוניות משולמות באיחור.</p>
+</div>
+</section>
+<section class="py-12 md:py-14" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">איך לקרוא את התוצאה מול תנאי התשלום שלכם?</h2>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">ימי לקוחות לבד לא אומרים הרבה. מה שחשוב הוא הפער בינם לבין תנאי התשלום שנתתם. שימו לב שבתנאי שוטף+ סופרים מסוף החודש שבו הוצאה החשבונית, ולכן גם לקוח שמשלם בדיוק בזמן משלם בממוצע כחצי חודש אחרי מספר הימים שבתנאים. עוד על זה ב<a href="/he/blog/net-30-60-90-payment-terms.html" class="underline hover:text-gray-900">מדריך לשוטף+30, 60 ו-90</a>.</p>
+<div class="lp-table-wrap mb-4"><table class="lp-table w-full text-start"><thead><tr><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">תנאי התשלום</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">ימי לקוחות אם כולם משלמים בדיוק בזמן (בקירוב)</th></tr></thead><tbody>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">שוטף (סוף החודש)</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כ-15 ימים</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">שוטף+30</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כ-45 ימים</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">שוטף+60</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כ-75 ימים</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">שוטף+90</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כ-105 ימים</td></tr>
+<tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">נטו 30 (מתאריך החשבונית)</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כ-30 ימים</td></tr>
+</tbody></table></div>
+<p class="text-sm text-gray-500 mb-4">הערכים בטבלה הם חישוב בקירוב, בהנחה שהחשבוניות מתפזרות באופן שווה לאורך החודש ושהמכירות יציבות. הם נקודת השוואה, לא יעד.</p>
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
+<li><strong>התוצאה קרובה לערך שבטבלה:</strong> רוב הלקוחות משלמים בערך בזמן.</li>
+<li><strong>התוצאה גבוהה בכמה ימים:</strong> יש איחורים קטנים, ובדרך כלל תזכורת מוקדמת ועקבית תסגור אותם.</li>
+<li><strong>התוצאה גבוהה בהרבה:</strong> יש חובות שתקועים. בדקו בדוח הגיול אצל אילו לקוחות.</li>
+</ul>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">ימי לקוחות הם ממוצע, והוא יכול להסתיר חוב גדול וישן אחד. לכן כדאי לקרוא אותם יחד עם <a href="/he/blog/aging-report.html" class="underline hover:text-gray-900">דוח גיול חובות</a>, ולעקוב אחרי המגמה מחודש לחודש, לא רק אחרי מספר בודד. קפיצה במכירות בסוף התקופה, או חשבונית גדולה אחת, יכולות להזיז את התוצאה גם בלי שמשהו השתנה בגבייה.</p>
+</div>
+</section>
+<section class="py-12 md:py-14" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">למה ימי הלקוחות עולים?</h2>
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
+<li><strong>מעקב מאוחר או לא עקבי:</strong> הפנייה הראשונה יוצאת רק כשהחוב כבר בן חודש או חודשיים.</li>
+<li><strong>חשבוניות שלא הגיעו או הגיעו לא נכון:</strong> לאדם הלא נכון, בלי מספר הזמנה, או עם פרטים שגויים.</li>
+<li><strong>מחלוקות על ניירת:</strong> ״לא קיבלתי חשבונית״, ״יש טעות בסכום״, ״מה היתרה שלי?״. כל שאלה כזאת שנשארת בלי מענה מוסיפה ימים.</li>
+<li><strong>תהליכי אישור אצל הלקוח:</strong> החשבונית מחכה לחתימה של מישהו.</li>
+<li><strong>אין דרך נוחה לשלם:</strong> הלקוח צריך לחפש פרטי חשבון כדי להעביר.</li>
+<li><strong>שינוי בתמהיל הלקוחות:</strong> יותר לקוחות גדולים עם תנאי תשלום ארוכים.</li>
+</ul>
+</div>
+</section>
+<section class="py-12 md:py-14" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">איך מקצרים את ימי הלקוחות?</h2>
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
+<li><strong>מתחילים לפני מועד הפירעון:</strong> תזכורת ידידותית כמה ימים לפני המועד. נוסחים מוכנים ב<a href="/he/payment-reminder-templates.html" class="underline hover:text-gray-900">נוסחי תזכורת התשלום</a>.</li>
+<li><strong>ממשיכים בעקביות, ומרימים טלפון:</strong> תזכורת ביום הפירעון ושבוע אחריו, ושיחה כשהחוב מתארך. ראו את <a href="/he/phone-collection.html" class="underline hover:text-gray-900">המדריך לגבייה טלפונית</a>.</li>
+<li><strong>שולחים מסמכים מיד:</strong> חשבונית, כרטסת או קבלה, ברגע שהלקוח מבקש. כך מחלוקות על ניירת לא נגררות שבועות.</li>
+<li><strong>מצרפים קישור לתשלום לסכום המדויק</strong> לכל תזכורת.</li>
+<li><strong>רושמים כל הבטחת תשלום, וחוזרים ביום שאחרי</strong> אם הכסף לא נכנס.</li>
+<li><strong>עוברים על דוח הגיול באופן קבוע,</strong> ומתחילים מהחובות הגדולים והישנים.</li>
+</ul>
+<p class="text-lg text-gray-700 leading-relaxed mb-4">את רוב הרשימה הזאת שירה, <a href="/he/ai-collection-agent.html" class="underline hover:text-gray-900">סוכנת הגבייה AI</a> של Seenn, עושה בשבילכם: היא פונה לכל לקוח בזמן, מתקשרת בקול טבעי, כותבת בוואטסאפ ובאימייל, שולחת חשבוניות, כרטסות וקבלות מהמערכת ומצרפת קישור לתשלום. בדשבורד רואים את סך החובות והסכומים שבאיחור, גיול חובות, מה מגיע לפירעון בחודשים הקרובים ומה נגבה בכל חודש.</p>
+</div>
+</section>
+
+<section class="py-16 md:py-20" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl cs-faq">
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center" style="font-family: 'Montserrat', sans-serif;">שאלות נפוצות על ימי לקוחות</h2>
+<details>
+<summary>מה זה DSO?</summary>
+<p>DSO, או Days Sales Outstanding, הוא השם באנגלית לימי לקוחות: מספר הימים הממוצע שעובר ממכירה באשראי ועד שהלקוח משלם. הוא אחד המדדים הפשוטים ביותר למהירות הגבייה בעסק.</p>
+</details>
+<details>
+<summary>איך מחשבים ימי לקוחות?</summary>
+<p>מחלקים את יתרת הלקוחות בסוף התקופה במכירות באשראי באותה תקופה, ומכפילים במספר הימים בתקופה. לדוגמה: יתרה של 600,000 ₪, מכירות של 900,000 ₪ ברבעון של 90 ימים, נותנות 60 ימי לקוחות.</p>
+</details>
+<details>
+<summary>מה נחשב DSO טוב?</summary>
+<p>אין מספר אחד שנכון לכל עסק. ההשוואה השימושית היא מול תנאי התשלום שלכם: בשוטף+60, למשל, לקוחות שמשלמים בדיוק בזמן נותנים בערך 75 ימי לקוחות, כי סופרים מסוף החודש. תוצאה גבוהה בהרבה מזה מעידה על איחורים. חשוב לא פחות לעקוב אחרי המגמה מחודש לחודש.</p>
+</details>
+<details>
+<summary>האם לחשב עם מע״מ או בלי?</summary>
+<p>העיקר שיהיה עקבי. יתרת הלקוחות כוללת בדרך כלל מע״מ, ודוח המכירות לרוב לא. אם משאירים את הפער, התוצאה תצא גבוהה מהמציאות, ולכן מוסיפים מע״מ למכירות או מורידים אותו מהיתרה.</p>
+</details>
+<details>
+<summary>מה ההבדל בין ימי לקוחות לדוח גיול?</summary>
+<p>ימי לקוחות הם מספר ממוצע אחד שמראה כמה מהר הלקוחות משלמים באופן כללי. דוח גיול מפרק את החובות לפי הוותק שלהם ולפי לקוח, ומראה איפה בדיוק נמצא הכסף התקוע. כדאי להשתמש בשניהם.</p>
+</details>
+<details>
+<summary>איך מורידים את ימי הלקוחות?</summary>
+<p>מתחילים במעקב לפני מועד הפירעון, ממשיכים בעקביות, ומתקשרים כשהחוב מתארך. שולחים חשבוניות וכרטסות מיד כשהלקוח מבקש, מצרפים קישור לתשלום לכל תזכורת, ורושמים כל הבטחת תשלום. שירה של Seenn עושה את כל אלה אוטומטית.</p>
+</details>
+</div>
+</section>
+
+<section class="pb-6" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+<h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">עוד על גבייה חכמה עם Seenn</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a href="/he/blog/aging-report.html" class="block rounded-2xl p-5 bg-white/70 hover:bg-white transition-colors border border-[#e2ddcf]"><span class="block font-bold text-gray-900 mb-1">דוח גיול חובות</span><span class="block text-sm text-gray-600 leading-relaxed">איך קוראים דוח גיול ומה עושים עם כל טווח.</span></a>
+<a href="/he/blog/net-30-60-90-payment-terms.html" class="block rounded-2xl p-5 bg-white/70 hover:bg-white transition-colors border border-[#e2ddcf]"><span class="block font-bold text-gray-900 mb-1">שוטף+30, 60, 90</span><span class="block text-sm text-gray-600 leading-relaxed">מה אומרים תנאי שוטף+, ומחשבון מועד תשלום.</span></a>
+<a href="/he/blog/cash-flow-management-small-business.html" class="block rounded-2xl p-5 bg-white/70 hover:bg-white transition-colors border border-[#e2ddcf]"><span class="block font-bold text-gray-900 mb-1">ניהול תזרים מזומנים לעסק קטן</span><span class="block text-sm text-gray-600 leading-relaxed">למה הגבייה היא צוואר הבקבוק של התזרים.</span></a>
+<a href="/he/collection-software.html" class="block rounded-2xl p-5 bg-white/70 hover:bg-white transition-colors border border-[#e2ddcf]"><span class="block font-bold text-gray-900 mb-1">תוכנת גבייה אוטומטית</span><span class="block text-sm text-gray-600 leading-relaxed">כל תהליך הגבייה מלקוחות, במקום אחד.</span></a>
+</div>
+</div>
+</section>
+
+<section class="py-20" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="relative pt-14 pb-14 text-white overflow-hidden rounded-3xl shadow-2xl" style="background-image: url('/images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="text-center px-6">
+<h2 class="text-2xl md:text-4xl font-bold text-white mb-5" style="font-family: 'Montserrat', sans-serif;">רוצים שהלקוחות ישלמו מהר יותר?</h2>
+<p class="text-lg text-gray-200 max-w-2xl mx-auto mb-8">שירה, סוכנת הגבייה של Seenn, פונה לכל לקוח בזמן: מתקשרת בקול טבעי, כותבת בוואטסאפ ובאימייל, ושולחת בעצמה חשבוניות, כרטסות וקישור לתשלום לסכום המדויק.</p>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+<a class="w-full sm:w-auto px-8 py-3 text-lg font-medium text-black bg-[#C9B555] rounded-lg hover:bg-[#BFA34A] transition-colors text-center" href="/he/contact.html">בקשו הדגמה</a>
+<a class="w-full sm:w-auto px-8 py-3 text-lg font-medium text-white bg-transparent rounded-lg transition-all duration-300 text-center" href="/he/" style="border: 2px solid #fff;">דברו עם שירה</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<footer class="relative py-6 overflow-hidden" style="background-color: #F5F0E8;">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<h3 class="text-lg font-semibold text-gray-900 mb-4">Seenn</h3>
+<p class="text-sm text-gray-700">תוכנת גבייה אוטומטית עם AI. קבלו תשלומים מהר יותר.</p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">מוצרים</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/">שירה - סוכנת גבייה AI</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/ai-collection-agent.html">סוכן גבייה AI</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/voice-collection-agent.html">סוכן גבייה קולי</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-collection-agent.html">סוכן גבייה בוואטסאפ</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/collection-software.html">תוכנת גבייה אוטומטית</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-reminders.html">תזכורות תשלום בוואטסאפ</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/payment-reminder-templates.html">נוסחי תזכורת תשלום</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/integrations.html">אינטגרציות</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/index.html#pricing">תמחור</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">חברה</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/about.html">אודות</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/blog/">בלוג</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="mailto:hello@seenn.ai">צור קשר: hello@seenn.ai</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="tel:+972559311784" onclick="if(typeof gtag==='function')gtag('event','click_to_call',{link_location:'footer'})">טלפון: <span dir="ltr">055-931-1784</span></a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">משפטי</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/privacy-policy.html">מדיניות פרטיות</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/terms-of-service.html">תנאי שימוש</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 border-t border-gray-300 pt-8 flex flex-col sm:flex-row justify-between items-center">
+<p class="text-sm text-gray-700">&copy; 2026 Seenn Inc. כל הזכויות שמורות.</p>
+<div class="flex gap-4 mt-4 sm:mt-0">
+<a href="https://www.facebook.com/profile.php?id=61582629688991" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-900 transition-colors" aria-label="Facebook">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+</a>
+<a href="https://www.instagram.com/seenn.ai" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-900 transition-colors" aria-label="Instagram">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+</a>
+<a href="https://www.linkedin.com/company/135063948/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-900 transition-colors" aria-label="LinkedIn">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<script>
+(function () {
+  function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params || {}); }
+  function el(f, n) { return f.querySelector('[name="' + n + '"]'); }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.lp-copy');
+    if (!b) return;
+    var pre = b.closest('.lp-tpl').querySelector('.lp-tpl-body');
+    var text = pre.textContent, orig = b.textContent;
+    function ok() { b.textContent = b.dataset.done; setTimeout(function () { b.textContent = orig; }, 1800); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, function () {});
+    else { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand('copy'); ok(); } catch (x) {} }
+    track('template_copy', { template_label: b.dataset.label || '' });
+  });
+  document.addEventListener('submit', function (e) {
+    var f = e.target; if (!f.dataset || !f.dataset.calc) return;
+    e.preventDefault();
+    var out = f.querySelector('.lp-calc-v');
+    if (f.dataset.calc === 'dso') {
+      var ar = parseFloat(el(f, 'ar').value), sales = parseFloat(el(f, 'sales').value), days = parseInt(el(f, 'days').value, 10);
+      if (!(ar > 0) || !(sales > 0)) { out.textContent = f.dataset.err; return; }
+      out.textContent = (Math.round(ar / sales * days * 10) / 10) + ' ' + f.dataset.unit;
+      track('calculator_use', { calculator: 'dso' });
+    } else if (f.dataset.calc === 'terms') {
+      var date = el(f, 'date').value, kind = el(f, 'kind').value;
+      if (!date) { out.textContent = f.dataset.err; return; }
+      var p = date.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]), n = parseInt(el(f, 'days').value, 10);
+      var fmt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }, alt = f.querySelector('.lp-calc-alt');
+      var y = d.getFullYear(), m = d.getMonth();
+      if (kind === 'eom') d = new Date(y, m + 1, 0);
+      d.setDate(d.getDate() + n);
+      out.textContent = d.toLocaleDateString(f.dataset.loc, fmt);
+      alt.textContent = '';
+      if (kind === 'eom' && n % 30 === 0) {
+        var whole = new Date(y, m + 1 + n / 30, 0);
+        if (whole.getTime() !== d.getTime()) alt.textContent = f.dataset.alt.replace('{n}', n / 30) + ' ' + whole.toLocaleDateString(f.dataset.loc, fmt);
+      }
+      track('calculator_use', { calculator: 'payment_terms', terms: kind + '+' + n });
+    }
+  });
+})();
+</script>
+</body>
+</html>

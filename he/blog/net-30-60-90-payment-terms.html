@@ -11,8 +11,8 @@
 </script>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>שוטף + 30, 60, 90: איך לגבות תשלומים בזמן כשלקוחות מאחרים | בלוג Seenn</title>
-<meta name="description" content="מדריך מעשי לגביית תשלומים בתנאי שוטף פלוס 30, 60, 90. למה לקוחות לא משלמים בזמן, מה העלות האמיתית של איחורים, ואיך AI משנה את המשחק בגביית חובות מלקוחות.">
+<title>שוטף+30, 60, 90: מה זה, מחשבון מועד תשלום וגבייה | Seenn</title>
+<meta name="description" content="מה זה שוטף+30, שוטף+60 ושוטף+90, איך מחשבים את מועד התשלום (עם מחשבון חינמי), ומה עושים כשהלקוח מאחר. מדריך מעשי לעסקים בישראל.">
 
 <link rel="canonical" href="https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html">
 <link rel="alternate" hreflang="en" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html">
@@ -20,7 +20,7 @@
 <link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/blog/net-30-60-90-payment-terms.html">
 
 <!-- Open Graph -->
-<meta property="og:title" content="שוטף + 30, 60, 90: איך לגבות תשלומים בזמן כשלקוחות מאחרים">
+<meta property="og:title" content="שוטף+30, 60, 90: מה זה, מחשבון מועד תשלום וגבייה | Seenn">
 <meta property="og:description" content="מדריך מעשי לגביית תשלומים בתנאי שוטף פלוס. למה לקוחות מאחרים, מה זה עולה לכם, ואיך לשפר את הגבייה עם אוטומציה ו-AI.">
 <meta property="og:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
 <meta property="og:url" content="https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html">
@@ -31,7 +31,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="שוטף + 30, 60, 90: איך לגבות תשלומים בזמן כשלקוחות מאחרים">
+<meta name="twitter:title" content="שוטף+30, 60, 90: מה זה, מחשבון מועד תשלום וגבייה | Seenn">
 <meta name="twitter:description" content="מדריך מעשי לגביית תשלומים בתנאי שוטף פלוס. למה לקוחות מאחרים ואיך AI משנה את המשחק.">
 <meta name="twitter:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
 
@@ -51,7 +51,7 @@
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "שוטף + 30, 60, 90: איך לגבות תשלומים בזמן כשלקוחות מאחרים",
+  "headline": "שוטף + 30, 60, 90: מה זה, איך מחשבים את מועד התשלום ואיך גובים בזמן",
   "description": "מדריך מעשי לגביית תשלומים בתנאי שוטף פלוס 30, 60, 90. למה לקוחות לא משלמים בזמן, מה העלות האמיתית של איחורים, ואיך AI משנה את המשחק בגביית חובות מלקוחות.",
   "author": {
     "@type": "Organization",
@@ -67,7 +67,7 @@
     }
   },
   "datePublished": "2026-03-20",
-  "dateModified": "2026-10-10",
+  "dateModified": "2026-11-20",
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "https://www.seenn.ai/he/blog/net-30-60-90-payment-terms.html"
@@ -117,6 +117,23 @@
   ]
 }
 </script>
+<style>
+  .lp-tpl { border: 1px solid #e2ddcf; border-radius: 1rem; background: #fff; margin: 0 0 1rem; overflow: hidden; }
+  .lp-tpl-head { display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem; background: #EDE6D6; }
+  .lp-tpl-label { font-weight: 700; color: #16233b; flex: 1 1 auto; }
+  .lp-tpl-chan { font-size: .75rem; font-weight: 700; color: #6b6553; background: rgba(255,255,255,.7); border-radius: 999px; padding: .1rem .6rem; }
+  .lp-copy { font-size: .85rem; font-weight: 700; color: #16233b; background: #C9B555; border-radius: .5rem; padding: .3rem .8rem; }
+  .lp-copy:hover { background: #BFA34A; }
+  .lp-tpl-body { white-space: pre-wrap; font-family: inherit; font-size: 1rem; line-height: 1.7; color: #16233b; padding: .9rem; margin: 0; }
+  .lp-calc { display: grid; gap: .9rem; padding: 1.25rem; border: 1px solid #e2ddcf; border-radius: 1rem; background: #fff; margin: 0 0 1rem; }
+  .lp-calc label { display: grid; gap: .35rem; font-weight: 600; color: #16233b; }
+  .lp-calc input, .lp-calc select { border: 1px solid #d6cfbd; border-radius: .6rem; padding: .55rem .7rem; font-size: 1rem; background: #fff; }
+  .lp-calc-btn { justify-self: start; font-weight: 700; color: #000; background: #C9B555; border-radius: .6rem; padding: .6rem 1.2rem; }
+  .lp-calc-btn:hover { background: #BFA34A; }
+  .lp-calc-out { font-size: 1.15rem; color: #16233b; }
+  .lp-calc-alt { display: block; font-size: .95rem; color: #3A4257; margin-top: .35rem; }
+  .lp-calc-alt:empty { display: none; }
+</style>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display">
 <div id="root">
@@ -187,11 +204,11 @@
 </nav>
 
 <header class="mb-10">
-<h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4" style="font-family: 'Montserrat', sans-serif;">שוטף + 30, 60, 90: איך לגבות תשלומים בזמן כשלקוחות מאחרים</h1>
+<h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4" style="font-family: 'Montserrat', sans-serif;">שוטף + 30, 60, 90: מה זה, איך מחשבים את מועד התשלום ואיך גובים בזמן</h1>
 <div class="flex items-center gap-4 text-sm text-gray-500" style="font-family: 'Inter', sans-serif;">
 <span>צוות Seenn</span>
 <span>&middot;</span>
-<time datetime="2026-03-20">20 במרץ, 2026</time>
+<time datetime="2026-03-20">20 במרץ, 2026</time> · עודכן <time datetime="2026-11-20">20 בנובמבר 2026</time>
 <span>&middot;</span>
 <span>5 דקות קריאה</span>
 </div>
@@ -206,6 +223,15 @@
 <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4" style="font-family: 'Montserrat', sans-serif;">מה זה שוטף + ולמה כולם עובדים ככה?</h2>
 
 <p class="text-gray-700 leading-relaxed mb-4">תנאי שוטף+ הם הסטנדרט בעולם ה-B2B הישראלי. הרעיון פשוט: חשבונית שהונפקה בחודש מסוים משולמת בסוף החודש העוקב (שוטף + 30), או שניים (שוטף + 60), או שלושה (שוטף + 90). למשל, חשבונית שהונפקה ב-15 בינואר בתנאי שוטף + 30 אמורה להיות משולמת עד סוף פברואר.</p>
+<h3 class="text-xl font-bold text-gray-900 mt-8 mb-3" style="font-family: 'Montserrat', sans-serif;">מחשבון שוטף+: מתי החשבונית צריכה להיות משולמת?</h3>
+<p class="text-gray-700 leading-relaxed mb-4">בחרו את תאריך החשבונית ואת תנאי התשלום, והמחשבון יראה מתי התשלום אמור להיכנס. ב״שוטף +״ סופרים מסוף החודש שבו הוצאה החשבונית; ב״נטו״ סופרים מתאריך החשבונית עצמו.</p>
+<div class="not-prose my-6"><form class="lp-calc" data-calc="terms" data-err="בחרו תאריך חשבונית." data-loc="he-IL" data-alt="ואם סופרים חודשים קלנדריים שלמים:" onsubmit="return false">
+<label>תאריך החשבונית<input type="date" name="date" required></label>
+<label>סוג התנאים<select name="kind"><option value="eom">שוטף + (מסוף החודש)</option><option value="net">נטו (מתאריך החשבונית)</option></select></label>
+<label>ימים<select name="days"><option>30</option><option>45</option><option selected>60</option><option>90</option><option>120</option></select></label>
+<button type="submit" class="lp-calc-btn">חשבו מועד תשלום</button>
+<output class="lp-calc-out" aria-live="polite"><span class="lp-calc-k">מועד התשלום:</span> <strong class="lp-calc-v">—</strong><span class="lp-calc-alt"></span></output>
+</form></div>
 
 <p class="text-gray-700 leading-relaxed mb-4">למה זה עובד ככה? כי לקוחות גדולים -- חברות, ארגונים, רשתות -- רוצים לנהל את תזרים המזומנים שלהם. הם מאגדים תשלומים למועדים קבועים ומשלמים בבת אחת. מהצד שלהם זה הגיוני. מהצד שלכם? זה אומר שאתם מממנים את הלקוח מכיס.</p>
 
@@ -319,6 +345,7 @@
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-collection-agent.html">סוכן גבייה בוואטסאפ</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/collection-software.html">תוכנת גבייה אוטומטית</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-reminders.html">תזכורות תשלום בוואטסאפ</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/payment-reminder-templates.html">נוסחי תזכורת תשלום</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/integrations.html">אינטגרציות</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/#pricing">תמחור</a></li>
 </ul>
@@ -353,5 +380,47 @@
 </div>
 </footer>
 </div>
+<script>
+(function () {
+  function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params || {}); }
+  function el(f, n) { return f.querySelector('[name="' + n + '"]'); }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.lp-copy');
+    if (!b) return;
+    var pre = b.closest('.lp-tpl').querySelector('.lp-tpl-body');
+    var text = pre.textContent, orig = b.textContent;
+    function ok() { b.textContent = b.dataset.done; setTimeout(function () { b.textContent = orig; }, 1800); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, function () {});
+    else { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand('copy'); ok(); } catch (x) {} }
+    track('template_copy', { template_label: b.dataset.label || '' });
+  });
+  document.addEventListener('submit', function (e) {
+    var f = e.target; if (!f.dataset || !f.dataset.calc) return;
+    e.preventDefault();
+    var out = f.querySelector('.lp-calc-v');
+    if (f.dataset.calc === 'dso') {
+      var ar = parseFloat(el(f, 'ar').value), sales = parseFloat(el(f, 'sales').value), days = parseInt(el(f, 'days').value, 10);
+      if (!(ar > 0) || !(sales > 0)) { out.textContent = f.dataset.err; return; }
+      out.textContent = (Math.round(ar / sales * days * 10) / 10) + ' ' + f.dataset.unit;
+      track('calculator_use', { calculator: 'dso' });
+    } else if (f.dataset.calc === 'terms') {
+      var date = el(f, 'date').value, kind = el(f, 'kind').value;
+      if (!date) { out.textContent = f.dataset.err; return; }
+      var p = date.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]), n = parseInt(el(f, 'days').value, 10);
+      var fmt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }, alt = f.querySelector('.lp-calc-alt');
+      var y = d.getFullYear(), m = d.getMonth();
+      if (kind === 'eom') d = new Date(y, m + 1, 0);
+      d.setDate(d.getDate() + n);
+      out.textContent = d.toLocaleDateString(f.dataset.loc, fmt);
+      alt.textContent = '';
+      if (kind === 'eom' && n % 30 === 0) {
+        var whole = new Date(y, m + 1 + n / 30, 0);
+        if (whole.getTime() !== d.getTime()) alt.textContent = f.dataset.alt.replace('{n}', n / 30) + ' ' + whole.toLocaleDateString(f.dataset.loc, fmt);
+      }
+      track('calculator_use', { calculator: 'payment_terms', terms: kind + '+' + n });
+    }
+  });
+})();
+</script>
 </body>
 </html>

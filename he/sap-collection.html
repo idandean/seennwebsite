@@ -33,14 +33,14 @@
 <meta name="twitter:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
 
 <link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" sizes="192x192" href="../images/favicon.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
-<link rel="shortcut icon" type="image/png" href="../images/favicon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/images/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
 
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <style>
-  body, h1, h2, h3, h4, h5, h6, p, a, span, li, button, strong, em, label, input, textarea, summary, th, td, figure, div {
+  body, h1, h2, h3, h4, h5, h6, p, a, span, li, button, strong, em, label, input, textarea, summary, th, td, figure, div, pre, select, output {
     font-family: 'Heebo', 'Montserrat', sans-serif !important;
   }
   .material-icons { font-family: 'Material Icons' !important; }
@@ -59,16 +59,16 @@
   .lp-chat--whatsapp { background: #EFEAE2; }
   .lp-chat-head { font-size: 0.8rem; font-weight: 700; color: #6b6553; margin-bottom: 0.75rem; }
   .lp-msg { max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 1rem; margin-bottom: 0.55rem; line-height: 1.6; color: #16233b; font-size: 0.98rem; }
-  .lp-msg--agent { background: #F5F0E8; margin-left: auto; border-top-right-radius: 0.3rem; }
+  .lp-msg--agent { background: #F5F0E8; margin-inline-start: auto; }
   .lp-chat--whatsapp .lp-msg--agent { background: #D9FDD3; }
-  .lp-msg--client { background: #fff; margin-right: auto; border: 1px solid #e2ddcf; border-top-left-radius: 0.3rem; }
+  .lp-msg--client { background: #fff; margin-inline-end: auto; border: 1px solid #e2ddcf; }
   .lp-who { display: block; font-size: 0.75rem; font-weight: 700; color: #A88F2F; margin-bottom: 0.15rem; }
   .lp-file { display: inline-block; margin-top: 0.35rem; padding: 0.15rem 0.55rem; border-radius: 0.5rem; background: rgba(22,35,59,0.07); font-size: 0.82rem; direction: ltr; }
   .lp-result { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #d6cfbd; font-size: 0.9rem; font-weight: 700; color: #16233b; }
 </style>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-<script src="../js/script.js"></script>
-<link href="../css/style.css" rel="stylesheet"/>
+<script src="/js/script.js"></script>
+<link href="/css/style.css" rel="stylesheet"/>
 
 <!-- JSON-LD Structured Data (generated, validated before deploy) -->
 <script type="application/ld+json">
@@ -202,7 +202,7 @@
 <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-16">
 <div class="flex items-center">
-<a href="/he/"><img src="../images/seenn-logo.webp" alt="Seenn לוגו" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" /></a>
+<a href="/he/"><img src="/images/seenn-logo.webp" alt="Seenn לוגו" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" /></a>
 </div>
 <div class="hidden md:flex items-center gap-8">
 <a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/index.html#pricing">תמחור</a>
@@ -237,7 +237,7 @@
 </header>
 
 <main>
-<section class="relative pt-16 sm:pt-24 pb-24 sm:pb-28 text-white overflow-hidden" style="min-height: 46vh; background-image: url('../images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<section class="relative pt-16 sm:pt-24 pb-24 sm:pb-28 text-white overflow-hidden" style="min-height: 46vh; background-image: url('/images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
 <div class="container mx-auto px-6 lg:px-8 text-center relative">
 <nav aria-label="breadcrumb" class="text-sm text-gray-200 mb-4">
 <a href="/he/" class="hover:text-white">דף הבית</a> <span class="mx-1">›</span> <a href="/he/integrations.html" class="hover:text-white">אינטגרציות</a> <span class="mx-1">›</span> <span>סוכן גבייה ל-SAP</span>
@@ -270,7 +270,7 @@
 <section class="py-12 md:py-14" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">מה שירה עושה מול SAP</h2>
-<ul class="cs-list list-disc pr-6 text-gray-700 text-lg mb-4">
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
 <li>עובדת מול החובות הפתוחים ופונה לכל חשבון לפי מדיניות הגבייה, תקופות החסד וסדר ההסלמה שקבעתם.</li>
 <li><a href="/he/voice-collection-agent.html" class="underline hover:text-gray-900">מתקשרת ללקוח בקול טבעי</a>, וממשיכה ב<a href="/he/whatsapp-collection-agent.html" class="underline hover:text-gray-900">וואטסאפ</a> ובאימייל עם קישור תשלום לסכום המדויק.</li>
 <li>שולחת חשבונית, כרטסת או קבלה ברגע שהלקוח מבקש, וסוגרת מחלוקות על ניירת בתוך השיחה.</li>
@@ -282,7 +282,7 @@
 <section class="py-12 md:py-14" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">צוות הכספים ושירה: מי עושה מה</h2>
-<div class="lp-table-wrap mb-4"><table class="lp-table w-full text-right"><thead><tr><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right"></th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right">הצוות שלכם</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right lp-hl">שירה</th></tr></thead><tbody>
+<div class="lp-table-wrap mb-4"><table class="lp-table w-full text-start"><thead><tr><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start"></th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">הצוות שלכם</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start lp-hl">שירה</th></tr></thead><tbody>
 <tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">מדיניות גבייה וכללי הסלמה</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">קובע</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700 lp-hl">מיישמת על כל חשבון</td></tr>
 <tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">פנייה ללקוחות ומעקבים</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">רק במקרים שהיא מעבירה</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700 lp-hl">טלפון, וואטסאפ ואימייל, לכל החשבונות</td></tr>
 <tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">שליחת חשבוניות, כרטסות וקבלות</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">לא צריך לגעת</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700 lp-hl">שולחת בעצמה</td></tr>
@@ -294,7 +294,7 @@
 <section class="py-12 md:py-14" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">שלוש דרכים לחבר את SAP</h2>
-<ul class="cs-list list-disc pr-6 text-gray-700 text-lg mb-4">
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
 <li><strong>אינטגרציה מוכנה:</strong> חיבור ישיר ל-SAP, תוך ימים.</li>
 <li><strong>ייצוא לאקסל:</strong> מייצאים את החובות הפתוחים, מעלים, ושירה מתחילה לעבוד תוך דקות.</li>
 <li><strong>אינטגרציה מותאמת ו-API:</strong> לארגונים עם דרישות מיוחדות.</li>
@@ -343,7 +343,7 @@
 
 <section class="py-20" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="relative pt-14 pb-14 text-white overflow-hidden rounded-3xl shadow-2xl" style="background-image: url('../images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="relative pt-14 pb-14 text-white overflow-hidden rounded-3xl shadow-2xl" style="background-image: url('/images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
 <div class="text-center px-6">
 <h2 class="text-2xl md:text-4xl font-bold text-white mb-5" style="font-family: 'Montserrat', sans-serif;">רוצים לראות את שירה עובדת מול SAP?</h2>
 <p class="text-lg text-gray-200 max-w-2xl mx-auto mb-8">בקשו הדגמה וספרו לנו שאתם עובדים על SAP. נראה לכם איך שירה מתחברת לנתונים שלכם ומתחילה לגבות.</p>
@@ -373,6 +373,7 @@
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-collection-agent.html">סוכן גבייה בוואטסאפ</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/collection-software.html">תוכנת גבייה אוטומטית</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-reminders.html">תזכורות תשלום בוואטסאפ</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/payment-reminder-templates.html">נוסחי תזכורת תשלום</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/integrations.html">אינטגרציות</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/index.html#pricing">תמחור</a></li>
 </ul>
@@ -411,5 +412,6 @@
 </div>
 </footer>
 </div>
+
 </body>
 </html>

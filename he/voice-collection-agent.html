@@ -15,7 +15,8 @@
 <meta name="description" content="סוכן גבייה קולי מבוסס AI שמתקשר ללקוחות החייבים בקול טבעי, מטפל בהתנגדויות, שולח קישור תשלום תוך כדי השיחה וסוגר התחייבות לתשלום. לא הודעה מוקלטת.">
 <link rel="canonical" href="https://www.seenn.ai/he/voice-collection-agent.html">
 <link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/voice-collection-agent.html">
-<link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/he/voice-collection-agent.html">
+<link rel="alternate" hreflang="en" href="https://www.seenn.ai/ai-collection-calls.html">
+<link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/ai-collection-calls.html">
 
 <!-- Open Graph -->
 <meta property="og:title" content="סוכן גבייה קולי: שיחות גבייה בקול טבעי | Seenn">
@@ -24,6 +25,7 @@
 <meta property="og:url" content="https://www.seenn.ai/he/voice-collection-agent.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="he_IL">
+<meta property="og:locale:alternate" content="en_US">
 <meta property="og:site_name" content="Seenn">
 
 <!-- Twitter Card -->
@@ -33,14 +35,14 @@
 <meta name="twitter:image" content="https://www.seenn.ai/images/hero-aurora-mountains.png">
 
 <link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" sizes="192x192" href="../images/favicon.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
-<link rel="shortcut icon" type="image/png" href="../images/favicon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/images/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
 
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <style>
-  body, h1, h2, h3, h4, h5, h6, p, a, span, li, button, strong, em, label, input, textarea, summary, th, td, figure, div {
+  body, h1, h2, h3, h4, h5, h6, p, a, span, li, button, strong, em, label, input, textarea, summary, th, td, figure, div, pre, select, output {
     font-family: 'Heebo', 'Montserrat', sans-serif !important;
   }
   .material-icons { font-family: 'Material Icons' !important; }
@@ -59,16 +61,16 @@
   .lp-chat--whatsapp { background: #EFEAE2; }
   .lp-chat-head { font-size: 0.8rem; font-weight: 700; color: #6b6553; margin-bottom: 0.75rem; }
   .lp-msg { max-width: 85%; padding: 0.65rem 0.85rem; border-radius: 1rem; margin-bottom: 0.55rem; line-height: 1.6; color: #16233b; font-size: 0.98rem; }
-  .lp-msg--agent { background: #F5F0E8; margin-left: auto; border-top-right-radius: 0.3rem; }
+  .lp-msg--agent { background: #F5F0E8; margin-inline-start: auto; }
   .lp-chat--whatsapp .lp-msg--agent { background: #D9FDD3; }
-  .lp-msg--client { background: #fff; margin-right: auto; border: 1px solid #e2ddcf; border-top-left-radius: 0.3rem; }
+  .lp-msg--client { background: #fff; margin-inline-end: auto; border: 1px solid #e2ddcf; }
   .lp-who { display: block; font-size: 0.75rem; font-weight: 700; color: #A88F2F; margin-bottom: 0.15rem; }
   .lp-file { display: inline-block; margin-top: 0.35rem; padding: 0.15rem 0.55rem; border-radius: 0.5rem; background: rgba(22,35,59,0.07); font-size: 0.82rem; direction: ltr; }
   .lp-result { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #d6cfbd; font-size: 0.9rem; font-weight: 700; color: #16233b; }
 </style>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-<script src="../js/script.js"></script>
-<link href="../css/style.css" rel="stylesheet"/>
+<script src="/js/script.js"></script>
+<link href="/css/style.css" rel="stylesheet"/>
 
 <!-- JSON-LD Structured Data (generated, validated before deploy) -->
 <script type="application/ld+json">
@@ -80,7 +82,7 @@
   "description": "סוכן גבייה קולי מבוסס AI שמתקשר ללקוחות החייבים בקול טבעי, מטפל בהתנגדויות, שולח קישור תשלום תוך כדי השיחה וסוגר התחייבות לתשלום. לא הודעה מוקלטת.",
   "inLanguage": "he",
   "datePublished": "2026-11-16",
-  "dateModified": "2026-11-16",
+  "dateModified": "2026-11-20",
   "isPartOf": {
     "@type": "WebSite",
     "name": "Seenn",
@@ -211,7 +213,7 @@
 <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-16">
 <div class="flex items-center">
-<a href="/he/"><img src="../images/seenn-logo.webp" alt="Seenn לוגו" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" /></a>
+<a href="/he/"><img src="/images/seenn-logo.webp" alt="Seenn לוגו" class="h-24 md:h-32 w-auto" style="filter: brightness(0);" /></a>
 </div>
 <div class="hidden md:flex items-center gap-8">
 <a class="text-sm font-medium text-gray-800 hover:text-primary transition-colors" style="font-family: 'Montserrat', sans-serif; letter-spacing: 0.05em;" href="/he/index.html#pricing">תמחור</a>
@@ -223,7 +225,7 @@
 <a class="hidden lg:inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors" style="font-family: 'Montserrat', sans-serif;" href="tel:+972559311784" onclick="if(typeof gtag==='function')gtag('event','click_to_call',{link_location:'header'})"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" style="width: 13px; height: 13px;"><path d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"/></svg><span dir="ltr">055-931-1784</span></a>
 <a class="text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors" style="font-family: 'Montserrat', sans-serif;" href="https://app.seenn.ai/auth/login">התחברות</a>
 <a class="px-3.5 py-1.5 text-[13px] font-semibold text-black bg-[#C9B555] rounded-lg hover:bg-[#BFA34A] transition-colors" style="font-family: 'Montserrat', sans-serif;" href="/he/contact.html">בקשו הדגמה</a>
-<a href="/" class="px-2.5 py-1 text-xs font-medium text-gray-500 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">English</a>
+<a href="/ai-collection-calls.html" class="px-2.5 py-1 text-xs font-medium text-gray-500 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors" style="font-family: 'Montserrat', sans-serif;">English</a>
 </div>
 <button id="mobileMenuBtn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-gray-800 hover:bg-gray-200 transition-colors" onclick="toggleMobileMenu()">
 <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -239,14 +241,14 @@
 <a href="tel:+972559311784" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;" onclick="if(typeof gtag==='function')gtag('event','click_to_call',{link_location:'mobile_menu'})">טלפון: <span dir="ltr">055-931-1784</span></a>
 <a href="https://app.seenn.ai/auth/login" class="block py-2 text-base font-medium text-gray-800" style="font-family: 'Montserrat', sans-serif;">התחברות</a>
 <a href="/he/contact.html" class="block px-4 py-3 text-center font-medium text-black bg-[#C9B555] rounded-lg" style="font-family: 'Montserrat', sans-serif;">בקשו הדגמה</a>
-<a href="/" class="block w-full px-4 py-2 text-center font-medium text-gray-800 border border-gray-300 rounded-lg" style="font-family: 'Montserrat', sans-serif;">English</a>
+<a href="/ai-collection-calls.html" class="block w-full px-4 py-2 text-center font-medium text-gray-800 border border-gray-300 rounded-lg" style="font-family: 'Montserrat', sans-serif;">English</a>
 </div>
 </div>
 </nav>
 </header>
 
 <main>
-<section class="relative pt-16 sm:pt-24 pb-24 sm:pb-28 text-white overflow-hidden" style="min-height: 46vh; background-image: url('../images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<section class="relative pt-16 sm:pt-24 pb-24 sm:pb-28 text-white overflow-hidden" style="min-height: 46vh; background-image: url('/images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
 <div class="container mx-auto px-6 lg:px-8 text-center relative">
 <nav aria-label="breadcrumb" class="text-sm text-gray-200 mb-4">
 <a href="/he/" class="hover:text-white">דף הבית</a> <span class="mx-1">›</span> <a href="/he/ai-collection-agent.html" class="hover:text-white">סוכן גבייה AI</a> <span class="mx-1">›</span> <span>סוכן גבייה קולי</span>
@@ -286,15 +288,14 @@
 <div class="lp-msg lp-msg--agent"><span class="lp-who">שירה</span>תודה שעדכנתם. אצלנו החשבונית עדיין פתוחה, אז אני שולחת לכם עכשיו בוואטסאפ את הכרטסת עם כל התנועות, כדי שנוכל להצליב. אם תמצאו את אסמכתת ההעברה, אפשר פשוט להשיב עליה.</div>
 <div class="lp-msg lp-msg--client"><span class="lp-who">הלקוח</span>בסדר, אבדוק עם הנהלת החשבונות.</div>
 <div class="lp-msg lp-msg--agent"><span class="lp-who">שירה</span>מצוין. אחזור אליכם ביום רביעי אם זה עוד לא ייסגר.</div>
-<div class="lp-result">תוצאה: הלקוח טוען ששילם · כרטסת נשלחה בוואטסאפ · מעקב נקבע ליום רביעי</div>
-</figure>
+<div class="lp-result">תוצאה: הלקוח טוען ששילם · כרטסת נשלחה בוואטסאפ · מעקב נקבע ליום רביעי</div></figure>
 <p class="text-sm text-gray-500 mb-4">ההמחשה מבוססת על חברות ומספרי חשבונית לדוגמה.</p>
 </div>
 </section>
 <section class="py-12 md:py-14" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">מה סוכן הגבייה הקולי עושה בשיחה</h2>
-<ul class="cs-list list-disc pr-6 text-gray-700 text-lg mb-4">
+<ul class="cs-list list-disc ps-6 text-gray-700 text-lg mb-4">
 <li>מתקשר בקול טבעי, בשם המותג שלכם ולפי הכללים שלכם, ומנהל שיחה אמיתית במקום להשאיר הודעה בתא הקולי.</li>
 <li>שולח קישור תשלום לסכום המדויק תוך כדי השיחה, כך שאפשר לסגור את החוב על המקום.</li>
 <li>מטפל בהתנגדויות: ״לא קיבלתי חשבונית״, ״כבר שילמתי״, ״מה היתרה שלי?״, ושולח את החשבונית, הכרטסת או הקבלה בוואטסאפ או באימייל.</li>
@@ -307,7 +308,7 @@
 <section class="py-12 md:py-14" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5" style="font-family: 'Montserrat', sans-serif;">סוכן גבייה קולי מול חייגן אוטומטי וגובה אנושי</h2>
-<div class="lp-table-wrap mb-4"><table class="lp-table w-full text-right"><thead><tr><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right"></th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right lp-hl">סוכן גבייה קולי (Seenn)</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right">חייגן או הודעה מוקלטת</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-right">גובה אנושי</th></tr></thead><tbody>
+<div class="lp-table-wrap mb-4"><table class="lp-table w-full text-start"><thead><tr><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start"></th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start lp-hl">סוכן גבייה קולי (Seenn)</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">חייגן או הודעה מוקלטת</th><th class="p-3 md:p-4 text-sm md:text-base font-bold text-gray-900 text-start">גובה אנושי</th></tr></thead><tbody>
 <tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">שיחה דו-כיוונית</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700 lp-hl">כן, מקשיב ועונה</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">לא, משמיע הודעה קבועה</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כן</td></tr>
 <tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">טיפול בהתנגדויות</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700 lp-hl">כן, ושולח את המסמך הנדרש</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">לא</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">כן, עם עבודה ידנית</td></tr>
 <tr class="border-t border-gray-200"><td class="p-3 md:p-4 text-sm md:text-base align-top font-semibold text-gray-900">קישור תשלום תוך כדי שיחה</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700 lp-hl">כן</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">לא</td><td class="p-3 md:p-4 text-sm md:text-base align-top text-gray-700">לפעמים</td></tr>
@@ -368,7 +369,7 @@
 
 <section class="py-20" style="background-color: #F5F0E8;">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="relative pt-14 pb-14 text-white overflow-hidden rounded-3xl shadow-2xl" style="background-image: url('../images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<div class="relative pt-14 pb-14 text-white overflow-hidden rounded-3xl shadow-2xl" style="background-image: url('/images/hero-aurora-mountains.webp'); background-size: cover; background-position: center; background-repeat: no-repeat;">
 <div class="text-center px-6">
 <h2 class="text-2xl md:text-4xl font-bold text-white mb-5" style="font-family: 'Montserrat', sans-serif;">רוצים לשמוע את שירה מתקשרת?</h2>
 <p class="text-lg text-gray-200 max-w-2xl mx-auto mb-8">דברו עם שירה בעצמכם בדף הבית, או בקשו הדגמה ותראו איך היא מתקשרת ללקוחות שלכם, מטפלת בהתנגדויות וסוגרת תאריכי תשלום.</p>
@@ -398,6 +399,7 @@
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-collection-agent.html">סוכן גבייה בוואטסאפ</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/collection-software.html">תוכנת גבייה אוטומטית</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/whatsapp-reminders.html">תזכורות תשלום בוואטסאפ</a></li>
+<li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/payment-reminder-templates.html">נוסחי תזכורת תשלום</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/integrations.html">אינטגרציות</a></li>
 <li><a class="text-gray-700 hover:text-gray-900 transition-colors" href="/he/index.html#pricing">תמחור</a></li>
 </ul>
@@ -436,5 +438,6 @@
 </div>
 </footer>
 </div>
+
 </body>
 </html>

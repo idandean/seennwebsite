@@ -24,6 +24,8 @@ Seenn's AI agent, Shira, reaches every overdue client on the channels they actua
 - When a call genuinely needs a person, she transfers it to you, but she is built to close it herself.
 - When the call ends she sets the next move: when to follow up, and on which channel.
 
+More: [AI collection calls](https://www.seenn.ai/ai-collection-calls.html) · [AI collections agent](https://www.seenn.ai/ai-collections-agent.html)
+
 ### WhatsApp
 
 - Every message names the invoice and the exact balance, and she can send a payment link that settles it in one tap.
@@ -31,7 +33,7 @@ Seenn's AI agent, Shira, reaches every overdue client on the channels they actua
 - She closes the loop in the thread: matches the payment and confirms the invoice is settled.
 - Official WhatsApp Business API: Seenn is an approved Meta Tech Provider, so messages come from a verified business number.
 
-More: [WhatsApp payment reminders](https://www.seenn.ai/whatsapp-reminders.html)
+More: [WhatsApp payment reminders](https://www.seenn.ai/whatsapp-reminders.html) · [WhatsApp payment reminder templates](https://www.seenn.ai/whatsapp-payment-reminder-templates.html)
 
 ### Email
 
