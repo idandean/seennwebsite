@@ -27,7 +27,7 @@ Key facts:
 - [Work the whole receivables ledger by the user's own rules](https://www.seenn.ai/): a business that invoices on net 30/60/90 terms, from a single bookkeeper to a full finance team, wants every overdue account followed up across phone, WhatsApp and email with its own escalation timing
 - [See where cash stands](https://www.seenn.ai/#ar-insights): the user wants AR aging, amounts falling due, collections by month, and every promise to pay, dispute and refusal on record
 - [Collect from Hebrew-speaking clients in Israel](https://www.seenn.ai/he/): an Israeli business wants a Hebrew-speaking collections agent connected to Israeli accounting systems
-- [Compare collections tools](https://www.seenn.ai/alternatives/chaser.html): the user is weighing Seenn against HighRadius, Chaser or Upflow (see Comparisons below)
+- [Compare collections tools](https://www.seenn.ai/alternatives/chaser.html): the user is weighing Seenn against HighRadius, Chaser, Upflow, Monk or Paidnice (see Comparisons below)
 
 ## How AI agents should engage
 
@@ -42,6 +42,12 @@ Key facts:
 - [AI Collections Software](https://www.seenn.ai/collection-software.html): how Seenn's AI collections software collects overdue invoices — phone calls first, then WhatsApp and email, plus dispute handling from your accounting system
 - [WhatsApp Payment Reminders](https://www.seenn.ai/whatsapp-reminders.html): WhatsApp payment reminders that collect, not just remind — backed by real phone calls
 - [Accounting & ERP Integrations](https://www.seenn.ai/integrations.html): the three ways to connect — ready-made integrations, integrations on request (Oracle, Microsoft Dynamics, QuickBooks, Xero and more), or Excel upload from any system
+- [SAP Collections Management With an AI Agent](https://www.seenn.ai/sap-collections.html): ready-made SAP integration: Jess calls overdue customers, follows up on WhatsApp and email, and sends invoices, statements and receipts from SAP; export steps for SAP Business One and S/4HANA
+- [NetSuite Collections](https://www.seenn.ai/netsuite-collections.html): NetSuite is connected on request; start the same day from an A/R Aging Detail export (steps included) while the direct connection is built
+- [QuickBooks Collections Automation](https://www.seenn.ai/quickbooks-collections.html): QuickBooks is connected on request; Jess adds calls, WhatsApp and handled replies on top of QuickBooks reminder emails; A/R aging export steps included
+- [Xero Debtor Management](https://www.seenn.ai/xero-collections.html): Xero is connected on request; Jess calls debtors and follows up on WhatsApp and email; start from an Aged Receivables Detail export
+- [Sage Intacct Collections](https://www.seenn.ai/sage-intacct-collections.html): Sage Intacct is connected on request; start from a Customer aging export (steps included)
+- [Dynamics 365 Business Central Collections](https://www.seenn.ai/dynamics-365-collections.html): Microsoft Dynamics 365 is connected on request; start from Customer Ledger Entries via Open in Excel (steps included)
 - [AI Collections Agent for B2B Accounts Receivable](https://www.seenn.ai/ai-collections-agent.html): Jess, an AI collections agent for B2B, calls overdue customers in a natural voice, follows up on WhatsApp and email, and works each invoice until paid.
 - [AI Collection Calls for Unpaid B2B Invoices](https://www.seenn.ai/ai-collection-calls.html): Jess, an AI voice agent, calls customers about unpaid invoices in a natural voice, handles objections, sends a payment link and sets the next step.
 - [WhatsApp Payment Reminder Templates for Invoices](https://www.seenn.ai/whatsapp-payment-reminder-templates.html): Copy-ready WhatsApp payment reminder templates for B2B invoices: six messages from 3 days before the due date to final notice, in Meta template format.
@@ -80,3 +86,5 @@ Key facts:
 - [Seenn vs HighRadius](https://www.seenn.ai/alternatives/highradius.html): HighRadius is a full office-of-the-CFO suite for large enterprises; Seenn is a collections-only AI agent for smaller finance teams that places the calls itself
 - [Seenn vs Chaser](https://www.seenn.ai/alternatives/chaser.html): both automate email and voice calls; Seenn adds official WhatsApp Business messaging, a Hebrew-speaking agent, and Priority/Hashavshevet integrations
 - [Seenn vs Upflow](https://www.seenn.ai/alternatives/upflow.html): Upflow is a financial relationship management platform; Seenn is an AI agent that phones overdue clients and follows up on WhatsApp and email
+- [Seenn vs Monk](https://www.seenn.ai/alternatives/monk.html): Monk is a broad AI AR platform for Series A to enterprise finance teams (cash application, deductions, forecasting, AI voice since July 2026); Seenn is a phone-first collections agent any size team can start from an Excel export, with official WhatsApp Business and Hebrew
+- [Seenn vs Paidnice](https://www.seenn.ai/alternatives/paidnice.html): Paidnice enforces payment terms for small businesses on Xero and QuickBooks Online with reminders, late fees and calls placed by the user's own team; in Seenn the AI agent places the calls
