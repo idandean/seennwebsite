@@ -62,6 +62,8 @@ Key facts:
 - [סוכן גבייה לפריוריטי — Priority ERP collections (Hebrew)](https://www.seenn.ai/he/priority-collection.html): ready-made Priority integration: Jess works the open balances and sends invoices, account statements and receipts from Priority
 - [סוכן גבייה ל-SAP — SAP collections (Hebrew)](https://www.seenn.ai/he/sap-collection.html): ready-made SAP integration: Jess applies your collection policy to every open account
 - [גבייה מחשבשבת — Hashavshevet collections (Hebrew)](https://www.seenn.ai/he/hashavshevet-collection.html): ready-made Hashavshevet integration for Israeli small and mid-sized businesses
+- [גבייה מ-iCount — iCount collections (Hebrew)](https://www.seenn.ai/he/icount-collection.html): ready-made iCount integration: Jess calls overdue customers, follows up on WhatsApp and email, and sends invoices, receipts and ledger cards from iCount
+- [גבייה מריווחית — Rivhit collections (Hebrew)](https://www.seenn.ai/he/rivhit-collection.html): ready-made Rivhit integration: Jess calls overdue customers, follows up on WhatsApp and email, and sends invoices, receipts and ledger cards from Rivhit
 - [About Seenn](https://www.seenn.ai/about.html): the company and why we built an AI collections agent
 - [Contact / Request a Demo](https://www.seenn.ai/contact.html): reach the team or book a demo
 - [Pricing](https://www.seenn.ai/#pricing): custom plans built around your receivables volume — request a demo from any page

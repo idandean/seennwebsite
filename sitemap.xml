@@ -215,7 +215,7 @@
   </url>
   <url>
     <loc>https://www.seenn.ai/he/hashavshevet-collection.html</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/hashavshevet-collection.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/he/hashavshevet-collection.html" />
     <changefreq>monthly</changefreq>
@@ -505,5 +505,22 @@
     <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <!-- Hebrew iCount and Rivhit pages (2026-11-21) -->
+  <url>
+    <loc>https://www.seenn.ai/he/icount-collection.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/icount-collection.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/he/icount-collection.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.seenn.ai/he/rivhit-collection.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.seenn.ai/he/rivhit-collection.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.seenn.ai/he/rivhit-collection.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
