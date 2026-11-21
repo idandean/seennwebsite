@@ -35,30 +35,8 @@
     window.oaiq('init', config);
 })();
 
-tailwind.config = {
-    darkMode: "class",
-    theme: {
-        extend: {
-            colors: {
-                primary: "#6A2FF9",
-                "background-light": "#F7F7F8",
-                "background-dark": "#120B29",
-                "text-light": "#18181B",
-                "text-dark": "#E4E4E7",
-                "card-light": "#FFFFFF",
-                "card-dark": "#1A1435",
-                "border-light": "#E4E4E7",
-                "border-dark": "#3F3F46"
-            },
-            fontFamily: {
-                display: ["Inter", "sans-serif"],
-            },
-            borderRadius: {
-                DEFAULT: "0.5rem",
-            },
-        },
-    },
-};
+// Tailwind is compiled ahead of time into /css/tailwind.css; its theme (colors, fonts,
+// radius) lives in tools/tailwind/tailwind.config.js. Rebuild there after changing classes.
 
 // Language translations
 const translations = {
