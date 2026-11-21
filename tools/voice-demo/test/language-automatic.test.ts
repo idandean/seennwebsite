@@ -1,11 +1,14 @@
 /**
  * Automatic language is the only behaviour the visitor sees.
  *
- * The same-origin lookup resolves one canonical starting language from the
- * visitor's approximate network country. Every session request must carry that
- * `he`, `en` or `ar` value. If resolution still fails after retry, the
- * widget must not create a session. The agent may still adapt after hearing
- * the visitor.
+ * The page decides the opening language (founder decision, 2026-11-21): the
+ * Hebrew site opens in Hebrew and the English site in English, wherever the
+ * visitor is. The same-origin country lookup only adds Arabic on the English
+ * site, and is the sole source on a page with no language of its own (an
+ * Arabic page). Every session request must carry a canonical `he`, `en` or
+ * `ar` value; when the page gives no answer and the lookup fails after retry,
+ * the widget must not create a session. The agent may still adapt after
+ * hearing the visitor.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -24,15 +27,27 @@ const SESSION_BODY = {
   language: 'he',
 };
 
-function stubFetch(body: unknown = SESSION_BODY) {
+/**
+ * Stubs the session endpoint. Without an explicit body it answers with the
+ * language that was requested, as the real backend does, so the client's
+ * language-match check stays meaningful.
+ */
+function stubFetch(body?: unknown) {
   const calls: Array<{ url: string; init: RequestInit }> = [];
   const impl = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
     calls.push({ url: String(url), init: init ?? {} });
+    const requested = (() => {
+      try {
+        return (JSON.parse(String(init?.body ?? '{}')) as { language?: unknown }).language;
+      } catch {
+        return undefined;
+      }
+    })();
     return {
       ok: true,
       status: 200,
       headers: { get: () => null },
-      json: async () => body,
+      json: async () => body ?? { ...SESSION_BODY, language: requested ?? SESSION_BODY.language },
     } as unknown as Response;
   });
   return { impl: impl as unknown as typeof fetch, calls };
@@ -186,22 +201,56 @@ describe('the session client requires a canonical language', () => {
   });
 });
 
-describe('no browser or page language is silently serialized', () => {
-  it('the page language never reaches the request, in any locale', async () => {
-    const cases = [
-      ['en', 'he'],
-      ['he', 'ar'],
-      ['ar', 'en'],
-      ['he-IL', 'ar'],
-      ['fr', 'he'],
-    ] as const;
-    for (const [pageLang, resolved] of cases) {
-      document.body.innerHTML = '';
-      const { calls } = await startWidget(pageLang, {}, stubLookup(resolved));
-      const body = sentBody(calls);
+describe('the page decides the opening language', () => {
+  it('the Hebrew site opens in Hebrew wherever the visitor is, without a country lookup', async () => {
+    for (const pageLang of ['he', 'he-IL', 'iw']) {
+      for (const country of ['he', 'en', 'ar'] as const) {
+        document.body.innerHTML = '';
+        const { calls, lookup } = await startWidget(pageLang, {}, stubLookup(country));
 
-      expect(body['language'], pageLang).toBe(resolved);
+        expect(sentBody(calls)['language'], `${pageLang}/${country}`).toBe('he');
+        expect(lookup, `${pageLang}/${country}`).not.toHaveBeenCalled();
+      }
     }
+  });
+
+  it('the English site opens in English, including for visitors in Israel', async () => {
+    for (const pageLang of ['en', 'en-US', 'fr']) {
+      for (const country of ['he', 'en'] as const) {
+        document.body.innerHTML = '';
+        const { calls, widget } = await startWidget(pageLang, {}, stubLookup(country));
+
+        expect(sentBody(calls)['language'], `${pageLang}/${country}`).toBe('en');
+        expect(widget.snapshot.state, `${pageLang}/${country}`).toBe('listening');
+      }
+    }
+  });
+
+  it('the English site keeps the Arabic greeting for visitors from Arabic-speaking countries', async () => {
+    const { calls, widget } = await startWidget('en', {}, stubLookup('ar'));
+
+    expect(sentBody(calls)['language']).toBe('ar');
+    expect(widget.snapshot.state).toBe('listening');
+  });
+
+  it('the English site still opens in English when the country lookup fails', async () => {
+    for (const failure of [null, 'reject', 'http-500'] as const) {
+      document.body.innerHTML = '';
+      const { widget, calls, lookup } = await startWidget('en', {}, stubLookup(failure));
+
+      expect(lookup, String(failure)).toHaveBeenCalledTimes(2);
+      expect(calls, String(failure)).toHaveLength(1);
+      expect(sentBody(calls)['language'], String(failure)).toBe('en');
+      expect(widget.snapshot.state, String(failure)).toBe('listening');
+    }
+  });
+
+  it('the English site opens in English when no lookup URL is configured', async () => {
+    const lookup = stubLookup('ar');
+    const { calls } = await startWidget('en', { languageLookupUrl: '' }, lookup);
+
+    expect(lookup).not.toHaveBeenCalled();
+    expect(sentBody(calls)['language']).toBe('en');
   });
 
   it('navigator.language is never read into the request', async () => {
@@ -212,7 +261,7 @@ describe('no browser or page language is silently serialized', () => {
     const raw = calls[0]!.init.body as string;
 
     expect(raw).not.toContain('de');
-    expect(sentBody(calls)['language']).toBe('he');
+    expect(sentBody(calls)['language']).toBe('en');
 
     if (original) Object.defineProperty(navigator, 'language', original);
   });
@@ -260,10 +309,10 @@ describe('canonical response language', () => {
   });
 
   it('records it as the initial session language without locking the UI', async () => {
-    // Page is English; the backend resolved Hebrew for the greeting.
-    const { widget, mount } = await startWidget('en');
+    // Page is English; the visitor's country added the Arabic greeting.
+    const { widget, mount } = await startWidget('en', {}, stubLookup('ar'));
 
-    expect(widget.snapshot.session?.language).toBe('he');
+    expect(widget.snapshot.session?.language).toBe('ar');
     // The widget keeps rendering in the page's language — the conversation is
     // not locked, so the UI must not imply that it is.
     expect(mount.querySelector('.svd')!.getAttribute('lang')).toBe('en');
@@ -324,11 +373,13 @@ describe('unrelated contracts are untouched', () => {
 });
 
 
+// An Arabic page has no he/en answer of its own, so the country is the only
+// source there: these tests pin the fail-closed rules on that path.
 describe('country-resolved initial language', () => {
   it('sends the resolved language when the lookup answers', async () => {
     for (const language of ['he', 'en', 'ar'] as const) {
       document.body.innerHTML = '';
-      const { calls } = await startWidget('en', {}, stubLookup(language));
+      const { calls } = await startWidget('ar', {}, stubLookup(language));
       const body = sentBody(calls);
 
       expect(Object.prototype.hasOwnProperty.call(body, 'language'), language).toBe(true);
@@ -337,7 +388,7 @@ describe('country-resolved initial language', () => {
   });
 
   it('fails closed without creating a session when the lookup returns null', async () => {
-    const { widget, calls, lookup, mic } = await startWidget('en', {}, stubLookup(null));
+    const { widget, calls, lookup, mic } = await startWidget('ar', {}, stubLookup(null));
 
     expect(lookup).toHaveBeenCalledTimes(2);
     expect(calls).toHaveLength(0);
@@ -349,7 +400,7 @@ describe('country-resolved initial language', () => {
   it('fails closed without creating a session when the lookup fails outright', async () => {
     for (const failure of ['reject', 'http-500'] as const) {
       document.body.innerHTML = '';
-      const { widget, calls, lookup } = await startWidget('en', {}, stubLookup(failure));
+      const { widget, calls, lookup } = await startWidget('ar', {}, stubLookup(failure));
       expect(lookup, failure).toHaveBeenCalledTimes(2);
       expect(calls, failure).toHaveLength(0);
       expect(widget.snapshot.errorCode, failure).toBe('language_unavailable');
@@ -363,14 +414,15 @@ describe('country-resolved initial language', () => {
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: async () => ({ language: 'he' }),
+        json: async () => ({ language: 'ar' }),
       } as Response);
 
+    // English page: the retry is what keeps the Arabic greeting.
     const { widget, calls } = await startWidget('en', {}, lookup);
 
     expect(lookup).toHaveBeenCalledTimes(2);
     expect(calls).toHaveLength(1);
-    expect(sentBody(calls)).toHaveProperty('language', 'he');
+    expect(sentBody(calls)).toHaveProperty('language', 'ar');
     expect(widget.snapshot.state).toBe('listening');
   });
 
@@ -393,7 +445,7 @@ describe('country-resolved initial language', () => {
     );
 
     const { widget, calls, mic } = await startWidget(
-      'en',
+      'ar',
       { languageLookupTimeoutMs: 10 },
       lookup as ReturnType<typeof stubLookup>,
     );
@@ -424,7 +476,7 @@ describe('country-resolved initial language', () => {
     for (const bogus of ['auto', 'fr', '', 'EN']) {
       document.body.innerHTML = '';
       const { widget, calls, lookup } = await startWidget(
-        'en',
+        'ar',
         {},
         stubLookup(bogus as unknown as 'he'),
       );
@@ -436,7 +488,7 @@ describe('country-resolved initial language', () => {
 
   it('an empty lookup URL fails closed unless an explicit language is configured', async () => {
     const lookup = stubLookup('he');
-    const { widget, calls } = await startWidget('en', { languageLookupUrl: '' }, lookup);
+    const { widget, calls } = await startWidget('ar', { languageLookupUrl: '' }, lookup);
 
     expect(lookup).not.toHaveBeenCalled();
     expect(calls).toHaveLength(0);

@@ -736,7 +736,7 @@ export class VoiceDemoWidget {
       this.consentGate.present(result.entry);
       this.gateText.textContent = result.entry.text;
       // The dialog belongs to the sentence, not to the page. A visitor on the
-      // English homepage whose session resolves to Hebrew is shown the Hebrew
+      // English homepage whose session resolves to Arabic is shown the Arabic
       // sentence — and that sentence quotes its own button, so the chrome and
       // the direction have to follow it too, or it names a control that is not
       // on screen.
@@ -1018,15 +1018,34 @@ export class VoiceDemoWidget {
    * two round-trips: ask, accept, ask again.
    */
   /**
-   * Asks the same-origin function which language to open in.
+   * Decides the language the session opens in.
    *
-   * Returns null after two failed attempts. The caller treats null as a
-   * blocking error: no session request is made without a canonical language.
+   * The site the visitor is reading decides (founder decision, 2026-11-21):
+   * the Hebrew site opens in Hebrew and the English site in English, wherever
+   * the visitor is. Geography only adds Arabic: a visitor from an
+   * Arabic-speaking country on the English site still hears an Arabic
+   * greeting. Either way the agent can switch once it hears the visitor.
+   *
+   * Returns null only when the page gives no answer of its own and the
+   * country lookup fails; the caller treats that as a blocking error, so no
+   * session request is made without a canonical language.
    */
   private async resolveInitialLanguage(): Promise<DemoLanguage | null> {
-    // An explicit override, if one is ever wired up, wins over geography.
+    // An explicit override, if one is ever wired up, wins over everything.
     if (this.config.languageOverride) return this.config.languageOverride;
 
+    if (this.locale === 'he') return 'he';
+    const fromCountry = await this.lookupCountryLanguage();
+    if (this.locale === 'en') return fromCountry === 'ar' ? 'ar' : 'en';
+    return fromCountry;
+  }
+
+  /**
+   * Asks the same-origin function which language the visitor's country maps to.
+   *
+   * Returns null after two failed attempts.
+   */
+  private async lookupCountryLanguage(): Promise<DemoLanguage | null> {
     const url = this.config.languageLookupUrl;
     if (!url) return null;
 
@@ -1071,9 +1090,9 @@ export class VoiceDemoWidget {
       let result;
       try {
         result = await this.client.createSession({
-          // Automatic: `this.locale` drives RENDERING only and is never sent.
-          // The country-resolved starting language is mandatory. Rendering
-          // locale and browser locale remain separate and are never sent.
+          // Resolved by resolveInitialLanguage(): the page's language, with
+          // Arabic added by country on the English site. Mandatory. The
+          // browser's own locale is never read and never sent.
           language: initialLanguage,
           // Pre-flight acceptance if the gate produced one, otherwise the
           // server-driven v2 path's. Never both, never invented.

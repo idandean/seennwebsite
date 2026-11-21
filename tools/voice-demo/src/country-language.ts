@@ -13,6 +13,11 @@
  * This picks a STARTING language, not a lock. The agent detects and switches
  * once it hears the visitor.
  *
+ * Since 2026-11-21 the page's own language comes first (see
+ * resolveInitialLanguage in widget.ts): the Hebrew site always opens in Hebrew
+ * and the English site in English, so on the live site this lookup only
+ * decides whether an English-site visitor gets the Arabic greeting.
+ *
  * Kept pure and free of any request object so the mapping is testable on its
  * own, and so the only thing the network layer does is call it.
  */
