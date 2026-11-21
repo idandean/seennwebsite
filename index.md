@@ -14,7 +14,7 @@ Your AI agent calls overdue clients, follows your rules, and improves your cash 
 
 ## How does Seenn reach clients who owe you money?
 
-Seenn's AI agent, Jess, reaches every overdue client on the channels they actually answer: a natural-voice phone call, official WhatsApp Business, and email. She answers replies, closes the loop when the money lands, and decides when to make contact again. The phone call is the difference: almost no other collections tool places a real one.
+Seenn's AI agent, Jess, reaches every overdue client on the channels they actually answer: a natural-voice phone call, official WhatsApp Business, and email. She answers replies, closes the loop when the money lands, and decides when to make contact again. The phone call leads, because a conversation moves invoices that emails don't.
 
 ### Phone call
 

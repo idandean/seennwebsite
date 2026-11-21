@@ -14,7 +14,7 @@ Key facts:
 - Capabilities: automated reminders, payment links, dispute handling, outcome logging, custom escalation rules, AR aging and collections reporting
 - AR data and reporting: dashboard with total receivables and overdue amounts, aging by day ranges or by month (matching each customer’s own data), amounts falling due in the coming months, collections by month, refusals flagged, and every call, message, promise to pay and dispute logged
 - Learning: Jess learns each client’s own customers’ payment behavior to collect better for that client only; the data is never shared or used for anyone else
-- Integrations: ready-made integrations with Priority, SAP, Hashavshevet and iCount/Rivhit; Oracle (NetSuite, Fusion Cloud ERP), Microsoft Dynamics 365, Sage, Odoo, QuickBooks, Xero and others connected on request; Excel upload from any system; custom integrations and API for enterprise
+- Integrations: ready-made integrations with Priority, SAP Business One, Hashavshevet and iCount/Rivhit; other SAP editions such as S/4HANA, Oracle (NetSuite, Fusion Cloud ERP), Microsoft Dynamics 365, Sage, Odoo, QuickBooks, Xero and others connected on request; Excel upload from any system; custom integrations and API for enterprise
 - Markets: United States, Israel
 - Languages: English (https://www.seenn.ai/), Hebrew (https://www.seenn.ai/he/)
 - Contact: hello@seenn.ai · phone and WhatsApp (Israel): +972-55-931-1784
